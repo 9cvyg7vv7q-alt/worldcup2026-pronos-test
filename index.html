@@ -89,7 +89,7 @@ input,select,textarea{width:100%;background:var(--bg);border:1.5px solid var(--b
 <div id="toast" class="toast hide"></div>
 <div id="loadingOverlay" class="loadingOverlay hide"><div class="loadingBox"><div class="spinner"></div><b id="loadingText">Chargement...</b><br><span class="muted">La base Google Sheets répond, deux secondes.</span></div></div>
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbyAuB73w9NvGXR7jcrXegic_5XZwllMtH_V7o_6IpBkGmA8z-1ZUA5kpA9lbV76Donh3A/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbx2bcmh0lp6vsLmttmav3knITpvlJtbQJ0vlAVWKKba0YRlp7sYFGo88oTWSdisHdwQMg/exec";
 const FLAGS={France:"",Mexico:"","South Africa":"","South Korea":"","Czech Republic":"",Canada:"","Bosnia & Herzegovina":"",Qatar:"",Switzerland:"",Brazil:"",Morocco:"",Haiti:"",Scotland:"",USA:"",Paraguay:"",Australia:"",Turkey:"",Germany:"","Curaçao":"","Ivory Coast":"",Ecuador:"",Netherlands:"",Japan:"",Sweden:"",Tunisia:"",Belgium:"",Egypt:"",Iran:"","New Zealand":"",Spain:"","Cape Verde":"","Saudi Arabia":"",Uruguay:"",Senegal:"",Iraq:"",Norway:"",Argentina:"",Algeria:"",Austria:"",Jordan:"",Portugal:"","DR Congo":"",Uzbekistan:"",Colombia:"",England:"",Croatia:"",Ghana:"",Panama:""};
 const FUN_ICONS={leader:"",target:"",rate:"",joker:"⭐",active:"",fire:"",lanterne:"",blackcat:"‍⬛",zero:"",boom:"",topScorerVote:"⚽",scorerVote:"⚽",drawExpert:"",curse:"",optimist:""};
 let mode="login", user=null, matches=[], pronos={}, classement=null, buteur=null, joueurs=[], butsMatch={}, pronosticStats={}, recentSummary={}, bonusJokers=[], equipes=[], teamMap={}, currentFilter="all", selectedMatch=null, selectedPlayer=null, rankHistoryCharts={}, activeRankSection="records", currentProfileFilter="all";
@@ -1098,6 +1098,197 @@ window.addEventListener('load',()=>setTimeout(()=>{
   }
 },20));
 /* FIN PATCH V12.4 FINAL */
+
+
+/* PATCH V13 FINAL - corrections admin dynamique, profil pronos, jokers épuisés */
+const PATCH_V13_FINAL = true;
+
+function elV13(id){ return document.getElementById(id); }
+function currentMatchBySelectV13(selectId){
+  const el=elV13(selectId);
+  const id=el ? String(el.value||'') : '';
+  return (matches||[]).find(m=>String(m.id)===id) || null;
+}
+function currentAdminMatch(){ return currentMatchBySelectV13('adminMatch') || (matches||[])[0] || {equipeA:'équipe A',equipeB:'équipe B'}; }
+function currentOddsMatch(){ return currentMatchBySelectV13('oddsMatch') || (matches||[])[0] || {equipeA:'équipe A',equipeB:'équipe B'}; }
+function jokerRemainingV13(){
+  const used=Object.values(pronos||{}).filter(p=>p && (p.joker===true || String(p.joker).toLowerCase()==='true')).length;
+  return Math.max(0,3-used);
+}
+function noJokerHtmlV13(){ return `<div class="jokerMiddle"><span>❌</span><small>0 joker</small></div>`; }
+function personalJokerHtmlV13(){ return jokerRemainingV13()>0 ? `<label class="jokerMiddle"><input id="quickJoker" type="checkbox"><span>🃏</span><small>Joker</small></label>` : noJokerHtmlV13(); }
+
+function adminResultInlineHtmlV91(){return `<div class="card"><b>Résultat + buteurs</b><br><br><select id="adminMatch" onchange="onAdminMatchChangeV13()"></select><br><br><div class="grid2"><div><div class="adminLabel" id="adminScoreALabel">Score équipe A</div><input id="adminScoreA" type="number" min="0" placeholder="Score équipe A"></div><div><div class="adminLabel" id="adminScoreBLabel">Score équipe B</div><input id="adminScoreB" type="number" min="0" placeholder="Score équipe B"></div></div><div class="sec">Buteurs du match</div><div class="hint">Une ligne = un but. Si un joueur marque deux fois, ajoute deux lignes. La liste est filtrée sur les deux équipes du match.</div><br><div id="scorerRows"></div><button type="button" class="btn btn2" onclick="addScorerRow()">+ Ajouter un but</button><br><br><button type="button" class="btn" onclick="adminSaveResult()">Valider résultat + calcul points</button><div id="adminMsg" class="small" style="margin-top:8px"></div></div>`;}
+function adminOddsInlineHtmlV91(){return `<div class="card"><b>Correction / ajout cotes</b><br><br><select id="oddsMatch" onchange="updateOddsLabels()"></select><br><br><div class="grid2"><div><div class="adminLabel" id="oddsALabel">Cote équipe A</div><input id="oddsA" type="number" step="0.01" min="1" placeholder="ex : 1.80"></div><div><div class="adminLabel">Cote match nul</div><input id="oddsX" type="number" step="0.01" min="1" placeholder="ex : 3.20"></div></div><br><div><div class="adminLabel" id="oddsBLabel">Cote équipe B</div><input id="oddsB" type="number" step="0.01" min="1" placeholder="ex : 2.10"></div><br><button type="button" class="btn" onclick="adminSaveOdds()">Enregistrer les cotes</button><div id="oddsMsg" class="small" style="margin-top:8px"></div></div>`;}
+function adminAddMatchInlineHtmlV91(){return `<div class="card"><b>Ajout match</b><br><br><div class="grid2"><div><div class="adminLabel">Équipe A</div><input id="addA" list="teamsDLV12" placeholder="Équipe A"></div><div><div class="adminLabel">Équipe B</div><input id="addB" list="teamsDLV12" placeholder="Équipe B"></div></div><br><div class="grid2"><div><div class="adminLabel">Date</div><input id="addDate" type="date"></div><div><div class="adminLabel">Heure France</div><input id="addTime" type="time"></div></div><br><select id="addPhase"><option>32e de finale</option><option>16e de finale</option><option>Quart de finale</option><option>Demi-finale</option><option>Finale de bronze</option><option>Finale</option></select><br><br><div class="grid2"><input id="addDiff1" placeholder="Diffuseur 1"><input id="addDiff2" placeholder="Diffuseur 2"></div><br><div class="grid2"><input id="addCote1" type="number" step="0.01" min="1" placeholder="Cote équipe A"><input id="addCoteX" type="number" step="0.01" min="1" placeholder="Cote nul"></div><br><input id="addCote2" type="number" step="0.01" min="1" placeholder="Cote équipe B"><br><br><input id="addPlace" list="stadiumsDL" placeholder="Ville / stade"><div class="hint">Commence à écrire le pays : la liste se filtre automatiquement depuis l’onglet EQUIPES.</div><br><button type="button" class="btn" onclick="adminAddMatch()">Ajouter le match</button><div id="addMsg" class="small" style="margin-top:8px"></div></div>`;}
+
+function fillAdminMatches(){
+  const el=elV13('adminMatch'); if(!el)return;
+  const current=el.value;
+  const list=(matches||[]).filter(m=>m.status!=='FINISHED');
+  el.innerHTML=list.map(m=>`<option value="${m.id}">${matchOptionLabelV10(m)}</option>`).join('') || `<option value="">Aucun match disponible</option>`;
+  if(current && [...el.options].some(o=>String(o.value)===String(current))) el.value=current;
+}
+function fillOddsMatches(){
+  const el=elV13('oddsMatch'); if(!el)return;
+  const current=el.value;
+  el.innerHTML=(matches||[]).map(m=>`<option value="${m.id}">${matchOptionLabelV10(m)}</option>`).join('') || '<option value="">Aucun match</option>';
+  if(current && [...el.options].some(o=>String(o.value)===String(current))) el.value=current;
+  updateOddsLabels();
+}
+function updateOddsLabels(){
+  const m=currentOddsMatch(); if(!m)return;
+  const la=elV13('oddsALabel'), lb=elV13('oddsBLabel'), a=elV13('oddsA'), x=elV13('oddsX'), b=elV13('oddsB');
+  if(la)la.textContent='Cote '+mName(m,'A');
+  if(lb)lb.textContent='Cote '+mName(m,'B');
+  if(a)a.value=m.cote1||'';
+  if(x)x.value=m.coteX||'';
+  if(b)b.value=m.cote2||'';
+}
+function updateAdminScoreLabels(){
+  const m=currentAdminMatch(); if(!m)return;
+  const la=elV13('adminScoreALabel'), lb=elV13('adminScoreBLabel'), a=elV13('adminScoreA'), b=elV13('adminScoreB');
+  if(la)la.textContent='Score '+mName(m,'A');
+  if(lb)lb.textContent='Score '+mName(m,'B');
+  if(a)a.placeholder=mName(m,'A');
+  if(b)b.placeholder=mName(m,'B');
+}
+function matchPlayersV12(){
+  const m=currentAdminMatch(); if(!m)return [];
+  return (joueurs||[]).filter(j=>String(j.equipeId)===String(m.equipeAId)||String(j.equipeId)===String(m.equipeBId));
+}
+function ensureDatalist(){
+  let old=elV13('playersDL'); if(old)old.remove();
+  let dl=document.createElement('datalist'); dl.id='playersDL';
+  dl.innerHTML=matchPlayersV12().map(j=>`<option value="${cleanText(j.nomComplet||j.initialNom||j.nom)}">${cleanText(j.equipe||'')}</option>`).join('');
+  document.body.appendChild(dl);
+}
+function ensureAdminPlayersForMatchV12(cb){
+  const m=currentAdminMatch();
+  if(!m || !m.equipeAId || !m.equipeBId){ensureDatalist(); cb&&cb(); return;}
+  api('getJoueurs',{equipeAId:m.equipeAId,equipeBId:m.equipeBId}).then(list=>{
+    joueurs=list||[];
+    ensureDatalist();
+    cb&&cb();
+  }).catch(e=>{toast('Erreur joueurs : '+e.message);ensureDatalist();cb&&cb();});
+}
+function onAdminMatchChangeV13(){
+  updateAdminScoreLabels();
+  const box=elV13('scorerRows'); if(box)box.innerHTML='';
+  ensureAdminPlayersForMatchV12(()=>addScorerRow());
+}
+function addScorerRow(){
+  const box=elV13('scorerRows'); if(!box)return;
+  ensureDatalist();
+  const div=document.createElement('div');
+  div.className='scorerRow scorerRowV12';
+  div.innerHTML=`<div><div class="adminLabel">Joueur</div><input list="playersDL" placeholder="Nom joueur" oninput="autoFillScorerTeam(this)"></div><div><div class="adminLabel">Pays</div><input class="scorerTeam" placeholder="Pays" readonly></div><div><div class="adminLabel">Minute</div><input placeholder="Min." inputmode="numeric"></div><div><div class="adminLabel">Type</div><select title="Type de but"><option value="NORMAL">Normal</option><option value="P">Penalty</option><option value="CSC">CSC</option></select></div><button type="button" onclick="this.parentNode.remove()">×</button>`;
+  box.appendChild(div);
+  if(!matchPlayersV12().length) ensureAdminPlayersForMatchV12(()=>ensureDatalist());
+}
+function resetScorerRows(){ const box=elV13('scorerRows'); if(!box)return; box.innerHTML=''; ensureAdminPlayersForMatchV12(()=>addScorerRow()); }
+function autoFillScorerTeam(input){
+  const row=input.closest('.scorerRow'); if(!row)return;
+  const val=String(input.value||'').toLowerCase().trim();
+  const found=matchPlayersV12().find(j=>String(j.nomComplet||j.initialNom||j.nom||'').toLowerCase().trim()===val) || matchPlayersV12().find(j=>String(j.nomComplet||j.initialNom||j.nom||'').toLowerCase().includes(val));
+  const teamInput=row.querySelector('.scorerTeam');
+  if(teamInput) teamInput.value=found?((found.emoji?found.emoji+' ':'')+(found.equipe||'')):'';
+  row.dataset.joueurId=found?found.id:'';
+  row.dataset.prenom=found?found.prenom||'':'';
+  row.dataset.nom=found?found.nom||input.value.trim():input.value.trim();
+  row.dataset.nomAffiche=found?(found.initialNom||found.nomComplet||found.nom):input.value.trim();
+  row.dataset.equipeId=found?found.equipeId||'':'';
+  row.dataset.equipe=found?found.equipe||'':(teamInput?teamInput.value:'');
+  row.dataset.codePays=found?found.codePays||'':'';
+}
+function collectScorers(){
+  const rows=[...document.querySelectorAll('#scorerRows .scorerRow')];
+  return rows.map(r=>{
+    const inputs=r.querySelectorAll('input'); const sel=r.querySelector('select'); const name=(inputs[0]?.value||'').trim();
+    if(!name)return null;
+    autoFillScorerTeam(inputs[0]);
+    return {joueurId:r.dataset.joueurId||'',prenom:r.dataset.prenom||'',nom:r.dataset.nom||name,nomAffiche:r.dataset.nomAffiche||name,equipeId:r.dataset.equipeId||'',equipe:r.dataset.equipe||(inputs[1]?.value||''),codePays:r.dataset.codePays||'',minute:inputs[2]?.value||'',type:sel?.value||'NORMAL'};
+  }).filter(Boolean);
+}
+function adminSaveResult(){
+  const msg=elV13('adminMsg');
+  const a=elV13('adminScoreA'), b=elV13('adminScoreB'), sel=elV13('adminMatch');
+  if(!sel || !sel.value){if(msg)msg.innerHTML='<span class="ko">Choisis un match.</span>';return;}
+  api('adminResult',{userId:user.userId,matchId:sel.value,scoreA:a?a.value:'',scoreB:b?b.value:'',buteurs:JSON.stringify(collectScorers())}).then(d=>{
+    if(msg)msg.innerHTML=d.error?'<span class="ko">'+d.error+'</span>':'<span class="ok">Résultat validé · '+d.pronos+' pronos recalculés · '+d.buteurs+' but(s).</span>';
+    if(!d.error){invalidateV11();v11Loaded.core=false;v11Loaded.rank=false;ensureProfileV11().then(()=>drawProfile());}
+  }).catch(e=>{if(msg)msg.innerHTML='<span class="ko">'+e.message+'</span>';});
+}
+function adminSaveOdds(){
+  const msg=elV13('oddsMsg'), sel=elV13('oddsMatch'), a=elV13('oddsA'), x=elV13('oddsX'), b=elV13('oddsB');
+  if(!sel || !sel.value){if(msg)msg.innerHTML='<span class="ko">Choisis un match.</span>';return;}
+  api('adminAddCotes',{userId:user.userId,matchId:sel.value,cote1:a?a.value:'',coteX:x?x.value:'',cote2:b?b.value:''}).then(d=>{
+    if(msg)msg.innerHTML=d.error?'<span class="ko">'+d.error+'</span>':'<span class="ok">Cotes enregistrées.</span>';
+    if(!d.error){invalidateV11();v11Loaded.core=false;ensureProfileV11().then(()=>{activeProfileSectionV8='cotes';drawProfile();});}
+  }).catch(e=>{if(msg)msg.innerHTML='<span class="ko">'+e.message+'</span>';});
+}
+function adminAddMatch(){
+  const msg=elV13('addMsg');
+  const a=elV13('addA'), b=elV13('addB'), d=elV13('addDate'), t=elV13('addTime');
+  if(!a?.value || !b?.value || !d?.value || !t?.value){if(msg)msg.innerHTML='<span class="ko">Équipe A, équipe B, date et heure sont obligatoires.</span>';return;}
+  api('adminAddMatch',{userId:user.userId,groupe:'PF',equipeAId:resolveTeamInputV12(a.value),equipeBId:resolveTeamInputV12(b.value),dateFR:frDateFromInput(),heureFR:t.value,phase:(elV13('addPhase')||{}).value||'Phase finale',diff1:(elV13('addDiff1')||{}).value||'',diff2:(elV13('addDiff2')||{}).value||'',cote1:(elV13('addCote1')||{}).value||'',coteX:(elV13('addCoteX')||{}).value||'',cote2:(elV13('addCote2')||{}).value||'',villeStade:(elV13('addPlace')||{}).value||''}).then(res=>{
+    if(msg)msg.innerHTML=res.error?'<span class="ko">'+res.error+'</span>':'<span class="ok">Match ajouté.</span>';
+    if(!res.error){invalidateV11();v11Loaded.core=false;ensureProfileV11().then(()=>{activeProfileSectionV8='addmatch';drawProfile();});}
+  }).catch(e=>{if(msg)msg.innerHTML='<span class="ko">'+e.message+'</span>';});
+}
+function adminInlineFillV91(){
+  try{
+    if(!user?.isAdmin)return;
+    fillAdminMatches();fillOddsMatches();fillBonusMatches();fillTeamSelects();ensureStadiumDatalist();teamInputListV12();
+    if(activeProfileSectionV8==='resultats') onAdminMatchChangeV13();
+    if(activeProfileSectionV8==='cotes') updateOddsLabels();
+  }catch(e){console.warn(e);}
+}
+
+function matchProfileStatusHtmlV13(m,p){
+  const state=matchStateTitleV10(m);
+  const finished=m.status==='FINISHED';
+  const pts=(p.points!==''&&p.points!=null&&!isNaN(Number(p.points)))?Number(p.points):null;
+  return `<div class="profileMatchState"><span>${state}</span>${finished&&pts!==null?`<b>+${pts} point${pts>1?'s':''}</b>`:''}</div>`;
+}
+function myPronosHtmlV8(){
+  let rows=(matches||[]).filter(m=>pronos[m.id]).filter(passProfilePronoFilterV10).sort(profileSort);
+  return profilePronoFilterBarV10()+(rows.length?rows.map(m=>{
+    let p=pronos[m.id];let grouped=isPoolFilter(m.groupe);
+    return `<div class="card profilePronostic profilePronoV13${grouped?' grouped':''}" ${grouped?groupStyle(m.groupe):''}><div class="profilePronoMain"><div><b>${mFlag(m,'A')} ${mName(m,'A')} - ${mName(m,'B')} ${mFlag(m,'B')}</b><br><span class="muted">${m.groupe?'Groupe '+m.groupe:'Phase finale'} · ${m.dateFR}<br>Ton prono : <b>${p.scoreA}-${p.scoreB}</b>${p.joker?' ⭐':''}${p.counterCurrent?' 😈':''}${p.riskBonus?' · 🎁 +'+p.riskBonus:''}</span></div>${matchProfileStatusHtmlV13(m,p)}</div></div>`;
+  }).join(''):'<div class="card muted">Aucun pronostic dans ce filtre.</div>');
+}
+
+function bigPronoCard(m,x,total){
+  let activeFilter=filterLabelV10(currentFilter), grouped=isPoolFilter(m.groupe);
+  let jokerMiddle=isBonusMatch(m.id)?`<div class="jokerMiddle jokerBonusMiddle"><span>⭐</span><small>Bonus actif</small></div>`:personalJokerHtmlV13();
+  return `<div class="card bigPronoCard${grouped?' grouped':''}" ${grouped?groupStyle(m.groupe):''}><div class="matchCardTitle">${matchStateTitleV10(m)}</div>${matchHeaderHtml(m,true)}${isBonusMatch(m.id)?'<div class="notice centeredLine">⭐ Joker bonus activé : inutile d’utiliser ton joker personnel.</div>':''}${jokerRemainingV13()<=0&&!isBonusMatch(m.id)?'<div class="notice centeredLine">❌ Tu as déjà utilisé tes 3 jokers personnels.</div>':''}<div class="scoreEntryRow"><div class="scoreEntryBox"><input id="quickScoreA" type="number" min="0" placeholder="${mName(m,'A')}"></div>${jokerMiddle}<div class="scoreEntryBox"><input id="quickScoreB" type="number" min="0" placeholder="${mName(m,'B')}"></div></div><div id="quickPronoErr" class="ko small centeredLine"></div><button class="btn" onclick="submitPronoFromSwipe('${m.id}')">Valider mon pronostic</button>${statMirrorHtml(m)}${riskHtml(m)}<div class="pronoBottomHint"><span>Swiper pour changer de match</span><span>${x}/${total} · Filtre : ${activeFilter}</span></div></div>`;
+}
+
+function openProno(id){
+  const m=(matches||[]).find(x=>String(x.id)===String(id));
+  if(!m){goPronosMatch(id);return;}
+  if(!document.getElementById('pronoModal')){goPronosMatch(id);return;}
+  selectedMatch=m;
+  const p=pronos[id];
+  const playable=(m.status==='OPEN'&&!p);
+  const jokerBlock=isBonusMatch(m.id)?`<div class="card bonusBanner">⭐ Joker bonus actif : pas besoin d’utiliser un joker perso, les points sont déjà doublés.</div>`:(jokerRemainingV13()>0?`<label class="card" style="display:block"><input id="joker" type="checkbox" style="width:auto"> ⭐ Utiliser un joker</label>`:`<div class="card">❌ Tu as déjà utilisé tes 3 jokers personnels.</div>`);
+  pronoContent.innerHTML=`<h3>${mFlag(m,'A')} ${mName(m,'A')} - ${mName(m,'B')} ${mFlag(m,'B')}</h3><div class="muted">${m.dateFR} · ${m.heureFR} · ${m.villeStade||''}</div>${isBonusMatch(m.id)?`<div class="card bonusBanner">⭐ Joker bonus actif : points doublés sur ce match.</div>`:''}${tvFor(m)}${oddsFor(m)}<br>${!playable?`<div class="card">${p?`Ton prono : <b>${p.scoreA}-${p.scoreB}</b>${p.joker?' ⭐':''}. Il est verrouillé pour éviter les modifications.`:`Match ${m.status}. Tu n'as pas pronostiqué ce match.`}</div><button class="btn btn2" onclick="closeProno()">Fermer</button>`:`<div class="grid2"><input id="scoreA" type="number" min="0" placeholder="${mName(m,'A')}"><input id="scoreB" type="number" min="0" placeholder="${mName(m,'B')}"></div><br>${jokerBlock}<div id="pronoErr" class="ko small"></div><br><button class="btn" onclick="submitProno()">Valider mon pronostic</button><br><br><button class="btn btn2" onclick="closeProno()">Annuler</button>`}`;
+  pronoModal.classList.add('open');
+}
+
+(function installV13Css(){
+  if(document.getElementById('stylePatchV13'))return;
+  const s=document.createElement('style');s.id='stylePatchV13';s.textContent=`
+    .profilePronoV13 .profilePronoMain{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+    .profileMatchState{text-align:right;min-width:96px;font-size:.7rem;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+    .profileMatchState b{display:block;color:var(--gold);font-size:1rem;margin-top:4px;text-transform:none;letter-spacing:0}
+    @media(max-width:520px){.profilePronoV13 .profilePronoMain{grid-template-columns:1fr}.profileMatchState{text-align:left;min-width:0;margin-top:8px}}
+  `;document.head.appendChild(s);
+})();
+
+window.addEventListener('load',()=>setTimeout(()=>{try{if(activeViewNameV11&&activeViewNameV11()==='Profile')drawProfile();}catch(e){}},250));
+/* FIN PATCH V13 FINAL */
 </script>
 
 </body>
