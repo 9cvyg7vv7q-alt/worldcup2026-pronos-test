@@ -1,3 +1,4 @@
+<!-- PATCH V8 FINAL - fichier régénéré explicitement le 2026-05-11 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -88,7 +89,7 @@ input,select,textarea{width:100%;background:var(--bg);border:1.5px solid var(--b
 <div id="toast" class="toast hide"></div>
 <div id="loadingOverlay" class="loadingOverlay hide"><div class="loadingBox"><div class="spinner"></div><b id="loadingText">Chargement...</b><br><span class="muted">La base Google Sheets répond, deux secondes.</span></div></div>
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbyUfLmkVbqI9l5qeDydaGfFcfgQiw3Pglf1n8S3AKboBak-hKmT2Igk0zSTGCmKaW8wjg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxPFlVTFYbbD4VWCUAtUhXuvm4O0YcaaS45h2zOsQT5rIeRnRPysr6JqHRmh970uvya6g/exec";
 const FLAGS={France:"",Mexico:"","South Africa":"","South Korea":"","Czech Republic":"",Canada:"","Bosnia & Herzegovina":"",Qatar:"",Switzerland:"",Brazil:"",Morocco:"",Haiti:"",Scotland:"",USA:"",Paraguay:"",Australia:"",Turkey:"",Germany:"","Curaçao":"","Ivory Coast":"",Ecuador:"",Netherlands:"",Japan:"",Sweden:"",Tunisia:"",Belgium:"",Egypt:"",Iran:"","New Zealand":"",Spain:"","Cape Verde":"","Saudi Arabia":"",Uruguay:"",Senegal:"",Iraq:"",Norway:"",Argentina:"",Algeria:"",Austria:"",Jordan:"",Portugal:"","DR Congo":"",Uzbekistan:"",Colombia:"",England:"",Croatia:"",Ghana:"",Panama:""};
 const FUN_ICONS={leader:"",target:"",rate:"",joker:"⭐",active:"",fire:"",lanterne:"",blackcat:"‍⬛",zero:"",boom:"",topScorerVote:"⚽",scorerVote:"⚽",drawExpert:"",curse:"",optimist:""};
 let mode="login", user=null, matches=[], pronos={}, classement=null, buteur=null, joueurs=[], butsMatch={}, pronosticStats={}, recentSummary={}, bonusJokers=[], equipes=[], teamMap={}, currentFilter="all", selectedMatch=null, selectedPlayer=null, rankHistoryCharts={}, activeRankSection="records", currentProfileFilter="all";
@@ -251,6 +252,155 @@ function fillOddsMatches(){let list=matches;oddsMatch.innerHTML=list.map(m=>`<op
 function updateOddsLabels(){let m=currentOddsMatch();if(!m)return;oddsALabel.textContent='Cote '+mName(m,'A');oddsBLabel.textContent='Cote '+mName(m,'B');oddsA.value=m.cote1||'';oddsX.value=m.coteX||'';oddsB.value=m.cote2||'';}
 function adminSaveBonusJoker(on){api('adminSetBonusJoker',{userId:user.userId,matchId:bonusMatch.value,enabled:on}).then(d=>{bonusMsg.innerHTML=d.error?'<span class="ko">'+d.error+'</span>':'<span class="ok">'+(d.message||'Joker bonus mis à jour')+'</span>';loadAll();}).catch(e=>bonusMsg.innerHTML='<span class="ko">'+e.message+'</span>')}
 window.addEventListener('load',()=>setTimeout(()=>{prepareV7Layout();drawFilters();},0));
+</script>
+
+<style id="patchV8Css">
+/* PATCH V8 - ajustements UI/UX demandés */
+.bnav button .ico{font-size:1.28rem;min-height:1.35rem}
+.bonusBanner{cursor:pointer;text-align:left}
+.bonusBanner:active{transform:scale(.99)}
+.matchSelectWrap{margin:8px 0 10px}
+.bigPronoCard.grouped{background:linear-gradient(135deg,var(--group-bg),var(--card) 68%);border-color:var(--group-border)}
+.pronoTopLine{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px}
+.jokerMini{width:auto!important;transform:scale(1.2);accent-color:var(--gold);margin:0 auto 3px;display:block}
+.jokerBox{min-width:58px;text-align:center;font-size:.66rem;color:var(--gold);font-weight:900;border:1px solid #ffd70044;background:#ffd70012;border-radius:10px;padding:6px 7px}
+.pronoTeamsInput{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:start;margin-top:8px}
+.pronoTeamBox{text-align:center}
+.pronoTeamBox input{margin-top:8px;text-align:center;font-size:1.15rem;font-weight:900;padding:10px}
+.pronoBottomHint{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;color:var(--muted);font-size:.68rem;font-weight:800}
+.statTitleLine{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px}
+.oddsInline{font-size:.62rem;color:var(--gold);font-weight:900;white-space:nowrap}
+.riskCenter{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;text-align:center}
+.riskPill{display:inline-flex;align-items:center;justify-content:center;margin:3px auto;text-align:center}
+.meta span:first-child{line-height:1.45}
+.profileUnifiedTabs,.adminSubnav{position:sticky;top:50px;z-index:4;background:var(--bg);margin-left:-12px;margin-right:-12px;padding:8px 12px 7px;display:flex;gap:6px;overflow-x:auto;box-shadow:0 8px 18px #0006}
+.profileUnifiedTabs button,.adminSubnav button{background:var(--card);border:1px solid var(--bdr);color:var(--muted);border-radius:99px;padding:7px 12px;font-weight:900;font-size:.68rem;white-space:nowrap}
+.profileUnifiedTabs button.active,.adminSubnav button.active{background:var(--g2);color:#fff}
+.profilePanel{margin-top:10px}
+.compactAdminCard .btn{margin-top:8px}
+.fun{grid-template-columns:1fr 1fr}
+@media(max-width:380px){.mirrorGrid{grid-template-columns:1fr}.oddsInline{white-space:normal}.pronoTeamsInput{gap:5px}.jokerBox{min-width:50px}.fun{grid-template-columns:1fr}}
+</style>
+<script id="patchV8Js">
+/* PATCH V8 - corrections demandées après test site secondaire */
+let groupsAlreadyDrawnV8=false;
+let activeProfileSectionV8='infos';
+let activeAdminProfileSectionV8=window.activeAdminProfileSection || 'suivi';
+
+function navEmojiV8(){
+  let map={Home:'🏠',Summary:'📰',Groups:'📊',Pronos:'⚽',Matches:'📅',Rank:'🏆',Profile:'👤'};
+  Object.keys(map).forEach(k=>{let b=document.querySelector(`.bnav button[data-view="${k}"] .ico`);if(b)b.textContent=map[k];});
+}
+
+function filterItemsForV8(kind){
+  if(kind==='pronos')return ['all:Toutes','today:Aujourd\'hui','A:A','B:B','C:C','D:D','E:E','F:F','G:G','H:H','I:I','J:J','K:K','L:L','PF:Finales'];
+  return ['all:Tous','today:Aujourd\'hui','open:Ouverts','finished:Terminés','A:A','B:B','C:C','D:D','E:E','F:F','G:G','H:H','I:I','J:J','K:K','L:L','PF:Finales'];
+}
+function drawFilterBarV8(id, callback, kind){
+  let box=document.getElementById(id);if(!box)return;
+  box.innerHTML=filterItemsForV8(kind).map(x=>{let [k,l]=x.split(':');let pool=isPoolFilter(k);return `<button class="${currentFilter===k?'active':''}${pool?' groupFilter':''}" ${pool?groupStyle(k):''} onclick="currentFilter='${k}';drawFilters();${callback}()">${l}</button>`}).join('');
+}
+function drawFilters(){drawFilterBarV8('filters','drawMatches','matches');drawFilterBarV8('pronosFilters','drawPronos','pronos');}
+
+function show(v,btn){
+  let target=document.getElementById('v'+v);if(!target)return;
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  target.classList.add('active');
+  document.querySelectorAll('.bnav button').forEach(x=>x.classList.remove('active'));
+  let navBtn=btn||document.querySelector(`.bnav button[data-view="${v}"]`);if(navBtn)navBtn.classList.add('active');
+  if(v==='Scorers')ensurePlayersLoaded(drawScorers);
+  if(v==='Groups' && !groupsAlreadyDrawnV8){drawGroups();groupsAlreadyDrawnV8=true;}
+  if(v==='Summary')drawSummary();
+  if(v==='Rank')showRankSection(activeRankSection);
+  if(v==='Pronos')drawPronos();
+  if(v==='Matches')drawMatches();
+  navEmojiV8();
+}
+
+function loadAll(){
+  setLoading(true,'Chargement de la base...');
+  api('init',{userId:user.userId}).then(d=>{
+    matches=d.matches||[];pronos=d.myPronos||{};classement=d.classement||{};buteur=d.buteur||{};joueurs=d.joueurs||[];butsMatch=d.butsMatch||{};pronosticStats=d.pronosticStats||{};recentSummary=d.recentSummary||{};bonusJokers=d.bonusJokers||[];equipes=d.equipes||[];adminCoverage=d.adminCoverage||null;groupsAlreadyDrawnV8=false;let g=document.getElementById('groups');if(g)g.innerHTML='';buildTeamMap();drawAll();navEmojiV8();
+  }).catch(e=>toast('Erreur API : '+e.message)).finally(()=>setLoading(false));
+}
+
+function bonusHomeHtml(){
+  return (bonusJokers||[]).length?bonusJokers.map(b=>`<div class="card bonusBanner" onclick="goPronosMatch('${b.matchId}')">⭐ <b>Joker bonus</b> sur <b>${cleanText(b.label)}</b><br><span class="muted">Clique ici pour aller directement au pronostic concerné.</span></div>`).join(''):'';
+}
+function installHomeRulesV8(){
+  let old=document.getElementById('rulesV7');if(old)old.remove();
+  if(document.getElementById('rulesV8'))return;
+  let cards=[...document.querySelectorAll('#vHome > .card')];
+  let pot=cards.find(c=>c.textContent.includes('Répartition de la cagnotte')) || cards[cards.length-1];
+  if(!pot)return;
+  pot.insertAdjacentHTML('beforebegin',`<div id="rulesV8"><div class="card notice"><b>⏱️ Temps réglementaire</b><br><span class="muted">Important : pour les matchs à élimination directe, seul le score à la fin du temps réglementaire est pris en compte. Les prolongations et tirs au but ne sont pas pris en compte.</span></div><div class="card">🛠️ <b>Correction admin</b><br><span class="muted">En cas de grosse erreur de saisie sur un pronostic, contactez l’admin avant le début du match.</span></div><div class="card">😈 <b>Pari contre-courant</b><br><span class="muted">Certains paris vraiment risqués peuvent rapporter un bonus : +1 sur bon résultat, +2 sur score exact. Le bonus n’est jamais doublé par les jokers. Avant verrouillage, le site peut seulement indiquer qu’un joueur tente un pari outsider.</span></div></div>`);
+  pot.insertAdjacentHTML('afterend',`<div class="card" id="badgeRulesV8">🔥 <b>Badges de match</b><br><span class="muted">“Match risqué” signale un match avec votes partagés, cotes serrées, beaucoup de jokers ou gros écart entre les votes et les cotes. “Pari outsider” est provisoire avant le résultat : le bonus final peut disparaître si trop de joueurs suivent le même risque.</span></div>`);
+}
+function drawHome(){homeSummary.innerHTML=bonusHomeHtml();installHomeRulesV8();}
+
+function tvFor(m){let a=[m.diffuseur1,m.diffuseur2].filter(Boolean);return a.length?`<div class="tv">📺 ${a.join(' · ')}</div>`:'';}
+function oddsFor(m){return (m.cote1||m.coteX||m.cote2)?`<div class="tv">🎲 Cotes : ${mFlag(m,'A')} <b>${m.cote1||'—'}</b> · Nul <b>${m.coteX||'—'}</b> · ${mFlag(m,'B')} <b>${m.cote2||'—'}</b></div>`:'';}
+function oddsInlineV8(m){return (m.cote1||m.coteX||m.cote2)?`<span class="oddsInline">🎲 ${m.cote1||'—'} · ${m.coteX||'—'} · ${m.cote2||'—'}</span>`:'';}
+function matchMetaV8(m){return `📅 ${m.dateFR||'—'} · 🕒 ${m.heureFR||'—'} · 🏷️ ${m.groupe?('Groupe '+m.groupe):cleanText(m.phase||'—')}<br>🏟️ ${cleanText(m.villeStade||'Stade à confirmer')} ${m.diffuseur1||m.diffuseur2?`<br>📺 ${[m.diffuseur1,m.diffuseur2].filter(Boolean).join(' · ')}`:''}`;}
+function matchHeaderHtml(m,big){let st=m.status==='OPEN'?'open':m.status==='FINISHED'?'finishedP':'lockedP';let score=m.status==='FINISHED'?`${m.scoreA} - ${m.scoreB}`:'VS';return `<div><div class="${big?'bigTeams':'mtop'}"><div class="team"><div class="flag">${mFlag(m,'A')}</div><div class="name">${mName(m,'A')}</div>${m.status==='FINISHED'?goalsForSide(m,'A'):''}</div><div class="${big?'vsBig':'score'}">${score}</div><div class="team"><div class="flag">${mFlag(m,'B')}</div><div class="name">${mName(m,'B')}</div>${m.status==='FINISHED'?goalsForSide(m,'B'):''}</div></div><div class="meta"><span>${matchMetaV8(m)}</span><span class="pill ${st}">${m.status}</span></div></div>`;}
+
+function statMirrorHtml(m){let s=pronosticStats[String(m.id)]||{};let p=s.pct||{A:s.total?pct(s.aWin,s.total):0,X:s.total?pct(s.draw,s.total):0,B:s.total?pct(s.bWin,s.total):0};let o=s.oddsProb||{};return `<div class="mirrorGrid"><div class="statBlock"><div class="statTitle">Votes du groupe ${s.total?`(${s.total})`:''}</div>${barRow(issueName('A',m),p.A,false)}${barRow('Nul',p.X,false)}${barRow(issueName('B',m),p.B,false)}</div><div class="statBlock"><div class="statTitleLine"><span class="statTitle">Tendance des cotes</span>${oddsInlineV8(m)}</div>${barRow(issueName('A',m),o.A||0,true)}${barRow('Nul',o.X||0,true)}${barRow(issueName('B',m),o.B||0,true)}</div></div>`;}
+function riskHtml(m){let s=pronosticStats[String(m.id)]||{};let pills=[];if(s.matchRisk)pills.push('<span class="riskPill">🔥 Match risqué</span>');if(s.jokers)pills.push(`<span class="riskPill">${s.jokers>=5?'🔥 Match sous tension':'⭐'} ${s.jokers} joker(s) joué(s)</span>`);if((s.riskNames||[]).length)pills.push(`<span class="riskPill devilPill">😈 ${s.riskNames.join(', ')} tente(nt) un pari outsider</span>`);return pills.length?`<div class="statBlock riskCenter">${pills.join('')}</div>`:'';}
+
+function bigPronoCard(m,x,total){
+  let grouped=isPoolFilter(m.groupe);let activeFilter=currentFilter==='all'?'Tous':(currentFilter==='today'?"Aujourd'hui":(currentFilter==='PF'?'Finales':('Poule '+currentFilter)));
+  return `<div class="card bigPronoCard${grouped?' grouped':''}" ${grouped?groupStyle(m.groupe):''}><div class="pronoTopLine"><div style="flex:1">${matchHeaderHtml(m,true)}</div>${isBonusMatch(m.id)?'<div class="jokerBox">⭐<br>Bonus actif</div>':`<label class="jokerBox"><input id="quickJoker" class="jokerMini" type="checkbox">🃏<br>Joker</label>`}</div>${isBonusMatch(m.id)?'<div class="notice">⭐ Joker bonus activé : inutile d’utiliser ton joker personnel.</div>':''}<div class="pronoTeamsInput"><div class="pronoTeamBox"><div class="flag">${mFlag(m,'A')}</div><div class="name">${mName(m,'A')}</div><input id="quickScoreA" type="number" min="0" placeholder="Score"></div><div class="vsBig">VS</div><div class="pronoTeamBox"><div class="flag">${mFlag(m,'B')}</div><div class="name">${mName(m,'B')}</div><input id="quickScoreB" type="number" min="0" placeholder="Score"></div></div><div id="quickPronoErr" class="ko small"></div><br><button class="btn" onclick="submitPronoFromSwipe('${m.id}')">Valider mon pronostic</button>${statMirrorHtml(m)}${riskHtml(m)}<div class="pronoBottomHint"><span>Swiper pour changer de match</span><span>${x}/${total} · Filtre : ${activeFilter}</span></div></div>`;
+}
+
+function drawMatches(){let list=matches.filter(passFilter).sort((a,b)=>(parseMatchDate(a)-parseMatchDate(b))||Number(a.id)-Number(b.id));let box=document.getElementById('matchList');if(!box)return;box.innerHTML=list.length?list.map(m=>{let p=pronos[m.id], grouped=isPoolFilter(m.groupe), canPlay=m.status==='OPEN'&&!p;return `<div class="match${grouped?' grouped':''}${m.status==='FINISHED'?' finished':''}${p?' predicted':''}" ${grouped?groupStyle(m.groupe):''}>${matchHeaderHtml(m,false)}${isBonusMatch(m.id)?'<div class="countdown bonusPill">⭐ Joker bonus : points doublés sur ce match</div>':''}${timeLeftText(m)?`<div class="countdown">⏳ ${timeLeftText(m)}</div>`:''}${statMirrorHtml(m)}${riskHtml(m)}${p?`<div class="prono"><span>✅ Ton prono : ${p.scoreA}-${p.scoreB}${p.joker?' ⭐':''}${p.counterCurrent?' 😈':''}${p.riskBonus?' 🎁 +'+p.riskBonus:''}</span><b>${p.points!==''&&p.points!=null?p.points+' pts':'En attente'}</b></div>`:''}${canPlay?`<button class="btn" onclick="goPronosMatch('${m.id}')">Pronostiquer ce match</button>`:''}${pronosVisibleHtml(m)}</div>`}).join(''):'<div class="card muted">Aucun match ici.</div>';}
+
+function extraFunRecordsV8(){
+  let arr=classement?.classement||[];if(!arr.length)return [];
+  let ready=arr.some(s=>(s.exact||0)+(s.good||0)+(s.wrong||0)>0 || (s.total||0)>0);
+  if(!ready)return [{key:'wait',label:'Records fun',value:'Pas encore assez de résultats',detail:'Les trophées se rempliront après les premiers matchs terminés.'}];
+  let max=(prop)=>arr.slice().sort((a,b)=>(b[prop]||0)-(a[prop]||0))[0]||{};
+  return [
+    {key:'target',label:'Le sniper',value:max('exact').pseudo||'—',detail:(max('exact').exact||0)+' score(s) exact(s)'},
+    {key:'rate',label:'Le voyant',value:max('rate').pseudo||'—',detail:(max('rate').rate||0)+' % de réussite'},
+    {key:'devil',label:'Le kamikaze',value:max('counterCurrentTry').pseudo||max('riskBonus').pseudo||'—',detail:(max('counterCurrentTry').counterCurrentTry||0)+' pari(s) outsider tenté(s)'},
+    {key:'rebel',label:'Le rebelle rentable',value:max('riskBonus').pseudo||'—',detail:'+'+(max('riskBonus').riskBonus||0)+' point(s) bonus risque'},
+    {key:'drawExpert',label:'Le banquier du nul',value:max('drawFound').pseudo||'—',detail:(max('drawFound').drawFound||0)+' nul(s) trouvé(s)'},
+    {key:'boom',label:'Le bourrin offensif',value:max('avgGoals').pseudo||'—',detail:(max('avgGoals').avgGoals||0)+' but(s) prévus / match'},
+    {key:'ice',label:'Le climatisé',value:max('wrong').pseudo||'—',detail:(max('wrong').wrong||0)+' échec(s), mais la tête haute'}
+  ];
+}
+function drawRank(){
+  let f=classement?.fun||{};let all=[...Object.values(f),...extraFunRecordsV8()];let seen={};all=all.filter(x=>{let k=(x.label||'')+'|'+(x.value||'');if(seen[k])return false;seen[k]=true;return true;});
+  funBox.innerHTML=all.map(x=>`<div class="card"><div class="em">${FUN_ICONS_V7[x.key]||FUN_ICONS[x.key]||'🏅'}</div><b>${cleanText(x.value)}</b><div class="muted">${cleanText(x.label)}<br>${cleanText(x.detail)}</div></div>`).join('');
+  rankList.innerHTML=(classement?.classement||[]).map(s=>{let pseudo=String(cleanText(s.pseudo)).replace(/'/g,'&#39;');let risk=s.counterCurrentSuccess?`<br>😈 ${s.counterCurrentSuccess} contre-courant réussi(s) · 🎁 +${s.riskBonus||0}`:'';return `<div class="card"><div class="rank rankClickable" onclick="toggleRankHistory('${s.userId}','${pseudo}')"><div class="pos">${s.rank<=3?['🥇','🥈','🥉'][s.rank-1]:s.rank}</div>${trendHtml(s)}<div class="nm">${cleanText(s.pseudo)}<div class="muted">${s.exact} exacts · ${s.good} bons · ${s.rate}% réussite<br>⭐ ${s.jokers||0}/3 jokers utilisés · ⚽ ${cleanText(s.buteur||'—')}${risk}</div></div><div class="pts">${s.total}</div></div><div id="rankChart_${s.userId}" class="rankChart hide"><canvas id="rankCanvas_${s.userId}"></canvas></div></div>`}).join('');
+  drawRankScorers();showRankSection(activeRankSection);
+}
+function dateRangeRankRowsV8(rows){
+  let start=new Date(2026,5,11), end=new Date(); if(end<start)end=start; let by={};(rows||[]).forEach(r=>{let p=String(r.date||'').split('/');let k=p.length===2?`2026${p[1].padStart(2,'0')}${p[0].padStart(2,'0')}`:String(r.date);by[k]=r;});
+  let out=[], last={rank:null,points:0}; for(let d=new Date(start);d<=end;d.setDate(d.getDate()+1)){let k=`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;if(by[k])last={rank:by[k].rank,points:by[k].points};out.push({date:String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0'),rank:last.rank,points:last.points});}
+  return out;
+}
+function drawRankHistory(userId,pseudo,rows){let canvas=document.getElementById('rankCanvas_'+userId);if(!canvas)return;if(rankHistoryCharts[userId])rankHistoryCharts[userId].destroy();let full=dateRangeRankRowsV8(rows||[]);if(!full.length){canvas.parentElement.innerHTML='<div class="muted small">Aucun historique disponible pour ce joueur.</div>';return}rankHistoryCharts[userId]=new Chart(canvas,{type:'line',data:{labels:full.map(r=>r.date),datasets:[{label:'Points par jour - '+cleanText(pseudo),data:full.map(r=>r.points),fill:false,tension:.15,pointRadius:2,pointHoverRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#e6edf3'}},tooltip:{callbacks:{afterLabel:(ctx)=>{let r=full[ctx.dataIndex];return 'Rang : '+(r.rank||'—')}}}},scales:{x:{title:{display:true,text:'Jour',color:'#8b949e'},ticks:{color:'#8b949e',autoSkip:true,maxTicksLimit:14,maxRotation:0},grid:{color:'rgba(255,255,255,.07)'}},y:{beginAtZero:true,title:{display:true,text:'Points',color:'#8b949e'},ticks:{color:'#8b949e',precision:0},grid:{color:'rgba(255,255,255,.07)'}}}}});}
+
+function profileStatsHtmlV8(s){return `<div class="grid2"><div class="card"><div class="pts">${s.total||0}</div><div class="muted">Points</div></div><div class="card"><div class="pts">${s.predictions||0}</div><div class="muted">Pronostics</div></div><div class="card"><div class="pts">${s.exact||0}</div><div class="muted">Scores exacts</div></div><div class="card"><div class="pts">+${s.riskBonus||0}</div><div class="muted">Bonus risque</div></div></div>`;}
+function myPronosHtmlV8(){let rows=matches.filter(m=>pronos[m.id]).sort(profileSort);return rows.length?rows.map(m=>{let p=pronos[m.id];let grouped=isPoolFilter(m.groupe);return `<div class="card profilePronostic${grouped?' grouped':''}" ${grouped?groupStyle(m.groupe):''}><b>${mFlag(m,'A')} ${mName(m,'A')} - ${mName(m,'B')} ${mFlag(m,'B')}</b><br><span class="muted">${m.groupe?'Groupe '+m.groupe:'Phase finale'} · ${m.dateFR} · ton prono : ${p.scoreA}-${p.scoreB}${p.joker?' ⭐':''}${p.counterCurrent?' 😈':''}${p.riskBonus?' · 🎁 +'+p.riskBonus:''}${p.points!==''&&p.points!=null?' · '+p.points+' pt(s)':''}</span></div>`}).join(''):'<div class="card muted">Aucun pronostic pour le moment.</div>';}
+function badgesHtmlV8(s){let badges=[];if((s.exact||0)>0)badges.push('🎯 Score exact');if((s.riskBonus||0)>0)badges.push('😈 Rebelle rentable');if((s.jokerPts||0)>0)badges.push('⭐ Joker rentable');if((s.predictions||0)>=10)badges.push('📌 Assidu');return `<div class="card"><div class="badgeLine">${badges.length?badges.map(b=>`<span class="badgeMini">${b}</span>`).join(''):'<span class="muted">Les badges arrivent avec les premiers résultats.</span>'}</div></div>`;}
+function drawProfile(){
+  let s=classement?.classement?.find(x=>String(x.userId)===String(user.userId))||{};
+  let tabs=[['infos','Mes infos'],['pronos','Mes pronos'],['badges','Mes badges']]; if(user?.isAdmin)tabs.push(['suivi','Admin suivi'],['actions','Admin actions'],['bonus','Admin joker bonus'],['coverage','Admin couverture pronos']);
+  let content='';
+  if(activeProfileSectionV8==='infos')content=profileStatsHtmlV8(s)+`<button class="btn btnDanger" onclick="logout()">Déconnexion</button>`;
+  else if(activeProfileSectionV8==='pronos')content=myPronosHtmlV8();
+  else if(activeProfileSectionV8==='badges')content=badgesHtmlV8(s);
+  else if(activeProfileSectionV8==='actions')content='<div class="card compactAdminCard"><b>Actions admin</b><br><span class="muted">Résultats, cotes, ajout match.</span><button class="btn" onclick="openAdmin()">Ouvrir le panneau admin</button></div>';
+  else if(activeProfileSectionV8==='suivi')content=adminSummaryHtml();
+  else if(activeProfileSectionV8==='bonus')content=adminBonusHtml();
+  else if(activeProfileSectionV8==='coverage')content=adminCoverageHtml();
+  document.getElementById('vProfile').innerHTML=`<div class="card" style="text-align:center"><div style="font-size:2.4rem">👤</div><h2>${cleanText(user.pseudo)}</h2><div class="muted">${3-(s.jokers||user.jokersUsed||0)} joker(s) restant(s)</div></div><div class="profileUnifiedTabs">${tabs.map(t=>`<button class="${activeProfileSectionV8===t[0]?'active':''}" onclick="activeProfileSectionV8='${t[0]}';drawProfile()">${t[1]}</button>`).join('')}</div><div class="profilePanel">${content}</div>`;
+}
+function drawAdminProfilePanels(){return;}
+
+window.addEventListener('load',()=>setTimeout(()=>{navEmojiV8();drawHome();},50));
 </script>
 
 </body>
