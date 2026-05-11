@@ -89,7 +89,7 @@ input,select,textarea{width:100%;background:var(--bg);border:1.5px solid var(--b
 <div id="toast" class="toast hide"></div>
 <div id="loadingOverlay" class="loadingOverlay hide"><div class="loadingBox"><div class="spinner"></div><b id="loadingText">Chargement...</b><br><span class="muted">La base Google Sheets répond, deux secondes.</span></div></div>
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbyrOmJws9FQeiFHU48_2xcLWRIizkHWpEX9FelFLkf9PKrT0kRQOOXeEY20S6z5ZL6smw/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyAuB73w9NvGXR7jcrXegic_5XZwllMtH_V7o_6IpBkGmA8z-1ZUA5kpA9lbV76Donh3A/exec";
 const FLAGS={France:"",Mexico:"","South Africa":"","South Korea":"","Czech Republic":"",Canada:"","Bosnia & Herzegovina":"",Qatar:"",Switzerland:"",Brazil:"",Morocco:"",Haiti:"",Scotland:"",USA:"",Paraguay:"",Australia:"",Turkey:"",Germany:"","Curaçao":"","Ivory Coast":"",Ecuador:"",Netherlands:"",Japan:"",Sweden:"",Tunisia:"",Belgium:"",Egypt:"",Iran:"","New Zealand":"",Spain:"","Cape Verde":"","Saudi Arabia":"",Uruguay:"",Senegal:"",Iraq:"",Norway:"",Argentina:"",Algeria:"",Austria:"",Jordan:"",Portugal:"","DR Congo":"",Uzbekistan:"",Colombia:"",England:"",Croatia:"",Ghana:"",Panama:""};
 const FUN_ICONS={leader:"",target:"",rate:"",joker:"⭐",active:"",fire:"",lanterne:"",blackcat:"‍⬛",zero:"",boom:"",topScorerVote:"⚽",scorerVote:"⚽",drawExpert:"",curse:"",optimist:""};
 let mode="login", user=null, matches=[], pronos={}, classement=null, buteur=null, joueurs=[], butsMatch={}, pronosticStats={}, recentSummary={}, bonusJokers=[], equipes=[], teamMap={}, currentFilter="all", selectedMatch=null, selectedPlayer=null, rankHistoryCharts={}, activeRankSection="records", currentProfileFilter="all";
@@ -963,100 +963,141 @@ window.addEventListener('load',()=>setTimeout(()=>{try{restorePrizeEmojisV12();i
 /* FIN PATCH V12 FINAL */
 
 
-/* PATCH V12.1 FINAL - correction connexion bloquée / drawProfile sécurisé */
-const drawProfileV121Base = typeof drawProfile === 'function' ? drawProfile : function(){};
-function drawProfile(){
-  if(!window.user){
-    return;
-  }
-  return drawProfileV121Base();
-}
-function startApp(){
-  try{
-    const loginEl=document.getElementById('login');
-    const appEl=document.getElementById('app');
-    const navEl=document.getElementById('nav');
-    if(loginEl)loginEl.classList.add('hide');
-    if(appEl)appEl.classList.remove('hide');
-    if(navEl)navEl.classList.remove('hide');
-    const uBadgeEl=document.getElementById('uBadge');
-    const aBadgeEl=document.getElementById('aBadge');
-    const profileNameEl=document.getElementById('profileName');
-    const adminBtnEl=document.getElementById('adminBtn');
-    if(uBadgeEl)uBadgeEl.textContent=user?.pseudo||'';
-    if(aBadgeEl)aBadgeEl.classList.toggle('hide',!user?.isAdmin);
-    if(adminBtnEl)adminBtnEl.classList.add('hide');
-    if(profileNameEl)profileNameEl.textContent=user?.pseudo||'';
-    document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
-    const home=document.getElementById('vHome');
-    if(home)home.classList.add('active');
-    document.querySelectorAll('.bnav button').forEach(x=>x.classList.remove('active'));
-    const homeBtn=document.querySelector('.bnav button[data-view="Home"]');
-    if(homeBtn)homeBtn.classList.add('active');
-    if(typeof navEmojiV8==='function')navEmojiV8();
-    if(typeof loadViewV11==='function')loadViewV11('Home',false);
-    else if(typeof loadAll==='function')loadAll();
-  }catch(e){
-    console.error('startApp V12.1',e);
-    const err=document.getElementById('authErr');
-    if(err)err.textContent='Erreur de démarrage : '+e.message;
-  }
-}
-function auth(){
-  const p=document.getElementById('pseudo');
-  const pinEl=document.getElementById('pin');
-  const err=document.getElementById('authErr');
-  const action=(window.mode==='register')?'register':'login';
-  if(err)err.textContent='Connexion en cours...';
-  api(action,{pseudo:(p?p.value:'').trim(),pin:(pinEl?pinEl.value:'').trim()}).then(d=>{
-    if(d.error){if(err)err.textContent=d.error;return;}
-    window.user=d;
-    localStorage.setItem('cdmUser',JSON.stringify(user));
-    if(err)err.textContent='';
-    startApp();
-  }).catch(e=>{if(err)err.textContent='Erreur API : '+e.message;});
-}
-window.addEventListener('load',()=>setTimeout(()=>{
-  try{
-    const saved=localStorage.getItem('cdmUser');
-    if(saved && !window.user){window.user=JSON.parse(saved);startApp();}
-  }catch(e){localStorage.removeItem('cdmUser');}
-},20));
-/* FIN PATCH V12.1 FINAL */
-</script>
 
-<script>
-/* PATCH V12.2 FINAL - correction chargement admin sans boucle */
+/* PATCH V12.4 FINAL - nettoyage rendu profil/admin sans récursion */
+const PATCH_V12_4_FINAL = true;
+var adminCoverageLoadingV124 = false;
+
+function drawAdminProfilePanels(){ return; }
+
 function ensureAdminCoverageV11(){
-  if(!user || !user.isAdmin) return Promise.resolve();
-  return v11Once('adminCoverage',()=>api('getAdminMatchCoverage',{userId:user.userId}).then(d=>{
+  if(!window.user || !user.isAdmin) return Promise.resolve();
+  if(window.adminCoverage && Array.isArray(window.adminCoverage.rows)){
+    v11Loaded.adminCoverage = true;
+    return Promise.resolve();
+  }
+  if(v11Pending.adminCoverage) return v11Pending.adminCoverage;
+  adminCoverageLoadingV124 = true;
+  v11Pending.adminCoverage = api('getAdminMatchCoverage',{userId:user.userId}).then(d=>{
     if(d && d.error) throw new Error(d.error);
-    adminCoverage=d||{rows:[],users:[]};
-  }));
+    window.adminCoverage = d || {rows:[],users:[]};
+    v11Loaded.adminCoverage = true;
+    adminCoverageLoadingV124 = false;
+    delete v11Pending.adminCoverage;
+  }).catch(e=>{
+    adminCoverageLoadingV124 = false;
+    delete v11Pending.adminCoverage;
+    throw e;
+  });
+  return v11Pending.adminCoverage;
 }
+
 function ensureProfileV11(){
   return v11Once('profile',()=>Promise.all([ensureCoreV11(), ensureRankV11()]).then(()=>{}));
 }
-function adminNeedsCoverageV122(){
-  return ['suivi','bonus','coverage'].includes(activeProfileSectionV8);
+
+function profileNeedsAdminCoverageV124(){
+  return !!(window.user && user.isAdmin && ['suivi','bonus','coverage'].includes(activeProfileSectionV8));
 }
-const drawProfileV122Base = typeof drawProfile === 'function' ? drawProfile : function(){};
+
+function safeAdminContentV124(section){
+  if(!profileNeedsAdminCoverageV124()) return '';
+  if(!window.adminCoverage || !Array.isArray(window.adminCoverage.rows)){
+    if(!adminCoverageLoadingV124){
+      ensureAdminCoverageV11().then(()=>{
+        if(activeViewNameV11 && activeViewNameV11()==='Profile') drawProfile();
+      }).catch(e=>{
+        let p=document.querySelector('#vProfile .profilePanel');
+        if(p)p.innerHTML='<div class="card ko">Erreur admin : '+cleanText(e.message)+'</div>';
+        else toast('Erreur admin : '+e.message);
+      });
+    }
+    return '<div class="card muted">Chargement des données admin...</div>';
+  }
+  if(section==='suivi') return adminSummaryHtml();
+  if(section==='bonus') return adminBonusHtml();
+  if(section==='coverage') return adminCoverageHtml();
+  return '';
+}
+
+
+function adminCoverageHtml(){
+  let rows=(window.adminCoverage && Array.isArray(adminCoverage.rows)) ? adminCoverage.rows : [];
+  let filters=['all:Tous','none:Aucun prono','low:Peu de pronos','incomplete:Incomplets','complete:Complets','bonus:Joker bonus actif'];
+  let filtered=rows.filter(r=>adminCoverageFilter==='all'||(adminCoverageFilter==='none'&&r.count===0)||(adminCoverageFilter==='low'&&r.count>0&&r.count<r.totalUsers/2)||(adminCoverageFilter==='incomplete'&&r.count<r.totalUsers)||(adminCoverageFilter==='complete'&&r.count>=r.totalUsers)||(adminCoverageFilter==='bonus'&&r.bonusJoker));
+  return `<div class="filters" style="position:static;margin:0 0 8px;padding:0;box-shadow:none">${filters.map(x=>{let [k,l]=x.split(':');return `<button class="${adminCoverageFilter===k?'active':''}" onclick="adminCoverageFilter='${k}';drawProfile()">${l}</button>`}).join('')}</div>${filtered.map(r=>`<div class="card"><b>${cleanText(r.label)}</b><br><span class="muted">${r.dateFR} · ${r.status} · ${r.ratio} · ⭐ ${r.jokers}${r.bonusJoker?' · Joker bonus':''}</span><br><br><b>Ont joué :</b><br><span class="small">${r.played&&r.played.length?cleanText(r.played.join(', ')):'Personne'}</span><br><br><b>Manquent :</b><br><span class="small">${r.missing&&r.missing.length?cleanText(r.missing.join(', ')):'Personne'}</span>${r.details&&r.details.length?`<br><br><b>Détails :</b><br>${r.details.map(d=>`<span class="small">${cleanText(d.pseudo)} : ${d.score}${d.joker?' ⭐':''}</span>`).join('<br>')}`:''}</div>`).join('')||'<div class="card muted">Aucun match dans ce filtre.</div>'}`;
+}
+
 function drawProfile(){
   if(!window.user) return;
-  if(user.isAdmin && adminNeedsCoverageV122() && !v11Loaded.adminCoverage){
-    const box=document.getElementById('vProfile');
-    if(box){
-      box.innerHTML='<div class="card muted">Chargement des données admin...</div>';
-    }
-    ensureAdminCoverageV11().then(()=>drawProfileV122Base()).catch(e=>{
-      const b=document.getElementById('vProfile');
-      if(b)b.innerHTML='<div class="card ko">Erreur admin : '+cleanText(e.message)+'</div><button class="btn btn2" onclick="activeProfileSectionV8=\'infos\';drawProfile()">Retour profil</button>';
-    });
-    return;
+  let s=(classement && classement.classement ? classement.classement : []).find(x=>String(x.userId)===String(user.userId)) || {};
+  let tabs=[['infos','Mes infos'],['pronos','Mes pronos']];
+  if(user.isAdmin){
+    tabs.push(['suivi','Admin suivi'],['resultats','Résultats'],['cotes','Correction / ajout cote'],['addmatch','Ajout match'],['bonus','Admin joker bonus'],['coverage','Admin couverture pronos']);
   }
-  return drawProfileV122Base();
+  if(!tabs.some(t=>t[0]===activeProfileSectionV8)) activeProfileSectionV8='infos';
+  let content='';
+  if(activeProfileSectionV8==='infos'){
+    content=profileStatsHtmlV8(s)+`<button class="btn btnDanger" onclick="logout()">Déconnexion</button>`;
+  } else if(activeProfileSectionV8==='pronos'){
+    content=myPronosHtmlV8();
+  } else if(activeProfileSectionV8==='resultats'){
+    content=adminResultInlineHtmlV91();
+  } else if(activeProfileSectionV8==='cotes'){
+    content=adminOddsInlineHtmlV91();
+  } else if(activeProfileSectionV8==='addmatch'){
+    content=adminAddMatchInlineHtmlV91();
+  } else if(['suivi','bonus','coverage'].includes(activeProfileSectionV8)){
+    content=safeAdminContentV124(activeProfileSectionV8);
+  }
+  let root=document.getElementById('vProfile');
+  if(!root) return;
+  root.innerHTML=profileHeaderV10(s)+`<div class="profileUnifiedTabs">${tabs.map(t=>`<button class="${activeProfileSectionV8===t[0]?'active':''}" onclick="activeProfileSectionV8='${t[0]}';drawProfile()">${t[1]}</button>`).join('')}</div><div class="profilePanel">${content}</div>`;
+  setTimeout(()=>{try{adminInlineFillV91();}catch(e){console.warn(e);}},0);
 }
-/* FIN PATCH V12.2 FINAL */
+
+function startApp(){
+  const loginEl=document.getElementById('login');
+  const appEl=document.getElementById('app');
+  const navEl=document.getElementById('nav');
+  if(loginEl) loginEl.classList.add('hide');
+  if(appEl) appEl.classList.remove('hide');
+  if(navEl) navEl.classList.remove('hide');
+  const uBadgeEl=document.getElementById('uBadge');
+  const aBadgeEl=document.getElementById('aBadge');
+  if(uBadgeEl) uBadgeEl.textContent=user && user.pseudo ? user.pseudo : '';
+  if(aBadgeEl) aBadgeEl.classList.toggle('hide',!(user && user.isAdmin));
+  const profileNameEl=document.getElementById('profileName');
+  if(profileNameEl) profileNameEl.textContent=user && user.pseudo ? user.pseudo : '';
+  loadAll();
+}
+
+function auth(){
+  const p=(document.getElementById('pseudo')||{}).value||'';
+  const pinVal=(document.getElementById('pin')||{}).value||'';
+  api(mode==='login'?'login':'register',{pseudo:p.trim(),pin:pinVal.trim()}).then(d=>{
+    if(d && d.error){authErr.textContent=d.error;return;}
+    user=d;
+    localStorage.setItem('cdmUser',JSON.stringify(user));
+    startApp();
+  }).catch(e=>{
+    if(authErr) authErr.textContent='Erreur API : '+e.message;
+  });
+}
+
+window.addEventListener('load',()=>setTimeout(()=>{
+  try{
+    navEmojiV8();
+    const saved=localStorage.getItem('cdmUser');
+    if(saved && !window.user){
+      window.user=JSON.parse(saved);
+      startApp();
+    }
+  }catch(e){
+    localStorage.removeItem('cdmUser');
+  }
+},20));
+/* FIN PATCH V12.4 FINAL */
 </script>
 
 </body>
