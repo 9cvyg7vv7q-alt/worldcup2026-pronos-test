@@ -1,4 +1,4 @@
-<!-- PATCH V9.1 FINAL - fichier régénéré proprement depuis V8_FINAL le 2026-05-12 -->
+<!-- PATCH V10 FINAL - fichier prêt à l’emploi -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -89,7 +89,7 @@ input,select,textarea{width:100%;background:var(--bg);border:1.5px solid var(--b
 <div id="toast" class="toast hide"></div>
 <div id="loadingOverlay" class="loadingOverlay hide"><div class="loadingBox"><div class="spinner"></div><b id="loadingText">Chargement...</b><br><span class="muted">La base Google Sheets répond, deux secondes.</span></div></div>
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbxjSLbcknA8swyhEszTTcR2ynv3CnwJVJB4myS0PD26QEX-a1YHkEz01aaMpGAMigLuJw/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwiAfrcC5A7ak_L9t-rlsWU1IcVGuttmkuL2C3VC2-kMmTqgmPuapS8bS-zdNjxfrwb/exec";
 const FLAGS={France:"",Mexico:"","South Africa":"","South Korea":"","Czech Republic":"",Canada:"","Bosnia & Herzegovina":"",Qatar:"",Switzerland:"",Brazil:"",Morocco:"",Haiti:"",Scotland:"",USA:"",Paraguay:"",Australia:"",Turkey:"",Germany:"","Curaçao":"","Ivory Coast":"",Ecuador:"",Netherlands:"",Japan:"",Sweden:"",Tunisia:"",Belgium:"",Egypt:"",Iran:"","New Zealand":"",Spain:"","Cape Verde":"","Saudi Arabia":"",Uruguay:"",Senegal:"",Iraq:"",Norway:"",Argentina:"",Algeria:"",Austria:"",Jordan:"",Portugal:"","DR Congo":"",Uzbekistan:"",Colombia:"",England:"",Croatia:"",Ghana:"",Panama:""};
 const FUN_ICONS={leader:"",target:"",rate:"",joker:"⭐",active:"",fire:"",lanterne:"",blackcat:"‍⬛",zero:"",boom:"",topScorerVote:"⚽",scorerVote:"⚽",drawExpert:"",curse:"",optimist:""};
 let mode="login", user=null, matches=[], pronos={}, classement=null, buteur=null, joueurs=[], butsMatch={}, pronosticStats={}, recentSummary={}, bonusJokers=[], equipes=[], teamMap={}, currentFilter="all", selectedMatch=null, selectedPlayer=null, rankHistoryCharts={}, activeRankSection="records", currentProfileFilter="all";
@@ -513,6 +513,292 @@ function drawProfile(){
 window.addEventListener('load',()=>setTimeout(()=>{navEmojiV8();drawFilters();drawHome();drawPronos();drawMatches();drawProfile();},100));
 /* FIN PATCH V9.1 FINAL */
 
+
+
+/* PATCH V10 FINAL - corrections finales UI et ergonomie */
+const PATCH_V10_FINAL = true;
+let activeProfilePronoFilterV10 = window.activeProfilePronoFilterV91 || 'all';
+
+function matchOptionLabelV10(m){
+  let scope = isPoolFilter(m.groupe) ? ('Poule ' + m.groupe) : cleanText(m.phase || 'Phase finale');
+  return `${scope} : ${mName(m,'A')} - ${mName(m,'B')} - ${m.dateFR || ''}`;
+}
+
+function filterItemsForV8(kind){
+  return ['all:Tous','today:Aujourd\'hui','A:A','B:B','C:C','D:D','E:E','F:F','G:G','H:H','I:I','J:J','K:K','L:L','PF:Finales'];
+}
+function drawFilterBarV8(id, callback, kind){
+  let box=document.getElementById(id);if(!box)return;
+  if(currentFilter==='open'||currentFilter==='finished'||currentFilter==='todo')currentFilter='all';
+  box.innerHTML=filterItemsForV8(kind).map(x=>{let [k,l]=x.split(':');let pool=isPoolFilter(k);return `<button class="${currentFilter===k?'active':''}${pool?' groupFilter':''}" ${pool?groupStyle(k):''} onclick="currentFilter='${k}';drawFilters();${callback}()">${l}</button>`}).join('');
+}
+function drawFilters(){drawFilterBarV8('filters','drawMatches','matches');drawFilterBarV8('pronosFilters','drawPronos','pronos');}
+function passFilter(m){
+  let today=new Date().toLocaleDateString('fr-FR');
+  if(currentFilter==='open'||currentFilter==='finished'||currentFilter==='todo')currentFilter='all';
+  if(currentFilter==='all')return true;
+  if(currentFilter==='today')return m.dateFR===today;
+  if(currentFilter==='PF')return !isPoolFilter(m.groupe);
+  return m.groupe===currentFilter;
+}
+
+function matchStateTitleV10(m){
+  if(m.status==='FINISHED')return 'Match terminé';
+  if(m.status==='LOCKED'||m.status==='CLOSED')return 'Match en cours';
+  return 'Match à venir';
+}
+function matchHeaderHtml(m,big){
+  let score=m.status==='FINISHED'?`${m.scoreA} - ${m.scoreB}`:'VS';
+  return `<div class="matchHeaderClean"><div class="${big?'bigTeams':'mtop'}"><div class="team"><div class="flag">${mFlag(m,'A')}</div><div class="name">${mName(m,'A')}</div>${m.status==='FINISHED'?goalsForSide(m,'A'):''}</div><div class="${big?'vsBig':'score'}">${score}</div><div class="team"><div class="flag">${mFlag(m,'B')}</div><div class="name">${mName(m,'B')}</div>${m.status==='FINISHED'?goalsForSide(m,'B'):''}</div></div><div class="meta metaClean"><span>${matchMetaV8(m)}</span></div></div>`;
+}
+
+function drawPronos(){
+  let box=document.getElementById('pronoSwipeBox');let sel=document.getElementById('pronoMatchSelect');if(!box||!sel)return;
+  drawFilterBarV8('pronosFilters','drawPronos','pronos');
+  let list=getPlayablePronos();
+  if(directPronoMatchId){let idx=list.findIndex(m=>String(m.id)===String(directPronoMatchId));if(idx>=0)currentPronoIndex=idx;directPronoMatchId=null;}
+  if(currentPronoIndex>=list.length)currentPronoIndex=0;
+  if(!list.length){sel.innerHTML='<option>Tous tes pronostics sont à jour.</option>';box.innerHTML='<div class="card muted">Tous tes pronostics sont à jour.</div>';return;}
+  let m=list[currentPronoIndex];
+  sel.innerHTML=list.map(x=>`<option value="${x.id}" ${String(x.id)===String(m.id)?'selected':''}>${matchOptionLabelV10(x)}</option>`).join('');
+  box.innerHTML=bigPronoCard(m,currentPronoIndex+1,list.length);
+  addSwipeHandlers(box,list.length);
+}
+function bigPronoCard(m,x,total){
+  let grouped=isPoolFilter(m.groupe);
+  let activeFilter=currentFilter==='all'?'Tous':(currentFilter==='today'?"Aujourd'hui":(currentFilter==='PF'?'Finales':('Poule '+currentFilter)));
+  let jokerMiddle=isBonusMatch(m.id)?`<div class="jokerMiddle jokerBonusMiddle"><span>⭐</span><small>Bonus actif</small></div>`:`<label class="jokerMiddle"><input id="quickJoker" type="checkbox"><span>🃏</span><small>Joker</small></label>`;
+  return `<div class="card bigPronoCard${grouped?' grouped':''}" ${grouped?groupStyle(m.groupe):''}><div class="matchCardTitle">${matchStateTitleV10(m)}</div>${matchHeaderHtml(m,true)}${isBonusMatch(m.id)?'<div class="notice centeredLine">⭐ Joker bonus activé : inutile d’utiliser ton joker personnel.</div>':''}<div class="scoreEntryRow"><div class="scoreEntryBox"><input id="quickScoreA" type="number" min="0" placeholder="${mName(m,'A')}"></div>${jokerMiddle}<div class="scoreEntryBox"><input id="quickScoreB" type="number" min="0" placeholder="${mName(m,'B')}"></div></div><div id="quickPronoErr" class="ko small centeredLine"></div><button class="btn" onclick="submitPronoFromSwipe('${m.id}')">Valider mon pronostic</button>${statMirrorHtml(m)}${riskHtml(m)}<div class="pronoBottomHint"><span>Swiper pour changer de match</span><span>${x}/${total} · Filtre : ${activeFilter}</span></div></div>`;
+}
+function drawMatches(){
+  let list=matches.filter(passFilter).sort((a,b)=>(parseMatchDate(a)-parseMatchDate(b))||Number(a.id)-Number(b.id));
+  let box=document.getElementById('matchList');if(!box)return;
+  box.innerHTML=list.length?list.map(m=>{let p=pronos[m.id], grouped=isPoolFilter(m.groupe), canPlay=m.status==='OPEN'&&!p;return `<div class="match${grouped?' grouped':''}${m.status==='FINISHED'?' finished':''}${p?' predicted':''}" ${grouped?groupStyle(m.groupe):''}><div class="matchCardTitle">${matchStateTitleV10(m)}</div>${matchHeaderHtml(m,false)}${isBonusMatch(m.id)?'<div class="countdown bonusPill centeredLine">⭐ Joker bonus : points doublés sur ce match</div>':''}${timeLeftText(m)?`<div class="countdown centeredLine">⏳ ${timeLeftText(m)}</div>`:''}${statMirrorHtml(m)}${riskHtml(m)}${p?`<div class="prono"><span>✅ Ton prono : ${p.scoreA}-${p.scoreB}${p.joker?' ⭐':''}${p.counterCurrent?' 😈':''}${p.riskBonus?' 🎁 +'+p.riskBonus:''}</span><b>${p.points!==''&&p.points!=null?p.points+' pts':'En attente'}</b></div>`:''}${canPlay?`<button class="btn" onclick="goPronosMatch('${m.id}')">Pronostiquer ce match</button>`:''}${pronosVisibleHtml(m)}</div>`}).join(''):'<div class="card muted">Aucun match ici.</div>';
+}
+
+function extraFunRecordsV8(){
+  let arr=classement?.classement||[];if(!arr.length)return [];
+  let ready=arr.some(s=>(s.exact||0)+(s.good||0)+(s.wrong||0)>0 || (s.total||0)>0);
+  if(!ready)return [{key:'wait',label:'Records fun',value:'Pas encore assez de résultats',detail:'Les trophées se rempliront après les premiers matchs terminés.'}];
+  let max=(prop)=>arr.slice().sort((a,b)=>(b[prop]||0)-(a[prop]||0))[0]||{};
+  return [
+    {key:'target',label:'Le sniper',value:max('exact').pseudo||'—',detail:(max('exact').exact||0)+' score(s) exact(s)'},
+    {key:'rate',label:'Le voyant',value:max('rate').pseudo||'—',detail:(max('rate').rate||0)+' % de réussite'},
+    {key:'devil',label:'Le kamikaze',value:max('counterCurrentAttempts').pseudo||max('counterCurrentTry').pseudo||max('riskBonus').pseudo||'—',detail:(max('counterCurrentAttempts').counterCurrentAttempts||max('counterCurrentTry').counterCurrentTry||0)+' pari(s) outsider tenté(s)'},
+    {key:'rebel',label:'Le rebelle rentable',value:max('riskBonus').pseudo||'—',detail:'+'+(max('riskBonus').riskBonus||0)+' point(s) bonus risque'},
+    {key:'drawExpert',label:'Le banquier du nul',value:max('drawFound').pseudo||'—',detail:(max('drawFound').drawFound||0)+' nul(s) trouvé(s)'},
+    {key:'boom',label:'Le bourrin offensif',value:max('avgGoals').pseudo||'—',detail:(max('avgGoals').avgGoals||0)+' but(s) prévus / match'},
+    {key:'curse',label:'Le maudit',value:max('nearMissOneGoal').pseudo||'—',detail:(max('nearMissOneGoal').nearMissOneGoal||0)+' prono(s) à 1 but près'},
+    {key:'optimist',label:"L’Optimiste",value:max('avgGoals').pseudo||'—',detail:(max('avgGoals').avgGoals||0)+' buts/prono en moyenne'},
+    {key:'ice',label:'Le climatisé',value:max('wrong').pseudo||'—',detail:(max('wrong').wrong||0)+' échec(s), mais la tête haute'}
+  ];
+}
+function drawRank(){
+  let f=classement?.fun||{};
+  let all=[...Object.values(f),...extraFunRecordsV8()].filter(x=>!/^Le rebelle$/i.test(String(x.label||'')));
+  let seen={};all=all.filter(x=>{let k=(x.label||'');if(seen[k])return false;seen[k]=true;return true;});
+  funBox.innerHTML=all.map(x=>`<div class="card"><div class="em">${FUN_ICONS_V7[x.key]||FUN_ICONS[x.key]||'🏅'}</div><b>${cleanText(x.value)}</b><div class="muted">${cleanText(x.label)}<br>${cleanText(x.detail)}</div></div>`).join('');
+  rankList.innerHTML=(classement?.classement||[]).map(s=>{let pseudo=String(cleanText(s.pseudo)).replace(/'/g,'&#39;');let risk=s.counterCurrentSuccess?`<br>😈 ${s.counterCurrentSuccess} contre-courant réussi(s) · 🎁 +${s.riskBonus||0}`:'';return `<div class="card"><div class="rank rankClickable" onclick="toggleRankHistory('${s.userId}','${pseudo}')"><div class="pos">${s.rank<=3?['🥇','🥈','🥉'][s.rank-1]:s.rank}</div>${trendHtml(s)}<div class="nm">${cleanText(s.pseudo)}<div class="muted">${s.exact} exacts · ${s.good} bons · ${s.rate}% réussite<br>⭐ ${s.jokers||0}/3 jokers utilisés · ⚽ ${cleanText(s.buteur||'—')}${risk}</div></div><div class="pts">${s.total}</div></div><div id="rankChart_${s.userId}" class="rankChart hide"><canvas id="rankCanvas_${s.userId}"></canvas></div></div>`}).join('');
+  drawRankScorers();showRankSection(activeRankSection);
+}
+
+function profileBadgesListV10(s){
+  let badges=[];if((s.exact||0)>0)badges.push('🎯 Score exact');if((s.riskBonus||0)>0)badges.push('😈 Rebelle rentable');if((s.jokerPts||0)>0)badges.push('⭐ Joker rentable');if((s.predictions||0)>=10)badges.push('📌 Assidu');if((s.nearMissOneGoal||0)>0)badges.push('😵 Maudit');if((s.avgGoals||0)>=3)badges.push('🚀 Optimiste');return badges;
+}
+function profileHeaderV10(s){
+  let remaining=Math.max(0,3-(s.jokers||user.jokersUsed||0));
+  let badges=profileBadgesListV10(s);
+  return `<div class="card profileHero"><div style="font-size:2.4rem">👤</div><h2>${cleanText(user.pseudo)}</h2><div class="muted">${remaining} joker(s) restant(s)</div><div class="badgeLine profileBadgeLine">${badges.length?badges.map(b=>`<span class="badgeMini">${b}</span>`).join(''):'<span class="muted small">Les badges arrivent avec les premiers résultats.</span>'}</div></div>`;
+}
+function profilePronoFilterBarV10(){
+  let items=['all:Tous','today:Aujourd\'hui','A:A','B:B','C:C','D:D','E:E','F:F','G:G','H:H','I:I','J:J','K:K','L:L','PF:Finales'];
+  return `<div class="profileMiniFilters">${items.map(x=>{let [k,l]=x.split(':');let pool=isPoolFilter(k);return `<button class="${activeProfilePronoFilterV10===k?'active':''}${pool?' groupFilter':''}" ${pool?groupStyle(k):''} onclick="activeProfilePronoFilterV10='${k}';drawProfile()">${l}</button>`}).join('')}</div>`;
+}
+function passProfilePronoFilterV10(m){
+  let today=new Date().toLocaleDateString('fr-FR');
+  if(activeProfilePronoFilterV10==='all')return true;
+  if(activeProfilePronoFilterV10==='today')return m.dateFR===today;
+  if(activeProfilePronoFilterV10==='PF')return !isPoolFilter(m.groupe);
+  return m.groupe===activeProfilePronoFilterV10;
+}
+function myPronosHtmlV8(){
+  let rows=matches.filter(m=>pronos[m.id]).filter(passProfilePronoFilterV10).sort(profileSort);
+  return profilePronoFilterBarV10()+(rows.length?rows.map(m=>{let p=pronos[m.id];let grouped=isPoolFilter(m.groupe);return `<div class="card profilePronostic${grouped?' grouped':''}" ${grouped?groupStyle(m.groupe):''}><b>${mFlag(m,'A')} ${mName(m,'A')} - ${mName(m,'B')} ${mFlag(m,'B')}</b><br><span class="muted">${m.groupe?'Groupe '+m.groupe:'Phase finale'} · ${m.dateFR} · ton prono : ${p.scoreA}-${p.scoreB}${p.joker?' ⭐':''}${p.counterCurrent?' 😈':''}${p.riskBonus?' · 🎁 +'+p.riskBonus:''}${p.points!==''&&p.points!=null?' · '+p.points+' pt(s)':''}</span></div>`}).join(''):'<div class="card muted">Aucun pronostic dans ce filtre.</div>');
+}
+
+function adminResultInlineHtmlV91(){return `<div class="card"><b>Résultat + buteurs</b><br><br><select id="adminMatch" onchange="updateAdminScoreLabels();resetScorerRows()"></select><br><br><div class="grid2"><div><div class="adminLabel" id="adminScoreALabel">Score équipe A</div><input id="adminScoreA" type="number" min="0" placeholder="Score équipe A"></div><div><div class="adminLabel" id="adminScoreBLabel">Score équipe B</div><input id="adminScoreB" type="number" min="0" placeholder="Score équipe B"></div></div><div class="sec">Buteurs du match</div><div class="hint">Une ligne = un but. Si un joueur marque deux fois, ajoute deux lignes. La liste est filtrée sur les deux équipes du match.</div><br><div id="scorerRows"></div><button class="btn btn2" onclick="addScorerRow()">+ Ajouter un but</button><br><br><button class="btn" onclick="adminSaveResult()">Valider résultat + calcul points</button><div id="adminMsg" class="small" style="margin-top:8px"></div></div>`;}
+function adminOddsInlineHtmlV91(){return `<div class="card"><b>Correction / ajout cotes</b><br><br><select id="oddsMatch" onchange="updateOddsLabels()"></select><br><br><div class="grid2"><div><div class="adminLabel" id="oddsALabel">Cote équipe A</div><input id="oddsA" type="number" step="0.01" min="1" placeholder="ex : 1.80"></div><div><div class="adminLabel">Cote match nul</div><input id="oddsX" type="number" step="0.01" min="1" placeholder="ex : 3.20"></div></div><br><div><div class="adminLabel" id="oddsBLabel">Cote équipe B</div><input id="oddsB" type="number" step="0.01" min="1" placeholder="ex : 2.10"></div><br><button class="btn" onclick="adminSaveOdds()">Enregistrer les cotes</button><div id="oddsMsg" class="small" style="margin-top:8px"></div></div>`;}
+function adminAddMatchInlineHtmlV91(){return `<div class="card"><b>Ajout match</b><br><br><div class="grid2"><select id="addA"></select><select id="addB"></select></div><br><div class="grid2"><div><div class="adminLabel">Date</div><input id="addDate" type="date"></div><div><div class="adminLabel">Heure France</div><input id="addTime" type="time"></div></div><br><select id="addPhase"><option>32e de finale</option><option>16e de finale</option><option>Quart de finale</option><option>Demi-finale</option><option>Finale de bronze</option><option>Finale</option></select><br><br><div class="grid2"><input id="addDiff1" placeholder="Diffuseur 1"><input id="addDiff2" placeholder="Diffuseur 2"></div><br><div class="grid2"><input id="addCote1" type="number" step="0.01" min="1" placeholder="Cote équipe A"><input id="addCoteX" type="number" step="0.01" min="1" placeholder="Cote nul"></div><br><input id="addCote2" type="number" step="0.01" min="1" placeholder="Cote équipe B"><br><br><input id="addPlace" list="stadiumsDL" placeholder="Ville / stade"><div class="hint">Les équipes viennent de l’onglet EQUIPES.</div><br><button class="btn" onclick="adminAddMatch()">Ajouter le match</button><div id="addMsg" class="small" style="margin-top:8px"></div></div>`;}
+function fillAdminMatches(){let list=matches.filter(m=>m.status!=="FINISHED");let el=document.getElementById('adminMatch');if(!el)return;el.innerHTML=list.map(m=>`<option value="${m.id}">${matchOptionLabelV10(m)}</option>`).join('')||`<option value="">Aucun match disponible</option>`;}
+function fillOddsMatches(){let list=matches;let el=document.getElementById('oddsMatch');if(!el)return;el.innerHTML=list.map(m=>`<option value="${m.id}">${matchOptionLabelV10(m)}</option>`).join('')||'<option value="">Aucun match</option>';updateOddsLabels();}
+function fillBonusMatches(){let el=document.getElementById('bonusMatch');if(!el)return;let list=matches.filter(m=>m.status==='OPEN');el.innerHTML=list.map(m=>`<option value="${m.id}">${isBonusMatch(m.id)?'⭐ ':''}${matchOptionLabelV10(m)}</option>`).join('')||`<option value="">Aucun match ouvert disponible</option>`;}
+function updateOddsLabels(){let m=currentOddsMatch();if(!m)return;oddsALabel.textContent='Cote '+mName(m,'A');oddsBLabel.textContent='Cote '+mName(m,'B');oddsA.value=m.cote1||'';oddsX.value=m.coteX||'';oddsB.value=m.cote2||'';}
+function adminInlineFillV91(){try{if(user?.isAdmin){fillAdminMatches();fillOddsMatches();fillBonusMatches();fillTeamSelects();ensureStadiumDatalist();updateAdminScoreLabels();updateOddsLabels();resetScorerRows();}}catch(e){}}
+function drawProfile(){
+  let s=classement?.classement?.find(x=>String(x.userId)===String(user.userId))||{};
+  let tabs=[['infos','Mes infos'],['pronos','Mes pronos']];
+  if(user?.isAdmin)tabs.push(['suivi','Admin suivi'],['resultats','Résultats'],['cotes','Correction / ajout cote'],['addmatch','Ajout match'],['bonus','Admin joker bonus'],['coverage','Admin couverture pronos']);
+  if(!tabs.some(t=>t[0]===activeProfileSectionV8))activeProfileSectionV8='infos';
+  let content='';
+  if(activeProfileSectionV8==='infos')content=profileStatsHtmlV8(s)+`<button class="btn btnDanger" onclick="logout()">Déconnexion</button>`;
+  else if(activeProfileSectionV8==='pronos')content=myPronosHtmlV8();
+  else if(activeProfileSectionV8==='suivi')content=adminSummaryHtml();
+  else if(activeProfileSectionV8==='resultats')content=adminResultInlineHtmlV91();
+  else if(activeProfileSectionV8==='cotes')content=adminOddsInlineHtmlV91();
+  else if(activeProfileSectionV8==='addmatch')content=adminAddMatchInlineHtmlV91();
+  else if(activeProfileSectionV8==='bonus')content=adminBonusHtml();
+  else if(activeProfileSectionV8==='coverage')content=adminCoverageHtml();
+  document.getElementById('vProfile').innerHTML=`${profileHeaderV10(s)}<div class="profileUnifiedTabs">${tabs.map(t=>`<button class="${activeProfileSectionV8===t[0]?'active':''}" onclick="activeProfileSectionV8='${t[0]}';drawProfile()">${t[1]}</button>`).join('')}</div><div class="profilePanel">${content}</div>`;
+  setTimeout(adminInlineFillV91,0);
+}
+
+(function installV10Css(){
+  if(document.getElementById('stylePatchV10'))return;
+  let s=document.createElement('style');s.id='stylePatchV10';s.textContent=`
+    .pronosSticky .filters button:nth-child(n), #filters button:nth-child(n){text-align:center}
+    .scoreEntryRow{grid-template-columns:1fr 70px 1fr;align-items:center}
+    .scoreEntryBox input::placeholder{font-size:.74rem;color:var(--muted);opacity:.95}
+    .matchCardTitle{text-align:left;font-size:.72rem;font-weight:900;color:var(--gold);margin-bottom:7px;text-transform:uppercase;letter-spacing:.04em}
+    .profileUnifiedTabs button{white-space:nowrap}
+    @media(max-width:520px){.scoreEntryRow{grid-template-columns:1fr 62px 1fr}.scoreEntryBox input{font-size:.78rem}.matchHeaderClean .team{align-items:center;text-align:center}.matchHeaderClean .mtop,.matchHeaderClean .bigTeams{align-items:start}.profileBadgeLine{justify-content:center}}
+  `;document.head.appendChild(s);
+})();
+window.addEventListener('load',()=>setTimeout(()=>{navEmojiV8();drawFilters();drawHome();drawPronos();drawMatches();drawRank();drawProfile();},120));
+/* FIN PATCH V10 FINAL */
+
+
+/* PATCH V11 FINAL - chargement progressif par onglet, sans toucher au rendu V10 */
+var v11Loaded = {home:false, core:false, rank:false, summary:false, groups:false, scorers:false, profile:false, adminCoverage:false};
+var v11Pending = {};
+var v11GroupStandings = null;
+
+function activeViewNameV11(){
+  let a=document.querySelector('.view.active');
+  return a && a.id ? a.id.replace(/^v/,'') : 'Home';
+}
+function v11Once(key, loader){
+  if(v11Loaded[key]) return Promise.resolve();
+  if(v11Pending[key]) return v11Pending[key];
+  v11Pending[key]=Promise.resolve().then(loader).then(()=>{v11Loaded[key]=true;delete v11Pending[key];}).catch(e=>{delete v11Pending[key];throw e;});
+  return v11Pending[key];
+}
+function invalidateV11(){
+  v11Loaded={home:false, core:false, rank:false, summary:false, groups:false, scorers:false, profile:false, adminCoverage:false};
+  v11Pending={};
+  v11GroupStandings=null;
+  groupsAlreadyDrawnV8=false;
+}
+function ensureHomeV11(){
+  return v11Once('home',()=>api('getBonusJokers').then(d=>{bonusJokers=d||[];}));
+}
+function ensureCoreV11(){
+  return v11Once('core',()=>Promise.all([
+    api('getMatches'),
+    api('getMyPronos',{userId:user.userId}),
+    api('getEquipes'),
+    api('getPronosticStats'),
+    api('getButsMatch'),
+    api('getBonusJokers')
+  ]).then(r=>{
+    matches=r[0]||[];
+    pronos=r[1]||{};
+    equipes=r[2]||[];
+    pronosticStats=r[3]||{};
+    butsMatch=r[4]||{};
+    bonusJokers=r[5]||[];
+    buildTeamMap();
+  }));
+}
+function ensureRankV11(){
+  return v11Once('rank',()=>Promise.all([api('getClassement'),api('getButeur')]).then(r=>{classement=r[0]||{};buteur=r[1]||{};}));
+}
+function ensureSummaryV11(){
+  return v11Once('summary',()=>api('getRecentSummary').then(d=>{recentSummary=d||{};}));
+}
+function ensureGroupsV11(){
+  return v11Once('groups',()=>Promise.all([api('getGroupStandings'), api('getEquipes')]).then(r=>{v11GroupStandings=r[0]||{};equipes=r[1]||equipes||[];buildTeamMap();}));
+}
+function ensureScorersV11(){
+  return v11Once('scorers',()=>Promise.all([api('getButeur'),api('getJoueurs')]).then(r=>{buteur=r[0]||{};joueurs=r[1]||[];}));
+}
+function ensureAdminCoverageV11(){
+  if(!user?.isAdmin) return Promise.resolve();
+  return v11Once('adminCoverage',()=>api('getAdminMatchCoverage',{userId:user.userId}).then(d=>{adminCoverage=d||null;}));
+}
+function ensureProfileV11(){
+  return v11Once('profile',()=>Promise.all([ensureCoreV11(), ensureRankV11(), user?.isAdmin?ensureAdminCoverageV11():Promise.resolve()]).then(()=>{}));
+}
+function ensureViewV11(v){
+  if(v==='Home') return ensureHomeV11();
+  if(v==='Pronos' || v==='Matches') return ensureCoreV11();
+  if(v==='Groups') return ensureGroupsV11();
+  if(v==='Summary') return ensureSummaryV11();
+  if(v==='Rank') return ensureRankV11();
+  if(v==='Profile') return ensureProfileV11();
+  if(v==='Scorers') return ensureScorersV11();
+  return Promise.resolve();
+}
+function loadingHtmlV11(label){return `<div class="card muted">Chargement de ${label||'la section'}...</div>`;}
+function placeholderV11(v){
+  if(v==='Pronos'){let e=document.getElementById('pronoSwipeBox');if(e)e.innerHTML=loadingHtmlV11('tes pronostics');}
+  else if(v==='Matches'){let e=document.getElementById('matchList');if(e)e.innerHTML=loadingHtmlV11('la liste des matchs');}
+  else if(v==='Groups'){let e=document.getElementById('groups');if(e)e.innerHTML=loadingHtmlV11('les poules');}
+  else if(v==='Summary'){let e=document.getElementById('summary3Days');if(e)e.innerHTML=loadingHtmlV11('le résumé');}
+  else if(v==='Rank'){let e=document.getElementById('funBox');if(e)e.innerHTML=loadingHtmlV11('le classement');}
+  else if(v==='Profile'){let e=document.getElementById('vProfile');if(e)e.innerHTML=loadingHtmlV11('ton profil');}
+}
+function renderViewV11(v){
+  if(v==='Home'){drawHome();}
+  else if(v==='Pronos'){drawFilters();drawPronos();}
+  else if(v==='Matches'){drawFilters();drawMatches();}
+  else if(v==='Groups'){drawGroups();}
+  else if(v==='Summary'){drawSummary();}
+  else if(v==='Rank'){drawRank();showRankSection(activeRankSection);}
+  else if(v==='Profile'){drawProfile();}
+  else if(v==='Scorers'){drawScorers();}
+  navEmojiV8();
+}
+function loadViewV11(v, showLoader){
+  v=v||activeViewNameV11()||'Home';
+  if(showLoader && v!=='Home') placeholderV11(v);
+  return ensureViewV11(v).then(()=>renderViewV11(v)).catch(e=>toast('Erreur API : '+e.message));
+}
+function loadAll(){
+  invalidateV11();
+  let v=activeViewNameV11()||'Home';
+  return loadViewV11(v, v!=='Home');
+}
+function drawAll(){
+  return renderViewV11(activeViewNameV11()||'Home');
+}
+function show(v,btn){
+  let target=document.getElementById('v'+v);if(!target)return;
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  target.classList.add('active');
+  document.querySelectorAll('.bnav button').forEach(x=>x.classList.remove('active'));
+  let navBtn=btn||document.querySelector(`.bnav button[data-view="${v}"]`);if(navBtn)navBtn.classList.add('active');
+  navEmojiV8();
+  loadViewV11(v,true);
+}
+function drawGroups(){
+  let el=document.getElementById('groups');if(!el)return;
+  if(!v11Loaded.groups){el.innerHTML=loadingHtmlV11('les poules');ensureGroupsV11().then(()=>drawGroups()).catch(()=>{el.innerHTML='<div class="card muted">Classement indisponible.</div>';});return;}
+  let g=v11GroupStandings||{};
+  el.innerHTML=Object.keys(g).sort().map(k=>`<div class="card groupCard" ${groupStyle(k)}><b class="groupTitle">Groupe ${k}</b><table class="table"><tr><th>Équipe</th><th>Pts</th><th>J</th><th>G</th><th>N</th><th>P</th><th>BP</th><th>BC</th><th>Diff</th></tr>${g[k].map(t=>`<tr><td>${teamFlag(t.name)} ${teamName(t.name)}</td><td><b>${t.pts}</b></td><td>${t.mp}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td><td>${t.gf}</td><td>${t.ga}</td><td>${t.gd}</td></tr>`).join('')}</table></div>`).join('') || '<div class="card muted">Classement indisponible.</div>';
+}
+function goPronosMatch(id){
+  directPronoMatchId=String(id||'');
+  currentFilter='all';
+  show('Pronos',document.querySelector('.bnav button[data-view="Pronos"]'));
+  setTimeout(()=>window.scrollTo(0,0),80);
+}
+function goTodo(){
+  directPronoMatchId=null;
+  currentFilter='all';
+  show('Pronos',document.querySelector('.bnav button[data-view="Pronos"]'));
+}
+window.addEventListener('load',()=>setTimeout(()=>{navEmojiV8();if(user)loadViewV11(activeViewNameV11()||'Home',false);},180));
+/* FIN PATCH V11 FINAL */
 </script>
 
 </body>
