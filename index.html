@@ -89,7 +89,7 @@ input,select,textarea{width:100%;background:var(--bg);border:1.5px solid var(--b
 <div id="toast" class="toast hide"></div>
 <div id="loadingOverlay" class="loadingOverlay hide"><div class="loadingBox"><div class="spinner"></div><b id="loadingText">Chargement...</b><br><span class="muted">La base Google Sheets répond, deux secondes.</span></div></div>
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbx2bcmh0lp6vsLmttmav3knITpvlJtbQJ0vlAVWKKba0YRlp7sYFGo88oTWSdisHdwQMg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwpo1qxiT9UPPoHOztjsuo9jRl_9voSlG-UeDI8N6QC8Z0FUVuQMruEl9mzz5weppk-FQ/exec";
 const FLAGS={France:"",Mexico:"","South Africa":"","South Korea":"","Czech Republic":"",Canada:"","Bosnia & Herzegovina":"",Qatar:"",Switzerland:"",Brazil:"",Morocco:"",Haiti:"",Scotland:"",USA:"",Paraguay:"",Australia:"",Turkey:"",Germany:"","Curaçao":"","Ivory Coast":"",Ecuador:"",Netherlands:"",Japan:"",Sweden:"",Tunisia:"",Belgium:"",Egypt:"",Iran:"","New Zealand":"",Spain:"","Cape Verde":"","Saudi Arabia":"",Uruguay:"",Senegal:"",Iraq:"",Norway:"",Argentina:"",Algeria:"",Austria:"",Jordan:"",Portugal:"","DR Congo":"",Uzbekistan:"",Colombia:"",England:"",Croatia:"",Ghana:"",Panama:""};
 const FUN_ICONS={leader:"",target:"",rate:"",joker:"⭐",active:"",fire:"",lanterne:"",blackcat:"‍⬛",zero:"",boom:"",topScorerVote:"⚽",scorerVote:"⚽",drawExpert:"",curse:"",optimist:""};
 let mode="login", user=null, matches=[], pronos={}, classement=null, buteur=null, joueurs=[], butsMatch={}, pronosticStats={}, recentSummary={}, bonusJokers=[], equipes=[], teamMap={}, currentFilter="all", selectedMatch=null, selectedPlayer=null, rankHistoryCharts={}, activeRankSection="records", currentProfileFilter="all";
@@ -1288,6 +1288,19 @@ function openProno(id){
 })();
 
 window.addEventListener('load',()=>setTimeout(()=>{try{if(activeViewNameV11&&activeViewNameV11()==='Profile')drawProfile();}catch(e){}},250));
+
+
+/* PATCH V13.1 FINAL - correction filterLabelV10 manquant */
+function filterLabelV10(key){
+  key = String(key || 'all');
+  if(key === 'all') return 'Tous';
+  if(key === 'today') return 'Aujourd’hui';
+  if(key === 'PF') return 'Phase finale';
+  if(typeof isPoolFilter === 'function' && isPoolFilter(key)) return 'Poule ' + key;
+  return key;
+}
+/* FIN PATCH V13.1 FINAL */
+
 /* FIN PATCH V13 FINAL */
 </script>
 
