@@ -89,7 +89,7 @@ input,select,textarea{width:100%;background:var(--bg);border:1.5px solid var(--b
 <div id="toast" class="toast hide"></div>
 <div id="loadingOverlay" class="loadingOverlay hide"><div class="loadingBox"><div class="spinner"></div><b id="loadingText">Chargement...</b><br><span class="muted">La base Google Sheets répond, deux secondes.</span></div></div>
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbygE_woKpaJ4mTasbo6QreTeSAJK83zMibr2e_UBfXY0GpmawxC9zjmVTwoTvTul9GTsQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyrOmJws9FQeiFHU48_2xcLWRIizkHWpEX9FelFLkf9PKrT0kRQOOXeEY20S6z5ZL6smw/exec";
 const FLAGS={France:"",Mexico:"","South Africa":"","South Korea":"","Czech Republic":"",Canada:"","Bosnia & Herzegovina":"",Qatar:"",Switzerland:"",Brazil:"",Morocco:"",Haiti:"",Scotland:"",USA:"",Paraguay:"",Australia:"",Turkey:"",Germany:"","Curaçao":"","Ivory Coast":"",Ecuador:"",Netherlands:"",Japan:"",Sweden:"",Tunisia:"",Belgium:"",Egypt:"",Iran:"","New Zealand":"",Spain:"","Cape Verde":"","Saudi Arabia":"",Uruguay:"",Senegal:"",Iraq:"",Norway:"",Argentina:"",Algeria:"",Austria:"",Jordan:"",Portugal:"","DR Congo":"",Uzbekistan:"",Colombia:"",England:"",Croatia:"",Ghana:"",Panama:""};
 const FUN_ICONS={leader:"",target:"",rate:"",joker:"⭐",active:"",fire:"",lanterne:"",blackcat:"‍⬛",zero:"",boom:"",topScorerVote:"⚽",scorerVote:"⚽",drawExpert:"",curse:"",optimist:""};
 let mode="login", user=null, matches=[], pronos={}, classement=null, buteur=null, joueurs=[], butsMatch={}, pronosticStats={}, recentSummary={}, bonusJokers=[], equipes=[], teamMap={}, currentFilter="all", selectedMatch=null, selectedPlayer=null, rankHistoryCharts={}, activeRankSection="records", currentProfileFilter="all";
@@ -1023,6 +1023,40 @@ window.addEventListener('load',()=>setTimeout(()=>{
   }catch(e){localStorage.removeItem('cdmUser');}
 },20));
 /* FIN PATCH V12.1 FINAL */
+</script>
+
+<script>
+/* PATCH V12.2 FINAL - correction chargement admin sans boucle */
+function ensureAdminCoverageV11(){
+  if(!user || !user.isAdmin) return Promise.resolve();
+  return v11Once('adminCoverage',()=>api('getAdminMatchCoverage',{userId:user.userId}).then(d=>{
+    if(d && d.error) throw new Error(d.error);
+    adminCoverage=d||{rows:[],users:[]};
+  }));
+}
+function ensureProfileV11(){
+  return v11Once('profile',()=>Promise.all([ensureCoreV11(), ensureRankV11()]).then(()=>{}));
+}
+function adminNeedsCoverageV122(){
+  return ['suivi','bonus','coverage'].includes(activeProfileSectionV8);
+}
+const drawProfileV122Base = typeof drawProfile === 'function' ? drawProfile : function(){};
+function drawProfile(){
+  if(!window.user) return;
+  if(user.isAdmin && adminNeedsCoverageV122() && !v11Loaded.adminCoverage){
+    const box=document.getElementById('vProfile');
+    if(box){
+      box.innerHTML='<div class="card muted">Chargement des données admin...</div>';
+    }
+    ensureAdminCoverageV11().then(()=>drawProfileV122Base()).catch(e=>{
+      const b=document.getElementById('vProfile');
+      if(b)b.innerHTML='<div class="card ko">Erreur admin : '+cleanText(e.message)+'</div><button class="btn btn2" onclick="activeProfileSectionV8=\'infos\';drawProfile()">Retour profil</button>';
+    });
+    return;
+  }
+  return drawProfileV122Base();
+}
+/* FIN PATCH V12.2 FINAL */
 </script>
 
 </body>
