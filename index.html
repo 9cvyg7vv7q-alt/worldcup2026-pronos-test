@@ -6,7 +6,128 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>CdM 2026 Pronos</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js">
+
+
+/* PATCH V9 FINAL - corrections UI/UX demandées après test mobile */
+const PATCH_V9_FINAL = true;
+let activeProfilePronoFilterV9 = 'all';
+
+function filterItemsForV8(kind){
+  // V9 : plus de filtres Ouverts / Terminés. Pronos = uniquement matchs ouverts non joués, Matchs = historique complet.
+  return ['all:Tous','today:Aujourd\'hui','A:A','B:B','C:C','D:D','E:E','F:F','G:G','H:H','I:I','J:J','K:K','L:L','PF:Finales'];
+}
+function passFilter(m){
+  let today=new Date().toLocaleDateString('fr-FR');
+  if(currentFilter==='all')return true;
+  if(currentFilter==='today')return m.dateFR===today;
+  if(currentFilter==='PF')return !isPoolFilter(m.groupe);
+  return m.groupe===currentFilter;
+}
+function drawFilters(){drawFilterBarV8('filters','drawMatches','matches');drawFilterBarV8('pronosFilters','drawPronos','pronos');}
+
+function matchStateTitleV9(m){
+  if(m.status==='FINISHED')return 'Match terminé';
+  if(m.status==='LOCKED'||m.status==='CLOSED')return 'Match en cours';
+  return 'Match à venir';
+}
+function matchHeaderHtml(m,big){
+  let score=m.status==='FINISHED'?`${m.scoreA} - ${m.scoreB}`:'VS';
+  return `<div class="matchHeaderClean"><div class="${big?'bigTeams':'mtop'}"><div class="team"><div class="flag">${mFlag(m,'A')}</div><div class="name">${mName(m,'A')}</div>${m.status==='FINISHED'?goalsForSide(m,'A'):''}</div><div class="${big?'vsBig':'score'}">${score}</div><div class="team"><div class="flag">${mFlag(m,'B')}</div><div class="name">${mName(m,'B')}</div>${m.status==='FINISHED'?goalsForSide(m,'B'):''}</div></div><div class="meta metaClean"><span>${matchMetaV8(m)}</span></div></div>`;
+}
+
+function bigPronoCard(m,x,total){
+  let grouped=isPoolFilter(m.groupe);
+  let activeFilter=currentFilter==='all'?'Tous':(currentFilter==='today'?"Aujourd'hui":(currentFilter==='PF'?'Finales':('Poule '+currentFilter)));
+  let jokerMid=isBonusMatch(m.id)
+    ? '<div class="jokerMiddle jokerBonusMiddle">⭐<br><span>Bonus actif</span></div>'
+    : `<label class="jokerMiddle"><input id="quickJoker" class="jokerMini" type="checkbox"><span>🃏</span><small>Joker</small></label>`;
+  return `<div class="card bigPronoCard${grouped?' grouped':''}" ${grouped?groupStyle(m.groupe):''}>${matchHeaderHtml(m,true)}${isBonusMatch(m.id)?'<div class="notice">⭐ Joker bonus activé : inutile d’utiliser ton joker personnel.</div>':''}<div class="scoreEntryRow"><div class="scoreEntryBox"><input id="quickScoreA" type="number" min="0" placeholder="${cleanText(mName(m,'A'))}"></div>${jokerMid}<div class="scoreEntryBox"><input id="quickScoreB" type="number" min="0" placeholder="${cleanText(mName(m,'B'))}"></div></div><div id="quickPronoErr" class="ko small"></div><br><button class="btn" onclick="submitPronoFromSwipe('${m.id}')">Valider mon pronostic</button>${statMirrorHtml(m)}${riskHtml(m)}<div class="pronoBottomHint"><span>Swiper pour changer de match</span><span>${x}/${total} · Filtre : ${activeFilter}</span></div></div>`;
+}
+
+function drawMatches(){
+  let list=matches.filter(passFilter).sort((a,b)=>(parseMatchDate(a)-parseMatchDate(b))||Number(a.id)-Number(b.id));
+  let box=document.getElementById('matchList');if(!box)return;
+  box.innerHTML=list.length?list.map(m=>{let p=pronos[m.id], grouped=isPoolFilter(m.groupe), canPlay=m.status==='OPEN'&&!p;return `<div class="match${grouped?' grouped':''}${m.status==='FINISHED'?' finished':''}${p?' predicted':''}" ${grouped?groupStyle(m.groupe):''}><div class="matchCardTitle">${matchStateTitleV9(m)}</div>${matchHeaderHtml(m,false)}${isBonusMatch(m.id)?'<div class="countdown bonusPill centeredLine">⭐ Joker bonus : points doublés sur ce match</div>':''}${timeLeftText(m)?`<div class="countdown centeredLine">⏳ ${timeLeftText(m)}</div>`:''}${statMirrorHtml(m)}${riskHtml(m)}${p?`<div class="prono"><span>✅ Ton prono : ${p.scoreA}-${p.scoreB}${p.joker?' ⭐':''}${p.counterCurrent?' 😈':''}${p.riskBonus?' 🎁 +'+p.riskBonus:''}</span><b>${p.points!==''&&p.points!=null?p.points+' pts':'En attente'}</b></div>`:''}${canPlay?`<button class="btn" onclick="goPronosMatch('${m.id}')">Pronostiquer ce match</button>`:''}${pronosVisibleHtml(m)}</div>`}).join(''):'<div class="card muted">Aucun match ici.</div>';
+}
+
+function extraFunRecordsV8(){
+  let arr=classement?.classement||[];if(!arr.length)return [];
+  let ready=arr.some(s=>(s.exact||0)+(s.good||0)+(s.wrong||0)>0 || (s.total||0)>0);
+  if(!ready)return [{key:'wait',label:'Records fun',value:'Pas encore assez de résultats',detail:'Les trophées se rempliront après les premiers matchs terminés.'}];
+  let max=(prop)=>arr.slice().sort((a,b)=>(b[prop]||0)-(a[prop]||0))[0]||{};
+  return [
+    {key:'target',label:'Le sniper',value:max('exact').pseudo||'—',detail:(max('exact').exact||0)+' score(s) exact(s)'},
+    {key:'rate',label:'Le voyant',value:max('rate').pseudo||'—',detail:(max('rate').rate||0)+' % de réussite'},
+    {key:'devil',label:'Le kamikaze',value:max('counterCurrentTry').pseudo||max('riskBonus').pseudo||'—',detail:(max('counterCurrentTry').counterCurrentTry||0)+' pari(s) outsider tenté(s)'},
+    {key:'rebel',label:'Le rebelle rentable',value:max('riskBonus').pseudo||'—',detail:'+'+(max('riskBonus').riskBonus||0)+' point(s) bonus risque'},
+    {key:'drawExpert',label:'Le banquier du nul',value:max('drawFound').pseudo||'—',detail:(max('drawFound').drawFound||0)+' nul(s) trouvé(s)'},
+    {key:'boom',label:'Le bourrin offensif',value:max('avgGoals').pseudo||'—',detail:(max('avgGoals').avgGoals||0)+' but(s) prévus / match'},
+    {key:'blackcat',label:'Le maudit',value:max('jokerLost').pseudo||max('wrong').pseudo||'—',detail:(max('jokerLost').jokerLost||0)+' joker(s) cramé(s) à vide'},
+    {key:'optimist',label:'L’optimiste',value:max('goalsPredicted').pseudo||max('avgGoals').pseudo||'—',detail:(max('goalsPredicted').goalsPredicted||0)+' but(s) pronostiqué(s)'},
+    {key:'ice',label:'Le climatisé',value:max('wrong').pseudo||'—',detail:(max('wrong').wrong||0)+' échec(s), mais la tête haute'}
+  ];
+}
+function drawRank(){
+  let f=classement?.fun||{};
+  let all=[...Object.values(f),...extraFunRecordsV8()].filter(x=>!/^Le rebelle$/i.test(String(x.label||'')));
+  let seen={};all=all.filter(x=>{let k=(x.label||'');if(seen[k])return false;seen[k]=true;return true;});
+  funBox.innerHTML=all.map(x=>`<div class="card"><div class="em">${FUN_ICONS_V7[x.key]||FUN_ICONS[x.key]||'🏅'}</div><b>${cleanText(x.value)}</b><div class="muted">${cleanText(x.label)}<br>${cleanText(x.detail)}</div></div>`).join('');
+  rankList.innerHTML=(classement?.classement||[]).map(s=>{let pseudo=String(cleanText(s.pseudo)).replace(/'/g,'&#39;');let risk=s.counterCurrentSuccess?`<br>😈 ${s.counterCurrentSuccess} contre-courant réussi(s) · 🎁 +${s.riskBonus||0}`:'';return `<div class="card"><div class="rank rankClickable" onclick="toggleRankHistory('${s.userId}','${pseudo}')"><div class="pos">${s.rank<=3?['🥇','🥈','🥉'][s.rank-1]:s.rank}</div>${trendHtml(s)}<div class="nm">${cleanText(s.pseudo)}<div class="muted">${s.exact} exacts · ${s.good} bons · ${s.rate}% réussite<br>⭐ ${s.jokers||0}/3 jokers utilisés · ⚽ ${cleanText(s.buteur||'—')}${risk}</div></div><div class="pts">${s.total}</div></div><div id="rankChart_${s.userId}" class="rankChart hide"><canvas id="rankCanvas_${s.userId}"></canvas></div></div>`}).join('');
+  drawRankScorers();showRankSection(activeRankSection);
+}
+
+function profilePronoFilterBarV9(){
+  let items=['all:Tous','today:Aujourd\'hui','A:A','B:B','C:C','D:D','E:E','F:F','G:G','H:H','I:I','J:J','K:K','L:L','PF:Finales'];
+  return `<div class="profileMiniFilters">${items.map(x=>{let [k,l]=x.split(':');let pool=isPoolFilter(k);return `<button class="${activeProfilePronoFilterV9===k?'active':''}${pool?' groupFilter':''}" ${pool?groupStyle(k):''} onclick="activeProfilePronoFilterV9='${k}';drawProfile()">${l}</button>`}).join('')}</div>`;
+}
+function passProfilePronoFilterV9(m){
+  let today=new Date().toLocaleDateString('fr-FR');
+  if(activeProfilePronoFilterV9==='all')return true;
+  if(activeProfilePronoFilterV9==='today')return m.dateFR===today;
+  if(activeProfilePronoFilterV9==='PF')return !isPoolFilter(m.groupe);
+  return m.groupe===activeProfilePronoFilterV9;
+}
+function profileBadgesListV9(s){let badges=[];if((s.exact||0)>0)badges.push('🎯 Score exact');if((s.riskBonus||0)>0)badges.push('😈 Rebelle rentable');if((s.jokerPts||0)>0)badges.push('⭐ Joker rentable');if((s.predictions||0)>=10)badges.push('📌 Assidu');if((s.drawFound||0)>0)badges.push('🤝 Banquier du nul');return badges;}
+function profileHeaderV9(s){let badges=profileBadgesListV9(s);return `<div class="card profileHero"><div style="font-size:2.2rem">👤</div><h2>${cleanText(user.pseudo)}</h2><div class="muted">${3-(s.jokers||user.jokersUsed||0)} joker(s) restant(s)</div><div class="badgeLine profileBadgeLine">${badges.length?badges.map(b=>`<span class="badgeMini">${b}</span>`).join(''):'<span class="muted">Badges à venir avec les premiers résultats.</span>'}</div></div>`;}
+function myPronosHtmlV8(){let rows=matches.filter(m=>pronos[m.id]).filter(passProfilePronoFilterV9).sort(profileSort);return profilePronoFilterBarV9()+(rows.length?rows.map(m=>{let p=pronos[m.id];let grouped=isPoolFilter(m.groupe);return `<div class="card profilePronostic${grouped?' grouped':''}" ${grouped?groupStyle(m.groupe):''}><b>${mFlag(m,'A')} ${mName(m,'A')} - ${mName(m,'B')} ${mFlag(m,'B')}</b><br><span class="muted">${m.groupe?'Groupe '+m.groupe:'Phase finale'} · ${m.dateFR} · ton prono : ${p.scoreA}-${p.scoreB}${p.joker?' ⭐':''}${p.counterCurrent?' 😈':''}${p.riskBonus?' · 🎁 +'+p.riskBonus:''}${p.points!==''&&p.points!=null?' · '+p.points+' pt(s)':''}</span></div>`}).join(''):'<div class="card muted">Aucun pronostic dans ce filtre.</div>');}
+function badgesHtmlV8(s){let badges=profileBadgesListV9(s);return `<div class="card"><div class="badgeLine">${badges.length?badges.map(b=>`<span class="badgeMini">${b}</span>`).join(''):'<span class="muted">Les badges arrivent avec les premiers résultats.</span>'}</div></div>`;}
+
+function adminBonusHtml(){let rows=(adminCoverage?.rows||[]).filter(r=>r.status==='OPEN').sort((a,b)=>a.count-b.count);return rows.map(r=>`<div class="card adminBonusCard"><div><b>${cleanText(r.label)}</b><br><span class="muted">${r.dateFR} · ${r.ratio} · ⭐ ${r.jokers}${r.bonusJoker?' · Bonus actif':''}</span></div><button class="btn adminSmallBtn" onclick="quickBonus('${r.matchId}',true)">Activer</button></div>`).join('')||'<div class="card muted">Aucun match ouvert.</div>';}
+function adminCoverageHtml(){let rows=adminCoverage?.rows||[];let filters=['all:Tous','none:Aucun prono','low:Peu de pronos','incomplete:Incomplets','complete:Complets','bonus:Joker bonus actif'];let filtered=rows.filter(r=>adminCoverageFilter==='all'||(adminCoverageFilter==='none'&&r.count===0)||(adminCoverageFilter==='low'&&r.count>0&&r.count<r.totalUsers/2)||(adminCoverageFilter==='incomplete'&&r.count<r.totalUsers)||(adminCoverageFilter==='complete'&&r.count>=r.totalUsers)||(adminCoverageFilter==='bonus'&&r.bonusJoker));return `<div class="adminCoverageFilters">${filters.map(x=>{let [k,l]=x.split(':');return `<button type="button" class="${adminCoverageFilter===k?'active':''}" onclick="adminCoverageFilter='${k}';drawProfile()">${l}</button>`}).join('')}</div>${filtered.map(r=>`<div class="card"><b>${cleanText(r.label)}</b><br><span class="muted">${r.dateFR} · ${matchStateTitleV9(r)} · ${r.ratio} · ⭐ ${r.jokers}${r.bonusJoker?' · Joker bonus':''}</span><br><br><b>Ont joué :</b><br><span class="small">${r.played.length?cleanText(r.played.join(', ')):'Personne'}</span><br><br><b>Manquent :</b><br><span class="small">${r.missing.length?cleanText(r.missing.join(', ')):'Personne'}</span>${r.details?.length?`<br><br><b>Détails :</b><br>${r.details.map(d=>`<span class="small">${cleanText(d.pseudo)} : ${d.score}${d.joker?' ⭐':''}</span>`).join('<br>')}`:''}</div>`).join('')||'<div class="card muted">Aucun match dans ce filtre.</div>'}`;}
+
+function adminResultInlineHtmlV9(){return `<div class="card"><b>Résultat + buteurs</b><br><br><select id="adminMatch" onchange="updateAdminScoreLabels();resetScorerRows()"></select><br><br><div class="grid2"><div><div class="adminLabel" id="adminScoreALabel">Score équipe A</div><input id="adminScoreA" type="number" min="0"></div><div><div class="adminLabel" id="adminScoreBLabel">Score équipe B</div><input id="adminScoreB" type="number" min="0"></div></div><div class="sec">Buteurs du match</div><div class="hint">Une ligne = un but. Utilise le type P pour pénalty, CSC pour contre son camp.</div><br><div id="scorerRows"></div><button class="btn btn2" onclick="addScorerRow()">+ Ajouter un but</button><br><br><button class="btn" onclick="adminSaveResult()">Valider résultat + calcul points</button><div id="adminMsg" class="small" style="margin-top:8px"></div></div>`;}
+function adminOddsInlineHtmlV9(){return `<div class="card"><b>Correction / ajout cotes</b><br><br><select id="oddsMatch" onchange="updateOddsLabels()"></select><br><br><div class="grid2"><div><div class="adminLabel" id="oddsALabel">Cote équipe A</div><input id="oddsA" type="number" step="0.01" min="1"></div><div><div class="adminLabel">Cote match nul</div><input id="oddsX" type="number" step="0.01" min="1"></div></div><br><div><div class="adminLabel" id="oddsBLabel">Cote équipe B</div><input id="oddsB" type="number" step="0.01" min="1"></div><br><button class="btn" onclick="adminSaveOdds()">Enregistrer les cotes</button><div id="oddsMsg" class="small" style="margin-top:8px"></div></div>`;}
+function adminAddMatchInlineHtmlV9(){return `<div class="card"><b>Ajout match</b><br><br><div class="grid2"><select id="addA"></select><select id="addB"></select></div><br><div class="grid2"><div><div class="adminLabel">Date</div><input id="addDate" type="date"></div><div><div class="adminLabel">Heure France</div><input id="addTime" type="time"></div></div><br><select id="addPhase"><option>32e de finale</option><option>16e de finale</option><option>Quart de finale</option><option>Demi-finale</option><option>Finale de bronze</option><option>Finale</option></select><br><br><div class="grid2"><input id="addDiff1" placeholder="Diffuseur 1"><input id="addDiff2" placeholder="Diffuseur 2"></div><br><div class="grid2"><input id="addCote1" type="number" step="0.01" min="1" placeholder="Cote équipe A"><input id="addCoteX" type="number" step="0.01" min="1" placeholder="Cote nul"></div><br><input id="addCote2" type="number" step="0.01" min="1" placeholder="Cote équipe B"><br><br><input id="addPlace" list="stadiumsDL" placeholder="Ville / stade"><br><br><button class="btn" onclick="adminAddMatch()">Ajouter le match</button><div id="addMsg" class="small" style="margin-top:8px"></div></div>`;}
+function adminInlineFillV9(){try{if(user?.isAdmin){fillAdminMatches();fillOddsMatches();fillBonusMatches();fillTeamSelects();ensureStadiumDatalist();updateAdminScoreLabels();updateOddsLabels();resetScorerRows();}}catch(e){}}
+function drawProfile(){
+  let s=classement?.classement?.find(x=>String(x.userId)===String(user.userId))||{};
+  let tabs=[['infos','Mes infos'],['pronos','Mes pronos'],['badges','Mes badges']]; if(user?.isAdmin)tabs.push(['suivi','Admin suivi'],['resultats','Résultats'],['cotes','Correction / ajout cote'],['addmatch','Ajout match'],['bonus','Admin joker bonus'],['coverage','Admin couverture pronos']);
+  let content='';
+  if(activeProfileSectionV8==='infos')content=profileStatsHtmlV8(s)+`<button class="btn btnDanger" onclick="logout()">Déconnexion</button>`;
+  else if(activeProfileSectionV8==='pronos')content=myPronosHtmlV8();
+  else if(activeProfileSectionV8==='badges')content=badgesHtmlV8(s);
+  else if(activeProfileSectionV8==='suivi')content=adminSummaryHtml();
+  else if(activeProfileSectionV8==='resultats')content=adminResultInlineHtmlV9();
+  else if(activeProfileSectionV8==='cotes')content=adminOddsInlineHtmlV9();
+  else if(activeProfileSectionV8==='addmatch')content=adminAddMatchInlineHtmlV9();
+  else if(activeProfileSectionV8==='bonus')content=adminBonusHtml();
+  else if(activeProfileSectionV8==='coverage')content=adminCoverageHtml();
+  document.getElementById('vProfile').innerHTML=`${profileHeaderV9(s)}<div class="profileUnifiedTabs">${tabs.map(t=>`<button class="${activeProfileSectionV8===t[0]?'active':''}" onclick="activeProfileSectionV8='${t[0]}';drawProfile()">${t[1]}</button>`).join('')}</div><div class="profilePanel">${content}</div>`;
+  setTimeout(adminInlineFillV9,0);
+}
+
+(function installV9Css(){
+  if(document.getElementById('stylePatchV9'))return;
+  let s=document.createElement('style');s.id='stylePatchV9';s.textContent=`
+    .matchHeaderClean{text-align:center}.metaClean{justify-content:center;text-align:center}.metaClean span{width:100%;line-height:1.45}.matchCardTitle{text-align:left;font-size:.72rem;font-weight:900;color:var(--gold);margin-bottom:7px;text-transform:uppercase;letter-spacing:.04em}.centeredLine{text-align:center}.bigTeams,.mtop{align-items:start}.bigTeams .team,.mtop .team{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}.bigTeams .flag,.mtop .flag{line-height:1.1}.bigTeams .name,.mtop .name{text-align:center;max-width:100%}.scoreEntryRow{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin:13px 0 8px}.scoreEntryBox input{text-align:center;font-weight:900;min-height:46px}.jokerMiddle{width:70px;min-height:54px;border:1px solid var(--bdr);border-radius:12px;background:#ffffff08;color:var(--txt);font-weight:900;font-size:.78rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px}.jokerMiddle input{width:auto;margin:0}.jokerMiddle span{font-size:1.2rem}.jokerMiddle small{font-size:.66rem;color:var(--muted);font-weight:900}.jokerBonusMiddle{color:var(--gold);font-size:.72rem}.pronoBottomHint{align-items:center}.profileHero{text-align:center}.profileBadgeLine{justify-content:center;margin-top:10px}.profileMiniFilters,.adminCoverageFilters{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px;padding:6px 0}.profileMiniFilters button,.adminCoverageFilters button{background:var(--card);border:1px solid var(--bdr);color:var(--muted);border-radius:99px;padding:7px 12px;font-weight:900;font-size:.68rem;white-space:nowrap}.profileMiniFilters button.active,.adminCoverageFilters button.active{background:var(--g2);color:#fff}.profileMiniFilters button.groupFilter{background:var(--group-bg);border-color:var(--group-border);color:var(--txt)}.profileMiniFilters button.groupFilter.active{background:var(--group-border);color:#fff}.adminBonusCard{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}.adminSmallBtn{width:auto;min-width:74px;padding:8px 10px;font-size:.72rem}.profileUnifiedTabs{top:50px}.pill.open,.pill.finishedP,.pill.lockedP{display:none!important}@media(max-width:520px){.bigPronoCard{padding:12px 10px}.bigTeams{grid-template-columns:1fr 54px 1fr;gap:6px}.scoreEntryRow{grid-template-columns:1fr 62px 1fr;gap:7px}.jokerMiddle{width:62px}.scoreEntryBox input{font-size:.78rem;padding:9px 5px}.metaClean{font-size:.66rem}.statTitleLine{align-items:flex-start}.oddsInline{font-size:.62rem}.adminBonusCard{grid-template-columns:1fr}.adminSmallBtn{justify-self:end}}
+  `;document.head.appendChild(s);
+})();
+
+window.addEventListener('load',()=>setTimeout(()=>{navEmojiV8();drawFilters();drawPronos();drawMatches();drawProfile();},80));
+/* FIN PATCH V9 FINAL */
+
+</script>
 <style>
 :root{--g:#1a5c38;--g2:#2e8b57;--gold:#FFD700;--bg:#0d1117;--card:#161b22;--bdr:#30363d;--txt:#e6edf3;--muted:#8b949e;--red:#ef5350}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--txt);padding-bottom:86px}.hide{display:none!important}.view{display:none;padding:12px}.view.active{display:block}
@@ -89,7 +210,7 @@ input,select,textarea{width:100%;background:var(--bg);border:1.5px solid var(--b
 <div id="toast" class="toast hide"></div>
 <div id="loadingOverlay" class="loadingOverlay hide"><div class="loadingBox"><div class="spinner"></div><b id="loadingText">Chargement...</b><br><span class="muted">La base Google Sheets répond, deux secondes.</span></div></div>
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbxPFlVTFYbbD4VWCUAtUhXuvm4O0YcaaS45h2zOsQT5rIeRnRPysr6JqHRmh970uvya6g/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzFJmX7xysFMHzj_Bk8AVy_TAImltJTVfMM6IGd3eOLTBRP1utxfL_kfjowssWsdB-3oQ/exec";
 const FLAGS={France:"",Mexico:"","South Africa":"","South Korea":"","Czech Republic":"",Canada:"","Bosnia & Herzegovina":"",Qatar:"",Switzerland:"",Brazil:"",Morocco:"",Haiti:"",Scotland:"",USA:"",Paraguay:"",Australia:"",Turkey:"",Germany:"","Curaçao":"","Ivory Coast":"",Ecuador:"",Netherlands:"",Japan:"",Sweden:"",Tunisia:"",Belgium:"",Egypt:"",Iran:"","New Zealand":"",Spain:"","Cape Verde":"","Saudi Arabia":"",Uruguay:"",Senegal:"",Iraq:"",Norway:"",Argentina:"",Algeria:"",Austria:"",Jordan:"",Portugal:"","DR Congo":"",Uzbekistan:"",Colombia:"",England:"",Croatia:"",Ghana:"",Panama:""};
 const FUN_ICONS={leader:"",target:"",rate:"",joker:"⭐",active:"",fire:"",lanterne:"",blackcat:"‍⬛",zero:"",boom:"",topScorerVote:"⚽",scorerVote:"⚽",drawExpert:"",curse:"",optimist:""};
 let mode="login", user=null, matches=[], pronos={}, classement=null, buteur=null, joueurs=[], butsMatch={}, pronosticStats={}, recentSummary={}, bonusJokers=[], equipes=[], teamMap={}, currentFilter="all", selectedMatch=null, selectedPlayer=null, rankHistoryCharts={}, activeRankSection="records", currentProfileFilter="all";
@@ -187,6 +308,127 @@ function adminSaveBonusJoker(enabled){api("adminSetBonusJoker",{userId:user.user
 function adminSaveOdds(){api("adminAddCotes",{userId:user.userId,matchId:oddsMatch.value,cote1:oddsA.value,coteX:oddsX.value,cote2:oddsB.value}).then(d=>{oddsMsg.innerHTML=d.error?'<span class="ko">'+d.error+'</span>':'<span class="ok">Cotes enregistrées.</span>';oddsA.value="";oddsX.value="";oddsB.value="";loadAll()}).catch(e=>oddsMsg.innerHTML='<span class="ko">'+e.message+'</span>')}
 function adminAddMatch(){api("adminAddMatch",{userId:user.userId,equipeAId:addA.value,equipeBId:addB.value,dateFR:frDateFromInput(),heureFR:addTime.value,phase:addPhase.value,diff1:addDiff1.value,diff2:addDiff2.value,cote1:addCote1.value,coteX:addCoteX.value,cote2:addCote2.value,villeStade:addPlace.value}).then(d=>{addMsg.innerHTML=d.error?'<span class="ko">'+d.error+'</span>':'<span class="ok">Match ajouté.</span>';loadAll()}).catch(e=>addMsg.innerHTML='<span class="ko">'+e.message+'</span>')}
 window.addEventListener("load",()=>{let saved=localStorage.getItem("cdmUser");if(saved){user=JSON.parse(saved);startApp()}drawAuth();setInterval(()=>{if(matches.length){drawHome();drawMatches()}},60000)});
+
+
+
+/* PATCH V9 FINAL - corrections UI/UX demandées après test mobile */
+const PATCH_V9_FINAL = true;
+let activeProfilePronoFilterV9 = 'all';
+
+function filterItemsForV8(kind){
+  // V9 : plus de filtres Ouverts / Terminés. Pronos = uniquement matchs ouverts non joués, Matchs = historique complet.
+  return ['all:Tous','today:Aujourd\'hui','A:A','B:B','C:C','D:D','E:E','F:F','G:G','H:H','I:I','J:J','K:K','L:L','PF:Finales'];
+}
+function passFilter(m){
+  let today=new Date().toLocaleDateString('fr-FR');
+  if(currentFilter==='all')return true;
+  if(currentFilter==='today')return m.dateFR===today;
+  if(currentFilter==='PF')return !isPoolFilter(m.groupe);
+  return m.groupe===currentFilter;
+}
+function drawFilters(){drawFilterBarV8('filters','drawMatches','matches');drawFilterBarV8('pronosFilters','drawPronos','pronos');}
+
+function matchStateTitleV9(m){
+  if(m.status==='FINISHED')return 'Match terminé';
+  if(m.status==='LOCKED'||m.status==='CLOSED')return 'Match en cours';
+  return 'Match à venir';
+}
+function matchHeaderHtml(m,big){
+  let score=m.status==='FINISHED'?`${m.scoreA} - ${m.scoreB}`:'VS';
+  return `<div class="matchHeaderClean"><div class="${big?'bigTeams':'mtop'}"><div class="team"><div class="flag">${mFlag(m,'A')}</div><div class="name">${mName(m,'A')}</div>${m.status==='FINISHED'?goalsForSide(m,'A'):''}</div><div class="${big?'vsBig':'score'}">${score}</div><div class="team"><div class="flag">${mFlag(m,'B')}</div><div class="name">${mName(m,'B')}</div>${m.status==='FINISHED'?goalsForSide(m,'B'):''}</div></div><div class="meta metaClean"><span>${matchMetaV8(m)}</span></div></div>`;
+}
+
+function bigPronoCard(m,x,total){
+  let grouped=isPoolFilter(m.groupe);
+  let activeFilter=currentFilter==='all'?'Tous':(currentFilter==='today'?"Aujourd'hui":(currentFilter==='PF'?'Finales':('Poule '+currentFilter)));
+  let jokerMid=isBonusMatch(m.id)
+    ? '<div class="jokerMiddle jokerBonusMiddle">⭐<br><span>Bonus actif</span></div>'
+    : `<label class="jokerMiddle"><input id="quickJoker" class="jokerMini" type="checkbox"><span>🃏</span><small>Joker</small></label>`;
+  return `<div class="card bigPronoCard${grouped?' grouped':''}" ${grouped?groupStyle(m.groupe):''}>${matchHeaderHtml(m,true)}${isBonusMatch(m.id)?'<div class="notice">⭐ Joker bonus activé : inutile d’utiliser ton joker personnel.</div>':''}<div class="scoreEntryRow"><div class="scoreEntryBox"><input id="quickScoreA" type="number" min="0" placeholder="${cleanText(mName(m,'A'))}"></div>${jokerMid}<div class="scoreEntryBox"><input id="quickScoreB" type="number" min="0" placeholder="${cleanText(mName(m,'B'))}"></div></div><div id="quickPronoErr" class="ko small"></div><br><button class="btn" onclick="submitPronoFromSwipe('${m.id}')">Valider mon pronostic</button>${statMirrorHtml(m)}${riskHtml(m)}<div class="pronoBottomHint"><span>Swiper pour changer de match</span><span>${x}/${total} · Filtre : ${activeFilter}</span></div></div>`;
+}
+
+function drawMatches(){
+  let list=matches.filter(passFilter).sort((a,b)=>(parseMatchDate(a)-parseMatchDate(b))||Number(a.id)-Number(b.id));
+  let box=document.getElementById('matchList');if(!box)return;
+  box.innerHTML=list.length?list.map(m=>{let p=pronos[m.id], grouped=isPoolFilter(m.groupe), canPlay=m.status==='OPEN'&&!p;return `<div class="match${grouped?' grouped':''}${m.status==='FINISHED'?' finished':''}${p?' predicted':''}" ${grouped?groupStyle(m.groupe):''}><div class="matchCardTitle">${matchStateTitleV9(m)}</div>${matchHeaderHtml(m,false)}${isBonusMatch(m.id)?'<div class="countdown bonusPill centeredLine">⭐ Joker bonus : points doublés sur ce match</div>':''}${timeLeftText(m)?`<div class="countdown centeredLine">⏳ ${timeLeftText(m)}</div>`:''}${statMirrorHtml(m)}${riskHtml(m)}${p?`<div class="prono"><span>✅ Ton prono : ${p.scoreA}-${p.scoreB}${p.joker?' ⭐':''}${p.counterCurrent?' 😈':''}${p.riskBonus?' 🎁 +'+p.riskBonus:''}</span><b>${p.points!==''&&p.points!=null?p.points+' pts':'En attente'}</b></div>`:''}${canPlay?`<button class="btn" onclick="goPronosMatch('${m.id}')">Pronostiquer ce match</button>`:''}${pronosVisibleHtml(m)}</div>`}).join(''):'<div class="card muted">Aucun match ici.</div>';
+}
+
+function extraFunRecordsV8(){
+  let arr=classement?.classement||[];if(!arr.length)return [];
+  let ready=arr.some(s=>(s.exact||0)+(s.good||0)+(s.wrong||0)>0 || (s.total||0)>0);
+  if(!ready)return [{key:'wait',label:'Records fun',value:'Pas encore assez de résultats',detail:'Les trophées se rempliront après les premiers matchs terminés.'}];
+  let max=(prop)=>arr.slice().sort((a,b)=>(b[prop]||0)-(a[prop]||0))[0]||{};
+  return [
+    {key:'target',label:'Le sniper',value:max('exact').pseudo||'—',detail:(max('exact').exact||0)+' score(s) exact(s)'},
+    {key:'rate',label:'Le voyant',value:max('rate').pseudo||'—',detail:(max('rate').rate||0)+' % de réussite'},
+    {key:'devil',label:'Le kamikaze',value:max('counterCurrentTry').pseudo||max('riskBonus').pseudo||'—',detail:(max('counterCurrentTry').counterCurrentTry||0)+' pari(s) outsider tenté(s)'},
+    {key:'rebel',label:'Le rebelle rentable',value:max('riskBonus').pseudo||'—',detail:'+'+(max('riskBonus').riskBonus||0)+' point(s) bonus risque'},
+    {key:'drawExpert',label:'Le banquier du nul',value:max('drawFound').pseudo||'—',detail:(max('drawFound').drawFound||0)+' nul(s) trouvé(s)'},
+    {key:'boom',label:'Le bourrin offensif',value:max('avgGoals').pseudo||'—',detail:(max('avgGoals').avgGoals||0)+' but(s) prévus / match'},
+    {key:'blackcat',label:'Le maudit',value:max('jokerLost').pseudo||max('wrong').pseudo||'—',detail:(max('jokerLost').jokerLost||0)+' joker(s) cramé(s) à vide'},
+    {key:'optimist',label:'L’optimiste',value:max('goalsPredicted').pseudo||max('avgGoals').pseudo||'—',detail:(max('goalsPredicted').goalsPredicted||0)+' but(s) pronostiqué(s)'},
+    {key:'ice',label:'Le climatisé',value:max('wrong').pseudo||'—',detail:(max('wrong').wrong||0)+' échec(s), mais la tête haute'}
+  ];
+}
+function drawRank(){
+  let f=classement?.fun||{};
+  let all=[...Object.values(f),...extraFunRecordsV8()].filter(x=>!/^Le rebelle$/i.test(String(x.label||'')));
+  let seen={};all=all.filter(x=>{let k=(x.label||'');if(seen[k])return false;seen[k]=true;return true;});
+  funBox.innerHTML=all.map(x=>`<div class="card"><div class="em">${FUN_ICONS_V7[x.key]||FUN_ICONS[x.key]||'🏅'}</div><b>${cleanText(x.value)}</b><div class="muted">${cleanText(x.label)}<br>${cleanText(x.detail)}</div></div>`).join('');
+  rankList.innerHTML=(classement?.classement||[]).map(s=>{let pseudo=String(cleanText(s.pseudo)).replace(/'/g,'&#39;');let risk=s.counterCurrentSuccess?`<br>😈 ${s.counterCurrentSuccess} contre-courant réussi(s) · 🎁 +${s.riskBonus||0}`:'';return `<div class="card"><div class="rank rankClickable" onclick="toggleRankHistory('${s.userId}','${pseudo}')"><div class="pos">${s.rank<=3?['🥇','🥈','🥉'][s.rank-1]:s.rank}</div>${trendHtml(s)}<div class="nm">${cleanText(s.pseudo)}<div class="muted">${s.exact} exacts · ${s.good} bons · ${s.rate}% réussite<br>⭐ ${s.jokers||0}/3 jokers utilisés · ⚽ ${cleanText(s.buteur||'—')}${risk}</div></div><div class="pts">${s.total}</div></div><div id="rankChart_${s.userId}" class="rankChart hide"><canvas id="rankCanvas_${s.userId}"></canvas></div></div>`}).join('');
+  drawRankScorers();showRankSection(activeRankSection);
+}
+
+function profilePronoFilterBarV9(){
+  let items=['all:Tous','today:Aujourd\'hui','A:A','B:B','C:C','D:D','E:E','F:F','G:G','H:H','I:I','J:J','K:K','L:L','PF:Finales'];
+  return `<div class="profileMiniFilters">${items.map(x=>{let [k,l]=x.split(':');let pool=isPoolFilter(k);return `<button class="${activeProfilePronoFilterV9===k?'active':''}${pool?' groupFilter':''}" ${pool?groupStyle(k):''} onclick="activeProfilePronoFilterV9='${k}';drawProfile()">${l}</button>`}).join('')}</div>`;
+}
+function passProfilePronoFilterV9(m){
+  let today=new Date().toLocaleDateString('fr-FR');
+  if(activeProfilePronoFilterV9==='all')return true;
+  if(activeProfilePronoFilterV9==='today')return m.dateFR===today;
+  if(activeProfilePronoFilterV9==='PF')return !isPoolFilter(m.groupe);
+  return m.groupe===activeProfilePronoFilterV9;
+}
+function profileBadgesListV9(s){let badges=[];if((s.exact||0)>0)badges.push('🎯 Score exact');if((s.riskBonus||0)>0)badges.push('😈 Rebelle rentable');if((s.jokerPts||0)>0)badges.push('⭐ Joker rentable');if((s.predictions||0)>=10)badges.push('📌 Assidu');if((s.drawFound||0)>0)badges.push('🤝 Banquier du nul');return badges;}
+function profileHeaderV9(s){let badges=profileBadgesListV9(s);return `<div class="card profileHero"><div style="font-size:2.2rem">👤</div><h2>${cleanText(user.pseudo)}</h2><div class="muted">${3-(s.jokers||user.jokersUsed||0)} joker(s) restant(s)</div><div class="badgeLine profileBadgeLine">${badges.length?badges.map(b=>`<span class="badgeMini">${b}</span>`).join(''):'<span class="muted">Badges à venir avec les premiers résultats.</span>'}</div></div>`;}
+function myPronosHtmlV8(){let rows=matches.filter(m=>pronos[m.id]).filter(passProfilePronoFilterV9).sort(profileSort);return profilePronoFilterBarV9()+(rows.length?rows.map(m=>{let p=pronos[m.id];let grouped=isPoolFilter(m.groupe);return `<div class="card profilePronostic${grouped?' grouped':''}" ${grouped?groupStyle(m.groupe):''}><b>${mFlag(m,'A')} ${mName(m,'A')} - ${mName(m,'B')} ${mFlag(m,'B')}</b><br><span class="muted">${m.groupe?'Groupe '+m.groupe:'Phase finale'} · ${m.dateFR} · ton prono : ${p.scoreA}-${p.scoreB}${p.joker?' ⭐':''}${p.counterCurrent?' 😈':''}${p.riskBonus?' · 🎁 +'+p.riskBonus:''}${p.points!==''&&p.points!=null?' · '+p.points+' pt(s)':''}</span></div>`}).join(''):'<div class="card muted">Aucun pronostic dans ce filtre.</div>');}
+function badgesHtmlV8(s){let badges=profileBadgesListV9(s);return `<div class="card"><div class="badgeLine">${badges.length?badges.map(b=>`<span class="badgeMini">${b}</span>`).join(''):'<span class="muted">Les badges arrivent avec les premiers résultats.</span>'}</div></div>`;}
+
+function adminBonusHtml(){let rows=(adminCoverage?.rows||[]).filter(r=>r.status==='OPEN').sort((a,b)=>a.count-b.count);return rows.map(r=>`<div class="card adminBonusCard"><div><b>${cleanText(r.label)}</b><br><span class="muted">${r.dateFR} · ${r.ratio} · ⭐ ${r.jokers}${r.bonusJoker?' · Bonus actif':''}</span></div><button class="btn adminSmallBtn" onclick="quickBonus('${r.matchId}',true)">Activer</button></div>`).join('')||'<div class="card muted">Aucun match ouvert.</div>';}
+function adminCoverageHtml(){let rows=adminCoverage?.rows||[];let filters=['all:Tous','none:Aucun prono','low:Peu de pronos','incomplete:Incomplets','complete:Complets','bonus:Joker bonus actif'];let filtered=rows.filter(r=>adminCoverageFilter==='all'||(adminCoverageFilter==='none'&&r.count===0)||(adminCoverageFilter==='low'&&r.count>0&&r.count<r.totalUsers/2)||(adminCoverageFilter==='incomplete'&&r.count<r.totalUsers)||(adminCoverageFilter==='complete'&&r.count>=r.totalUsers)||(adminCoverageFilter==='bonus'&&r.bonusJoker));return `<div class="adminCoverageFilters">${filters.map(x=>{let [k,l]=x.split(':');return `<button type="button" class="${adminCoverageFilter===k?'active':''}" onclick="adminCoverageFilter='${k}';drawProfile()">${l}</button>`}).join('')}</div>${filtered.map(r=>`<div class="card"><b>${cleanText(r.label)}</b><br><span class="muted">${r.dateFR} · ${matchStateTitleV9(r)} · ${r.ratio} · ⭐ ${r.jokers}${r.bonusJoker?' · Joker bonus':''}</span><br><br><b>Ont joué :</b><br><span class="small">${r.played.length?cleanText(r.played.join(', ')):'Personne'}</span><br><br><b>Manquent :</b><br><span class="small">${r.missing.length?cleanText(r.missing.join(', ')):'Personne'}</span>${r.details?.length?`<br><br><b>Détails :</b><br>${r.details.map(d=>`<span class="small">${cleanText(d.pseudo)} : ${d.score}${d.joker?' ⭐':''}</span>`).join('<br>')}`:''}</div>`).join('')||'<div class="card muted">Aucun match dans ce filtre.</div>'}`;}
+
+function adminResultInlineHtmlV9(){return `<div class="card"><b>Résultat + buteurs</b><br><br><select id="adminMatch" onchange="updateAdminScoreLabels();resetScorerRows()"></select><br><br><div class="grid2"><div><div class="adminLabel" id="adminScoreALabel">Score équipe A</div><input id="adminScoreA" type="number" min="0"></div><div><div class="adminLabel" id="adminScoreBLabel">Score équipe B</div><input id="adminScoreB" type="number" min="0"></div></div><div class="sec">Buteurs du match</div><div class="hint">Une ligne = un but. Utilise le type P pour pénalty, CSC pour contre son camp.</div><br><div id="scorerRows"></div><button class="btn btn2" onclick="addScorerRow()">+ Ajouter un but</button><br><br><button class="btn" onclick="adminSaveResult()">Valider résultat + calcul points</button><div id="adminMsg" class="small" style="margin-top:8px"></div></div>`;}
+function adminOddsInlineHtmlV9(){return `<div class="card"><b>Correction / ajout cotes</b><br><br><select id="oddsMatch" onchange="updateOddsLabels()"></select><br><br><div class="grid2"><div><div class="adminLabel" id="oddsALabel">Cote équipe A</div><input id="oddsA" type="number" step="0.01" min="1"></div><div><div class="adminLabel">Cote match nul</div><input id="oddsX" type="number" step="0.01" min="1"></div></div><br><div><div class="adminLabel" id="oddsBLabel">Cote équipe B</div><input id="oddsB" type="number" step="0.01" min="1"></div><br><button class="btn" onclick="adminSaveOdds()">Enregistrer les cotes</button><div id="oddsMsg" class="small" style="margin-top:8px"></div></div>`;}
+function adminAddMatchInlineHtmlV9(){return `<div class="card"><b>Ajout match</b><br><br><div class="grid2"><select id="addA"></select><select id="addB"></select></div><br><div class="grid2"><div><div class="adminLabel">Date</div><input id="addDate" type="date"></div><div><div class="adminLabel">Heure France</div><input id="addTime" type="time"></div></div><br><select id="addPhase"><option>32e de finale</option><option>16e de finale</option><option>Quart de finale</option><option>Demi-finale</option><option>Finale de bronze</option><option>Finale</option></select><br><br><div class="grid2"><input id="addDiff1" placeholder="Diffuseur 1"><input id="addDiff2" placeholder="Diffuseur 2"></div><br><div class="grid2"><input id="addCote1" type="number" step="0.01" min="1" placeholder="Cote équipe A"><input id="addCoteX" type="number" step="0.01" min="1" placeholder="Cote nul"></div><br><input id="addCote2" type="number" step="0.01" min="1" placeholder="Cote équipe B"><br><br><input id="addPlace" list="stadiumsDL" placeholder="Ville / stade"><br><br><button class="btn" onclick="adminAddMatch()">Ajouter le match</button><div id="addMsg" class="small" style="margin-top:8px"></div></div>`;}
+function adminInlineFillV9(){try{if(user?.isAdmin){fillAdminMatches();fillOddsMatches();fillBonusMatches();fillTeamSelects();ensureStadiumDatalist();updateAdminScoreLabels();updateOddsLabels();resetScorerRows();}}catch(e){}}
+function drawProfile(){
+  let s=classement?.classement?.find(x=>String(x.userId)===String(user.userId))||{};
+  let tabs=[['infos','Mes infos'],['pronos','Mes pronos'],['badges','Mes badges']]; if(user?.isAdmin)tabs.push(['suivi','Admin suivi'],['resultats','Résultats'],['cotes','Correction / ajout cote'],['addmatch','Ajout match'],['bonus','Admin joker bonus'],['coverage','Admin couverture pronos']);
+  let content='';
+  if(activeProfileSectionV8==='infos')content=profileStatsHtmlV8(s)+`<button class="btn btnDanger" onclick="logout()">Déconnexion</button>`;
+  else if(activeProfileSectionV8==='pronos')content=myPronosHtmlV8();
+  else if(activeProfileSectionV8==='badges')content=badgesHtmlV8(s);
+  else if(activeProfileSectionV8==='suivi')content=adminSummaryHtml();
+  else if(activeProfileSectionV8==='resultats')content=adminResultInlineHtmlV9();
+  else if(activeProfileSectionV8==='cotes')content=adminOddsInlineHtmlV9();
+  else if(activeProfileSectionV8==='addmatch')content=adminAddMatchInlineHtmlV9();
+  else if(activeProfileSectionV8==='bonus')content=adminBonusHtml();
+  else if(activeProfileSectionV8==='coverage')content=adminCoverageHtml();
+  document.getElementById('vProfile').innerHTML=`${profileHeaderV9(s)}<div class="profileUnifiedTabs">${tabs.map(t=>`<button class="${activeProfileSectionV8===t[0]?'active':''}" onclick="activeProfileSectionV8='${t[0]}';drawProfile()">${t[1]}</button>`).join('')}</div><div class="profilePanel">${content}</div>`;
+  setTimeout(adminInlineFillV9,0);
+}
+
+(function installV9Css(){
+  if(document.getElementById('stylePatchV9'))return;
+  let s=document.createElement('style');s.id='stylePatchV9';s.textContent=`
+    .matchHeaderClean{text-align:center}.metaClean{justify-content:center;text-align:center}.metaClean span{width:100%;line-height:1.45}.matchCardTitle{text-align:left;font-size:.72rem;font-weight:900;color:var(--gold);margin-bottom:7px;text-transform:uppercase;letter-spacing:.04em}.centeredLine{text-align:center}.bigTeams,.mtop{align-items:start}.bigTeams .team,.mtop .team{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}.bigTeams .flag,.mtop .flag{line-height:1.1}.bigTeams .name,.mtop .name{text-align:center;max-width:100%}.scoreEntryRow{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin:13px 0 8px}.scoreEntryBox input{text-align:center;font-weight:900;min-height:46px}.jokerMiddle{width:70px;min-height:54px;border:1px solid var(--bdr);border-radius:12px;background:#ffffff08;color:var(--txt);font-weight:900;font-size:.78rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px}.jokerMiddle input{width:auto;margin:0}.jokerMiddle span{font-size:1.2rem}.jokerMiddle small{font-size:.66rem;color:var(--muted);font-weight:900}.jokerBonusMiddle{color:var(--gold);font-size:.72rem}.pronoBottomHint{align-items:center}.profileHero{text-align:center}.profileBadgeLine{justify-content:center;margin-top:10px}.profileMiniFilters,.adminCoverageFilters{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px;padding:6px 0}.profileMiniFilters button,.adminCoverageFilters button{background:var(--card);border:1px solid var(--bdr);color:var(--muted);border-radius:99px;padding:7px 12px;font-weight:900;font-size:.68rem;white-space:nowrap}.profileMiniFilters button.active,.adminCoverageFilters button.active{background:var(--g2);color:#fff}.profileMiniFilters button.groupFilter{background:var(--group-bg);border-color:var(--group-border);color:var(--txt)}.profileMiniFilters button.groupFilter.active{background:var(--group-border);color:#fff}.adminBonusCard{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}.adminSmallBtn{width:auto;min-width:74px;padding:8px 10px;font-size:.72rem}.profileUnifiedTabs{top:50px}.pill.open,.pill.finishedP,.pill.lockedP{display:none!important}@media(max-width:520px){.bigPronoCard{padding:12px 10px}.bigTeams{grid-template-columns:1fr 54px 1fr;gap:6px}.scoreEntryRow{grid-template-columns:1fr 62px 1fr;gap:7px}.jokerMiddle{width:62px}.scoreEntryBox input{font-size:.78rem;padding:9px 5px}.metaClean{font-size:.66rem}.statTitleLine{align-items:flex-start}.oddsInline{font-size:.62rem}.adminBonusCard{grid-template-columns:1fr}.adminSmallBtn{justify-self:end}}
+  `;document.head.appendChild(s);
+})();
+
+window.addEventListener('load',()=>setTimeout(()=>{navEmojiV8();drawFilters();drawPronos();drawMatches();drawProfile();},80));
+/* FIN PATCH V9 FINAL */
+
 </script>
 
 <style>
@@ -252,6 +494,127 @@ function fillOddsMatches(){let list=matches;oddsMatch.innerHTML=list.map(m=>`<op
 function updateOddsLabels(){let m=currentOddsMatch();if(!m)return;oddsALabel.textContent='Cote '+mName(m,'A');oddsBLabel.textContent='Cote '+mName(m,'B');oddsA.value=m.cote1||'';oddsX.value=m.coteX||'';oddsB.value=m.cote2||'';}
 function adminSaveBonusJoker(on){api('adminSetBonusJoker',{userId:user.userId,matchId:bonusMatch.value,enabled:on}).then(d=>{bonusMsg.innerHTML=d.error?'<span class="ko">'+d.error+'</span>':'<span class="ok">'+(d.message||'Joker bonus mis à jour')+'</span>';loadAll();}).catch(e=>bonusMsg.innerHTML='<span class="ko">'+e.message+'</span>')}
 window.addEventListener('load',()=>setTimeout(()=>{prepareV7Layout();drawFilters();},0));
+
+
+
+/* PATCH V9 FINAL - corrections UI/UX demandées après test mobile */
+const PATCH_V9_FINAL = true;
+let activeProfilePronoFilterV9 = 'all';
+
+function filterItemsForV8(kind){
+  // V9 : plus de filtres Ouverts / Terminés. Pronos = uniquement matchs ouverts non joués, Matchs = historique complet.
+  return ['all:Tous','today:Aujourd\'hui','A:A','B:B','C:C','D:D','E:E','F:F','G:G','H:H','I:I','J:J','K:K','L:L','PF:Finales'];
+}
+function passFilter(m){
+  let today=new Date().toLocaleDateString('fr-FR');
+  if(currentFilter==='all')return true;
+  if(currentFilter==='today')return m.dateFR===today;
+  if(currentFilter==='PF')return !isPoolFilter(m.groupe);
+  return m.groupe===currentFilter;
+}
+function drawFilters(){drawFilterBarV8('filters','drawMatches','matches');drawFilterBarV8('pronosFilters','drawPronos','pronos');}
+
+function matchStateTitleV9(m){
+  if(m.status==='FINISHED')return 'Match terminé';
+  if(m.status==='LOCKED'||m.status==='CLOSED')return 'Match en cours';
+  return 'Match à venir';
+}
+function matchHeaderHtml(m,big){
+  let score=m.status==='FINISHED'?`${m.scoreA} - ${m.scoreB}`:'VS';
+  return `<div class="matchHeaderClean"><div class="${big?'bigTeams':'mtop'}"><div class="team"><div class="flag">${mFlag(m,'A')}</div><div class="name">${mName(m,'A')}</div>${m.status==='FINISHED'?goalsForSide(m,'A'):''}</div><div class="${big?'vsBig':'score'}">${score}</div><div class="team"><div class="flag">${mFlag(m,'B')}</div><div class="name">${mName(m,'B')}</div>${m.status==='FINISHED'?goalsForSide(m,'B'):''}</div></div><div class="meta metaClean"><span>${matchMetaV8(m)}</span></div></div>`;
+}
+
+function bigPronoCard(m,x,total){
+  let grouped=isPoolFilter(m.groupe);
+  let activeFilter=currentFilter==='all'?'Tous':(currentFilter==='today'?"Aujourd'hui":(currentFilter==='PF'?'Finales':('Poule '+currentFilter)));
+  let jokerMid=isBonusMatch(m.id)
+    ? '<div class="jokerMiddle jokerBonusMiddle">⭐<br><span>Bonus actif</span></div>'
+    : `<label class="jokerMiddle"><input id="quickJoker" class="jokerMini" type="checkbox"><span>🃏</span><small>Joker</small></label>`;
+  return `<div class="card bigPronoCard${grouped?' grouped':''}" ${grouped?groupStyle(m.groupe):''}>${matchHeaderHtml(m,true)}${isBonusMatch(m.id)?'<div class="notice">⭐ Joker bonus activé : inutile d’utiliser ton joker personnel.</div>':''}<div class="scoreEntryRow"><div class="scoreEntryBox"><input id="quickScoreA" type="number" min="0" placeholder="${cleanText(mName(m,'A'))}"></div>${jokerMid}<div class="scoreEntryBox"><input id="quickScoreB" type="number" min="0" placeholder="${cleanText(mName(m,'B'))}"></div></div><div id="quickPronoErr" class="ko small"></div><br><button class="btn" onclick="submitPronoFromSwipe('${m.id}')">Valider mon pronostic</button>${statMirrorHtml(m)}${riskHtml(m)}<div class="pronoBottomHint"><span>Swiper pour changer de match</span><span>${x}/${total} · Filtre : ${activeFilter}</span></div></div>`;
+}
+
+function drawMatches(){
+  let list=matches.filter(passFilter).sort((a,b)=>(parseMatchDate(a)-parseMatchDate(b))||Number(a.id)-Number(b.id));
+  let box=document.getElementById('matchList');if(!box)return;
+  box.innerHTML=list.length?list.map(m=>{let p=pronos[m.id], grouped=isPoolFilter(m.groupe), canPlay=m.status==='OPEN'&&!p;return `<div class="match${grouped?' grouped':''}${m.status==='FINISHED'?' finished':''}${p?' predicted':''}" ${grouped?groupStyle(m.groupe):''}><div class="matchCardTitle">${matchStateTitleV9(m)}</div>${matchHeaderHtml(m,false)}${isBonusMatch(m.id)?'<div class="countdown bonusPill centeredLine">⭐ Joker bonus : points doublés sur ce match</div>':''}${timeLeftText(m)?`<div class="countdown centeredLine">⏳ ${timeLeftText(m)}</div>`:''}${statMirrorHtml(m)}${riskHtml(m)}${p?`<div class="prono"><span>✅ Ton prono : ${p.scoreA}-${p.scoreB}${p.joker?' ⭐':''}${p.counterCurrent?' 😈':''}${p.riskBonus?' 🎁 +'+p.riskBonus:''}</span><b>${p.points!==''&&p.points!=null?p.points+' pts':'En attente'}</b></div>`:''}${canPlay?`<button class="btn" onclick="goPronosMatch('${m.id}')">Pronostiquer ce match</button>`:''}${pronosVisibleHtml(m)}</div>`}).join(''):'<div class="card muted">Aucun match ici.</div>';
+}
+
+function extraFunRecordsV8(){
+  let arr=classement?.classement||[];if(!arr.length)return [];
+  let ready=arr.some(s=>(s.exact||0)+(s.good||0)+(s.wrong||0)>0 || (s.total||0)>0);
+  if(!ready)return [{key:'wait',label:'Records fun',value:'Pas encore assez de résultats',detail:'Les trophées se rempliront après les premiers matchs terminés.'}];
+  let max=(prop)=>arr.slice().sort((a,b)=>(b[prop]||0)-(a[prop]||0))[0]||{};
+  return [
+    {key:'target',label:'Le sniper',value:max('exact').pseudo||'—',detail:(max('exact').exact||0)+' score(s) exact(s)'},
+    {key:'rate',label:'Le voyant',value:max('rate').pseudo||'—',detail:(max('rate').rate||0)+' % de réussite'},
+    {key:'devil',label:'Le kamikaze',value:max('counterCurrentTry').pseudo||max('riskBonus').pseudo||'—',detail:(max('counterCurrentTry').counterCurrentTry||0)+' pari(s) outsider tenté(s)'},
+    {key:'rebel',label:'Le rebelle rentable',value:max('riskBonus').pseudo||'—',detail:'+'+(max('riskBonus').riskBonus||0)+' point(s) bonus risque'},
+    {key:'drawExpert',label:'Le banquier du nul',value:max('drawFound').pseudo||'—',detail:(max('drawFound').drawFound||0)+' nul(s) trouvé(s)'},
+    {key:'boom',label:'Le bourrin offensif',value:max('avgGoals').pseudo||'—',detail:(max('avgGoals').avgGoals||0)+' but(s) prévus / match'},
+    {key:'blackcat',label:'Le maudit',value:max('jokerLost').pseudo||max('wrong').pseudo||'—',detail:(max('jokerLost').jokerLost||0)+' joker(s) cramé(s) à vide'},
+    {key:'optimist',label:'L’optimiste',value:max('goalsPredicted').pseudo||max('avgGoals').pseudo||'—',detail:(max('goalsPredicted').goalsPredicted||0)+' but(s) pronostiqué(s)'},
+    {key:'ice',label:'Le climatisé',value:max('wrong').pseudo||'—',detail:(max('wrong').wrong||0)+' échec(s), mais la tête haute'}
+  ];
+}
+function drawRank(){
+  let f=classement?.fun||{};
+  let all=[...Object.values(f),...extraFunRecordsV8()].filter(x=>!/^Le rebelle$/i.test(String(x.label||'')));
+  let seen={};all=all.filter(x=>{let k=(x.label||'');if(seen[k])return false;seen[k]=true;return true;});
+  funBox.innerHTML=all.map(x=>`<div class="card"><div class="em">${FUN_ICONS_V7[x.key]||FUN_ICONS[x.key]||'🏅'}</div><b>${cleanText(x.value)}</b><div class="muted">${cleanText(x.label)}<br>${cleanText(x.detail)}</div></div>`).join('');
+  rankList.innerHTML=(classement?.classement||[]).map(s=>{let pseudo=String(cleanText(s.pseudo)).replace(/'/g,'&#39;');let risk=s.counterCurrentSuccess?`<br>😈 ${s.counterCurrentSuccess} contre-courant réussi(s) · 🎁 +${s.riskBonus||0}`:'';return `<div class="card"><div class="rank rankClickable" onclick="toggleRankHistory('${s.userId}','${pseudo}')"><div class="pos">${s.rank<=3?['🥇','🥈','🥉'][s.rank-1]:s.rank}</div>${trendHtml(s)}<div class="nm">${cleanText(s.pseudo)}<div class="muted">${s.exact} exacts · ${s.good} bons · ${s.rate}% réussite<br>⭐ ${s.jokers||0}/3 jokers utilisés · ⚽ ${cleanText(s.buteur||'—')}${risk}</div></div><div class="pts">${s.total}</div></div><div id="rankChart_${s.userId}" class="rankChart hide"><canvas id="rankCanvas_${s.userId}"></canvas></div></div>`}).join('');
+  drawRankScorers();showRankSection(activeRankSection);
+}
+
+function profilePronoFilterBarV9(){
+  let items=['all:Tous','today:Aujourd\'hui','A:A','B:B','C:C','D:D','E:E','F:F','G:G','H:H','I:I','J:J','K:K','L:L','PF:Finales'];
+  return `<div class="profileMiniFilters">${items.map(x=>{let [k,l]=x.split(':');let pool=isPoolFilter(k);return `<button class="${activeProfilePronoFilterV9===k?'active':''}${pool?' groupFilter':''}" ${pool?groupStyle(k):''} onclick="activeProfilePronoFilterV9='${k}';drawProfile()">${l}</button>`}).join('')}</div>`;
+}
+function passProfilePronoFilterV9(m){
+  let today=new Date().toLocaleDateString('fr-FR');
+  if(activeProfilePronoFilterV9==='all')return true;
+  if(activeProfilePronoFilterV9==='today')return m.dateFR===today;
+  if(activeProfilePronoFilterV9==='PF')return !isPoolFilter(m.groupe);
+  return m.groupe===activeProfilePronoFilterV9;
+}
+function profileBadgesListV9(s){let badges=[];if((s.exact||0)>0)badges.push('🎯 Score exact');if((s.riskBonus||0)>0)badges.push('😈 Rebelle rentable');if((s.jokerPts||0)>0)badges.push('⭐ Joker rentable');if((s.predictions||0)>=10)badges.push('📌 Assidu');if((s.drawFound||0)>0)badges.push('🤝 Banquier du nul');return badges;}
+function profileHeaderV9(s){let badges=profileBadgesListV9(s);return `<div class="card profileHero"><div style="font-size:2.2rem">👤</div><h2>${cleanText(user.pseudo)}</h2><div class="muted">${3-(s.jokers||user.jokersUsed||0)} joker(s) restant(s)</div><div class="badgeLine profileBadgeLine">${badges.length?badges.map(b=>`<span class="badgeMini">${b}</span>`).join(''):'<span class="muted">Badges à venir avec les premiers résultats.</span>'}</div></div>`;}
+function myPronosHtmlV8(){let rows=matches.filter(m=>pronos[m.id]).filter(passProfilePronoFilterV9).sort(profileSort);return profilePronoFilterBarV9()+(rows.length?rows.map(m=>{let p=pronos[m.id];let grouped=isPoolFilter(m.groupe);return `<div class="card profilePronostic${grouped?' grouped':''}" ${grouped?groupStyle(m.groupe):''}><b>${mFlag(m,'A')} ${mName(m,'A')} - ${mName(m,'B')} ${mFlag(m,'B')}</b><br><span class="muted">${m.groupe?'Groupe '+m.groupe:'Phase finale'} · ${m.dateFR} · ton prono : ${p.scoreA}-${p.scoreB}${p.joker?' ⭐':''}${p.counterCurrent?' 😈':''}${p.riskBonus?' · 🎁 +'+p.riskBonus:''}${p.points!==''&&p.points!=null?' · '+p.points+' pt(s)':''}</span></div>`}).join(''):'<div class="card muted">Aucun pronostic dans ce filtre.</div>');}
+function badgesHtmlV8(s){let badges=profileBadgesListV9(s);return `<div class="card"><div class="badgeLine">${badges.length?badges.map(b=>`<span class="badgeMini">${b}</span>`).join(''):'<span class="muted">Les badges arrivent avec les premiers résultats.</span>'}</div></div>`;}
+
+function adminBonusHtml(){let rows=(adminCoverage?.rows||[]).filter(r=>r.status==='OPEN').sort((a,b)=>a.count-b.count);return rows.map(r=>`<div class="card adminBonusCard"><div><b>${cleanText(r.label)}</b><br><span class="muted">${r.dateFR} · ${r.ratio} · ⭐ ${r.jokers}${r.bonusJoker?' · Bonus actif':''}</span></div><button class="btn adminSmallBtn" onclick="quickBonus('${r.matchId}',true)">Activer</button></div>`).join('')||'<div class="card muted">Aucun match ouvert.</div>';}
+function adminCoverageHtml(){let rows=adminCoverage?.rows||[];let filters=['all:Tous','none:Aucun prono','low:Peu de pronos','incomplete:Incomplets','complete:Complets','bonus:Joker bonus actif'];let filtered=rows.filter(r=>adminCoverageFilter==='all'||(adminCoverageFilter==='none'&&r.count===0)||(adminCoverageFilter==='low'&&r.count>0&&r.count<r.totalUsers/2)||(adminCoverageFilter==='incomplete'&&r.count<r.totalUsers)||(adminCoverageFilter==='complete'&&r.count>=r.totalUsers)||(adminCoverageFilter==='bonus'&&r.bonusJoker));return `<div class="adminCoverageFilters">${filters.map(x=>{let [k,l]=x.split(':');return `<button type="button" class="${adminCoverageFilter===k?'active':''}" onclick="adminCoverageFilter='${k}';drawProfile()">${l}</button>`}).join('')}</div>${filtered.map(r=>`<div class="card"><b>${cleanText(r.label)}</b><br><span class="muted">${r.dateFR} · ${matchStateTitleV9(r)} · ${r.ratio} · ⭐ ${r.jokers}${r.bonusJoker?' · Joker bonus':''}</span><br><br><b>Ont joué :</b><br><span class="small">${r.played.length?cleanText(r.played.join(', ')):'Personne'}</span><br><br><b>Manquent :</b><br><span class="small">${r.missing.length?cleanText(r.missing.join(', ')):'Personne'}</span>${r.details?.length?`<br><br><b>Détails :</b><br>${r.details.map(d=>`<span class="small">${cleanText(d.pseudo)} : ${d.score}${d.joker?' ⭐':''}</span>`).join('<br>')}`:''}</div>`).join('')||'<div class="card muted">Aucun match dans ce filtre.</div>'}`;}
+
+function adminResultInlineHtmlV9(){return `<div class="card"><b>Résultat + buteurs</b><br><br><select id="adminMatch" onchange="updateAdminScoreLabels();resetScorerRows()"></select><br><br><div class="grid2"><div><div class="adminLabel" id="adminScoreALabel">Score équipe A</div><input id="adminScoreA" type="number" min="0"></div><div><div class="adminLabel" id="adminScoreBLabel">Score équipe B</div><input id="adminScoreB" type="number" min="0"></div></div><div class="sec">Buteurs du match</div><div class="hint">Une ligne = un but. Utilise le type P pour pénalty, CSC pour contre son camp.</div><br><div id="scorerRows"></div><button class="btn btn2" onclick="addScorerRow()">+ Ajouter un but</button><br><br><button class="btn" onclick="adminSaveResult()">Valider résultat + calcul points</button><div id="adminMsg" class="small" style="margin-top:8px"></div></div>`;}
+function adminOddsInlineHtmlV9(){return `<div class="card"><b>Correction / ajout cotes</b><br><br><select id="oddsMatch" onchange="updateOddsLabels()"></select><br><br><div class="grid2"><div><div class="adminLabel" id="oddsALabel">Cote équipe A</div><input id="oddsA" type="number" step="0.01" min="1"></div><div><div class="adminLabel">Cote match nul</div><input id="oddsX" type="number" step="0.01" min="1"></div></div><br><div><div class="adminLabel" id="oddsBLabel">Cote équipe B</div><input id="oddsB" type="number" step="0.01" min="1"></div><br><button class="btn" onclick="adminSaveOdds()">Enregistrer les cotes</button><div id="oddsMsg" class="small" style="margin-top:8px"></div></div>`;}
+function adminAddMatchInlineHtmlV9(){return `<div class="card"><b>Ajout match</b><br><br><div class="grid2"><select id="addA"></select><select id="addB"></select></div><br><div class="grid2"><div><div class="adminLabel">Date</div><input id="addDate" type="date"></div><div><div class="adminLabel">Heure France</div><input id="addTime" type="time"></div></div><br><select id="addPhase"><option>32e de finale</option><option>16e de finale</option><option>Quart de finale</option><option>Demi-finale</option><option>Finale de bronze</option><option>Finale</option></select><br><br><div class="grid2"><input id="addDiff1" placeholder="Diffuseur 1"><input id="addDiff2" placeholder="Diffuseur 2"></div><br><div class="grid2"><input id="addCote1" type="number" step="0.01" min="1" placeholder="Cote équipe A"><input id="addCoteX" type="number" step="0.01" min="1" placeholder="Cote nul"></div><br><input id="addCote2" type="number" step="0.01" min="1" placeholder="Cote équipe B"><br><br><input id="addPlace" list="stadiumsDL" placeholder="Ville / stade"><br><br><button class="btn" onclick="adminAddMatch()">Ajouter le match</button><div id="addMsg" class="small" style="margin-top:8px"></div></div>`;}
+function adminInlineFillV9(){try{if(user?.isAdmin){fillAdminMatches();fillOddsMatches();fillBonusMatches();fillTeamSelects();ensureStadiumDatalist();updateAdminScoreLabels();updateOddsLabels();resetScorerRows();}}catch(e){}}
+function drawProfile(){
+  let s=classement?.classement?.find(x=>String(x.userId)===String(user.userId))||{};
+  let tabs=[['infos','Mes infos'],['pronos','Mes pronos'],['badges','Mes badges']]; if(user?.isAdmin)tabs.push(['suivi','Admin suivi'],['resultats','Résultats'],['cotes','Correction / ajout cote'],['addmatch','Ajout match'],['bonus','Admin joker bonus'],['coverage','Admin couverture pronos']);
+  let content='';
+  if(activeProfileSectionV8==='infos')content=profileStatsHtmlV8(s)+`<button class="btn btnDanger" onclick="logout()">Déconnexion</button>`;
+  else if(activeProfileSectionV8==='pronos')content=myPronosHtmlV8();
+  else if(activeProfileSectionV8==='badges')content=badgesHtmlV8(s);
+  else if(activeProfileSectionV8==='suivi')content=adminSummaryHtml();
+  else if(activeProfileSectionV8==='resultats')content=adminResultInlineHtmlV9();
+  else if(activeProfileSectionV8==='cotes')content=adminOddsInlineHtmlV9();
+  else if(activeProfileSectionV8==='addmatch')content=adminAddMatchInlineHtmlV9();
+  else if(activeProfileSectionV8==='bonus')content=adminBonusHtml();
+  else if(activeProfileSectionV8==='coverage')content=adminCoverageHtml();
+  document.getElementById('vProfile').innerHTML=`${profileHeaderV9(s)}<div class="profileUnifiedTabs">${tabs.map(t=>`<button class="${activeProfileSectionV8===t[0]?'active':''}" onclick="activeProfileSectionV8='${t[0]}';drawProfile()">${t[1]}</button>`).join('')}</div><div class="profilePanel">${content}</div>`;
+  setTimeout(adminInlineFillV9,0);
+}
+
+(function installV9Css(){
+  if(document.getElementById('stylePatchV9'))return;
+  let s=document.createElement('style');s.id='stylePatchV9';s.textContent=`
+    .matchHeaderClean{text-align:center}.metaClean{justify-content:center;text-align:center}.metaClean span{width:100%;line-height:1.45}.matchCardTitle{text-align:left;font-size:.72rem;font-weight:900;color:var(--gold);margin-bottom:7px;text-transform:uppercase;letter-spacing:.04em}.centeredLine{text-align:center}.bigTeams,.mtop{align-items:start}.bigTeams .team,.mtop .team{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}.bigTeams .flag,.mtop .flag{line-height:1.1}.bigTeams .name,.mtop .name{text-align:center;max-width:100%}.scoreEntryRow{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin:13px 0 8px}.scoreEntryBox input{text-align:center;font-weight:900;min-height:46px}.jokerMiddle{width:70px;min-height:54px;border:1px solid var(--bdr);border-radius:12px;background:#ffffff08;color:var(--txt);font-weight:900;font-size:.78rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px}.jokerMiddle input{width:auto;margin:0}.jokerMiddle span{font-size:1.2rem}.jokerMiddle small{font-size:.66rem;color:var(--muted);font-weight:900}.jokerBonusMiddle{color:var(--gold);font-size:.72rem}.pronoBottomHint{align-items:center}.profileHero{text-align:center}.profileBadgeLine{justify-content:center;margin-top:10px}.profileMiniFilters,.adminCoverageFilters{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px;padding:6px 0}.profileMiniFilters button,.adminCoverageFilters button{background:var(--card);border:1px solid var(--bdr);color:var(--muted);border-radius:99px;padding:7px 12px;font-weight:900;font-size:.68rem;white-space:nowrap}.profileMiniFilters button.active,.adminCoverageFilters button.active{background:var(--g2);color:#fff}.profileMiniFilters button.groupFilter{background:var(--group-bg);border-color:var(--group-border);color:var(--txt)}.profileMiniFilters button.groupFilter.active{background:var(--group-border);color:#fff}.adminBonusCard{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}.adminSmallBtn{width:auto;min-width:74px;padding:8px 10px;font-size:.72rem}.profileUnifiedTabs{top:50px}.pill.open,.pill.finishedP,.pill.lockedP{display:none!important}@media(max-width:520px){.bigPronoCard{padding:12px 10px}.bigTeams{grid-template-columns:1fr 54px 1fr;gap:6px}.scoreEntryRow{grid-template-columns:1fr 62px 1fr;gap:7px}.jokerMiddle{width:62px}.scoreEntryBox input{font-size:.78rem;padding:9px 5px}.metaClean{font-size:.66rem}.statTitleLine{align-items:flex-start}.oddsInline{font-size:.62rem}.adminBonusCard{grid-template-columns:1fr}.adminSmallBtn{justify-self:end}}
+  `;document.head.appendChild(s);
+})();
+
+window.addEventListener('load',()=>setTimeout(()=>{navEmojiV8();drawFilters();drawPronos();drawMatches();drawProfile();},80));
+/* FIN PATCH V9 FINAL */
+
 </script>
 
 <style id="patchV8Css">
@@ -401,6 +764,127 @@ function drawProfile(){
 function drawAdminProfilePanels(){return;}
 
 window.addEventListener('load',()=>setTimeout(()=>{navEmojiV8();drawHome();},50));
+
+
+
+/* PATCH V9 FINAL - corrections UI/UX demandées après test mobile */
+const PATCH_V9_FINAL = true;
+let activeProfilePronoFilterV9 = 'all';
+
+function filterItemsForV8(kind){
+  // V9 : plus de filtres Ouverts / Terminés. Pronos = uniquement matchs ouverts non joués, Matchs = historique complet.
+  return ['all:Tous','today:Aujourd\'hui','A:A','B:B','C:C','D:D','E:E','F:F','G:G','H:H','I:I','J:J','K:K','L:L','PF:Finales'];
+}
+function passFilter(m){
+  let today=new Date().toLocaleDateString('fr-FR');
+  if(currentFilter==='all')return true;
+  if(currentFilter==='today')return m.dateFR===today;
+  if(currentFilter==='PF')return !isPoolFilter(m.groupe);
+  return m.groupe===currentFilter;
+}
+function drawFilters(){drawFilterBarV8('filters','drawMatches','matches');drawFilterBarV8('pronosFilters','drawPronos','pronos');}
+
+function matchStateTitleV9(m){
+  if(m.status==='FINISHED')return 'Match terminé';
+  if(m.status==='LOCKED'||m.status==='CLOSED')return 'Match en cours';
+  return 'Match à venir';
+}
+function matchHeaderHtml(m,big){
+  let score=m.status==='FINISHED'?`${m.scoreA} - ${m.scoreB}`:'VS';
+  return `<div class="matchHeaderClean"><div class="${big?'bigTeams':'mtop'}"><div class="team"><div class="flag">${mFlag(m,'A')}</div><div class="name">${mName(m,'A')}</div>${m.status==='FINISHED'?goalsForSide(m,'A'):''}</div><div class="${big?'vsBig':'score'}">${score}</div><div class="team"><div class="flag">${mFlag(m,'B')}</div><div class="name">${mName(m,'B')}</div>${m.status==='FINISHED'?goalsForSide(m,'B'):''}</div></div><div class="meta metaClean"><span>${matchMetaV8(m)}</span></div></div>`;
+}
+
+function bigPronoCard(m,x,total){
+  let grouped=isPoolFilter(m.groupe);
+  let activeFilter=currentFilter==='all'?'Tous':(currentFilter==='today'?"Aujourd'hui":(currentFilter==='PF'?'Finales':('Poule '+currentFilter)));
+  let jokerMid=isBonusMatch(m.id)
+    ? '<div class="jokerMiddle jokerBonusMiddle">⭐<br><span>Bonus actif</span></div>'
+    : `<label class="jokerMiddle"><input id="quickJoker" class="jokerMini" type="checkbox"><span>🃏</span><small>Joker</small></label>`;
+  return `<div class="card bigPronoCard${grouped?' grouped':''}" ${grouped?groupStyle(m.groupe):''}>${matchHeaderHtml(m,true)}${isBonusMatch(m.id)?'<div class="notice">⭐ Joker bonus activé : inutile d’utiliser ton joker personnel.</div>':''}<div class="scoreEntryRow"><div class="scoreEntryBox"><input id="quickScoreA" type="number" min="0" placeholder="${cleanText(mName(m,'A'))}"></div>${jokerMid}<div class="scoreEntryBox"><input id="quickScoreB" type="number" min="0" placeholder="${cleanText(mName(m,'B'))}"></div></div><div id="quickPronoErr" class="ko small"></div><br><button class="btn" onclick="submitPronoFromSwipe('${m.id}')">Valider mon pronostic</button>${statMirrorHtml(m)}${riskHtml(m)}<div class="pronoBottomHint"><span>Swiper pour changer de match</span><span>${x}/${total} · Filtre : ${activeFilter}</span></div></div>`;
+}
+
+function drawMatches(){
+  let list=matches.filter(passFilter).sort((a,b)=>(parseMatchDate(a)-parseMatchDate(b))||Number(a.id)-Number(b.id));
+  let box=document.getElementById('matchList');if(!box)return;
+  box.innerHTML=list.length?list.map(m=>{let p=pronos[m.id], grouped=isPoolFilter(m.groupe), canPlay=m.status==='OPEN'&&!p;return `<div class="match${grouped?' grouped':''}${m.status==='FINISHED'?' finished':''}${p?' predicted':''}" ${grouped?groupStyle(m.groupe):''}><div class="matchCardTitle">${matchStateTitleV9(m)}</div>${matchHeaderHtml(m,false)}${isBonusMatch(m.id)?'<div class="countdown bonusPill centeredLine">⭐ Joker bonus : points doublés sur ce match</div>':''}${timeLeftText(m)?`<div class="countdown centeredLine">⏳ ${timeLeftText(m)}</div>`:''}${statMirrorHtml(m)}${riskHtml(m)}${p?`<div class="prono"><span>✅ Ton prono : ${p.scoreA}-${p.scoreB}${p.joker?' ⭐':''}${p.counterCurrent?' 😈':''}${p.riskBonus?' 🎁 +'+p.riskBonus:''}</span><b>${p.points!==''&&p.points!=null?p.points+' pts':'En attente'}</b></div>`:''}${canPlay?`<button class="btn" onclick="goPronosMatch('${m.id}')">Pronostiquer ce match</button>`:''}${pronosVisibleHtml(m)}</div>`}).join(''):'<div class="card muted">Aucun match ici.</div>';
+}
+
+function extraFunRecordsV8(){
+  let arr=classement?.classement||[];if(!arr.length)return [];
+  let ready=arr.some(s=>(s.exact||0)+(s.good||0)+(s.wrong||0)>0 || (s.total||0)>0);
+  if(!ready)return [{key:'wait',label:'Records fun',value:'Pas encore assez de résultats',detail:'Les trophées se rempliront après les premiers matchs terminés.'}];
+  let max=(prop)=>arr.slice().sort((a,b)=>(b[prop]||0)-(a[prop]||0))[0]||{};
+  return [
+    {key:'target',label:'Le sniper',value:max('exact').pseudo||'—',detail:(max('exact').exact||0)+' score(s) exact(s)'},
+    {key:'rate',label:'Le voyant',value:max('rate').pseudo||'—',detail:(max('rate').rate||0)+' % de réussite'},
+    {key:'devil',label:'Le kamikaze',value:max('counterCurrentTry').pseudo||max('riskBonus').pseudo||'—',detail:(max('counterCurrentTry').counterCurrentTry||0)+' pari(s) outsider tenté(s)'},
+    {key:'rebel',label:'Le rebelle rentable',value:max('riskBonus').pseudo||'—',detail:'+'+(max('riskBonus').riskBonus||0)+' point(s) bonus risque'},
+    {key:'drawExpert',label:'Le banquier du nul',value:max('drawFound').pseudo||'—',detail:(max('drawFound').drawFound||0)+' nul(s) trouvé(s)'},
+    {key:'boom',label:'Le bourrin offensif',value:max('avgGoals').pseudo||'—',detail:(max('avgGoals').avgGoals||0)+' but(s) prévus / match'},
+    {key:'blackcat',label:'Le maudit',value:max('jokerLost').pseudo||max('wrong').pseudo||'—',detail:(max('jokerLost').jokerLost||0)+' joker(s) cramé(s) à vide'},
+    {key:'optimist',label:'L’optimiste',value:max('goalsPredicted').pseudo||max('avgGoals').pseudo||'—',detail:(max('goalsPredicted').goalsPredicted||0)+' but(s) pronostiqué(s)'},
+    {key:'ice',label:'Le climatisé',value:max('wrong').pseudo||'—',detail:(max('wrong').wrong||0)+' échec(s), mais la tête haute'}
+  ];
+}
+function drawRank(){
+  let f=classement?.fun||{};
+  let all=[...Object.values(f),...extraFunRecordsV8()].filter(x=>!/^Le rebelle$/i.test(String(x.label||'')));
+  let seen={};all=all.filter(x=>{let k=(x.label||'');if(seen[k])return false;seen[k]=true;return true;});
+  funBox.innerHTML=all.map(x=>`<div class="card"><div class="em">${FUN_ICONS_V7[x.key]||FUN_ICONS[x.key]||'🏅'}</div><b>${cleanText(x.value)}</b><div class="muted">${cleanText(x.label)}<br>${cleanText(x.detail)}</div></div>`).join('');
+  rankList.innerHTML=(classement?.classement||[]).map(s=>{let pseudo=String(cleanText(s.pseudo)).replace(/'/g,'&#39;');let risk=s.counterCurrentSuccess?`<br>😈 ${s.counterCurrentSuccess} contre-courant réussi(s) · 🎁 +${s.riskBonus||0}`:'';return `<div class="card"><div class="rank rankClickable" onclick="toggleRankHistory('${s.userId}','${pseudo}')"><div class="pos">${s.rank<=3?['🥇','🥈','🥉'][s.rank-1]:s.rank}</div>${trendHtml(s)}<div class="nm">${cleanText(s.pseudo)}<div class="muted">${s.exact} exacts · ${s.good} bons · ${s.rate}% réussite<br>⭐ ${s.jokers||0}/3 jokers utilisés · ⚽ ${cleanText(s.buteur||'—')}${risk}</div></div><div class="pts">${s.total}</div></div><div id="rankChart_${s.userId}" class="rankChart hide"><canvas id="rankCanvas_${s.userId}"></canvas></div></div>`}).join('');
+  drawRankScorers();showRankSection(activeRankSection);
+}
+
+function profilePronoFilterBarV9(){
+  let items=['all:Tous','today:Aujourd\'hui','A:A','B:B','C:C','D:D','E:E','F:F','G:G','H:H','I:I','J:J','K:K','L:L','PF:Finales'];
+  return `<div class="profileMiniFilters">${items.map(x=>{let [k,l]=x.split(':');let pool=isPoolFilter(k);return `<button class="${activeProfilePronoFilterV9===k?'active':''}${pool?' groupFilter':''}" ${pool?groupStyle(k):''} onclick="activeProfilePronoFilterV9='${k}';drawProfile()">${l}</button>`}).join('')}</div>`;
+}
+function passProfilePronoFilterV9(m){
+  let today=new Date().toLocaleDateString('fr-FR');
+  if(activeProfilePronoFilterV9==='all')return true;
+  if(activeProfilePronoFilterV9==='today')return m.dateFR===today;
+  if(activeProfilePronoFilterV9==='PF')return !isPoolFilter(m.groupe);
+  return m.groupe===activeProfilePronoFilterV9;
+}
+function profileBadgesListV9(s){let badges=[];if((s.exact||0)>0)badges.push('🎯 Score exact');if((s.riskBonus||0)>0)badges.push('😈 Rebelle rentable');if((s.jokerPts||0)>0)badges.push('⭐ Joker rentable');if((s.predictions||0)>=10)badges.push('📌 Assidu');if((s.drawFound||0)>0)badges.push('🤝 Banquier du nul');return badges;}
+function profileHeaderV9(s){let badges=profileBadgesListV9(s);return `<div class="card profileHero"><div style="font-size:2.2rem">👤</div><h2>${cleanText(user.pseudo)}</h2><div class="muted">${3-(s.jokers||user.jokersUsed||0)} joker(s) restant(s)</div><div class="badgeLine profileBadgeLine">${badges.length?badges.map(b=>`<span class="badgeMini">${b}</span>`).join(''):'<span class="muted">Badges à venir avec les premiers résultats.</span>'}</div></div>`;}
+function myPronosHtmlV8(){let rows=matches.filter(m=>pronos[m.id]).filter(passProfilePronoFilterV9).sort(profileSort);return profilePronoFilterBarV9()+(rows.length?rows.map(m=>{let p=pronos[m.id];let grouped=isPoolFilter(m.groupe);return `<div class="card profilePronostic${grouped?' grouped':''}" ${grouped?groupStyle(m.groupe):''}><b>${mFlag(m,'A')} ${mName(m,'A')} - ${mName(m,'B')} ${mFlag(m,'B')}</b><br><span class="muted">${m.groupe?'Groupe '+m.groupe:'Phase finale'} · ${m.dateFR} · ton prono : ${p.scoreA}-${p.scoreB}${p.joker?' ⭐':''}${p.counterCurrent?' 😈':''}${p.riskBonus?' · 🎁 +'+p.riskBonus:''}${p.points!==''&&p.points!=null?' · '+p.points+' pt(s)':''}</span></div>`}).join(''):'<div class="card muted">Aucun pronostic dans ce filtre.</div>');}
+function badgesHtmlV8(s){let badges=profileBadgesListV9(s);return `<div class="card"><div class="badgeLine">${badges.length?badges.map(b=>`<span class="badgeMini">${b}</span>`).join(''):'<span class="muted">Les badges arrivent avec les premiers résultats.</span>'}</div></div>`;}
+
+function adminBonusHtml(){let rows=(adminCoverage?.rows||[]).filter(r=>r.status==='OPEN').sort((a,b)=>a.count-b.count);return rows.map(r=>`<div class="card adminBonusCard"><div><b>${cleanText(r.label)}</b><br><span class="muted">${r.dateFR} · ${r.ratio} · ⭐ ${r.jokers}${r.bonusJoker?' · Bonus actif':''}</span></div><button class="btn adminSmallBtn" onclick="quickBonus('${r.matchId}',true)">Activer</button></div>`).join('')||'<div class="card muted">Aucun match ouvert.</div>';}
+function adminCoverageHtml(){let rows=adminCoverage?.rows||[];let filters=['all:Tous','none:Aucun prono','low:Peu de pronos','incomplete:Incomplets','complete:Complets','bonus:Joker bonus actif'];let filtered=rows.filter(r=>adminCoverageFilter==='all'||(adminCoverageFilter==='none'&&r.count===0)||(adminCoverageFilter==='low'&&r.count>0&&r.count<r.totalUsers/2)||(adminCoverageFilter==='incomplete'&&r.count<r.totalUsers)||(adminCoverageFilter==='complete'&&r.count>=r.totalUsers)||(adminCoverageFilter==='bonus'&&r.bonusJoker));return `<div class="adminCoverageFilters">${filters.map(x=>{let [k,l]=x.split(':');return `<button type="button" class="${adminCoverageFilter===k?'active':''}" onclick="adminCoverageFilter='${k}';drawProfile()">${l}</button>`}).join('')}</div>${filtered.map(r=>`<div class="card"><b>${cleanText(r.label)}</b><br><span class="muted">${r.dateFR} · ${matchStateTitleV9(r)} · ${r.ratio} · ⭐ ${r.jokers}${r.bonusJoker?' · Joker bonus':''}</span><br><br><b>Ont joué :</b><br><span class="small">${r.played.length?cleanText(r.played.join(', ')):'Personne'}</span><br><br><b>Manquent :</b><br><span class="small">${r.missing.length?cleanText(r.missing.join(', ')):'Personne'}</span>${r.details?.length?`<br><br><b>Détails :</b><br>${r.details.map(d=>`<span class="small">${cleanText(d.pseudo)} : ${d.score}${d.joker?' ⭐':''}</span>`).join('<br>')}`:''}</div>`).join('')||'<div class="card muted">Aucun match dans ce filtre.</div>'}`;}
+
+function adminResultInlineHtmlV9(){return `<div class="card"><b>Résultat + buteurs</b><br><br><select id="adminMatch" onchange="updateAdminScoreLabels();resetScorerRows()"></select><br><br><div class="grid2"><div><div class="adminLabel" id="adminScoreALabel">Score équipe A</div><input id="adminScoreA" type="number" min="0"></div><div><div class="adminLabel" id="adminScoreBLabel">Score équipe B</div><input id="adminScoreB" type="number" min="0"></div></div><div class="sec">Buteurs du match</div><div class="hint">Une ligne = un but. Utilise le type P pour pénalty, CSC pour contre son camp.</div><br><div id="scorerRows"></div><button class="btn btn2" onclick="addScorerRow()">+ Ajouter un but</button><br><br><button class="btn" onclick="adminSaveResult()">Valider résultat + calcul points</button><div id="adminMsg" class="small" style="margin-top:8px"></div></div>`;}
+function adminOddsInlineHtmlV9(){return `<div class="card"><b>Correction / ajout cotes</b><br><br><select id="oddsMatch" onchange="updateOddsLabels()"></select><br><br><div class="grid2"><div><div class="adminLabel" id="oddsALabel">Cote équipe A</div><input id="oddsA" type="number" step="0.01" min="1"></div><div><div class="adminLabel">Cote match nul</div><input id="oddsX" type="number" step="0.01" min="1"></div></div><br><div><div class="adminLabel" id="oddsBLabel">Cote équipe B</div><input id="oddsB" type="number" step="0.01" min="1"></div><br><button class="btn" onclick="adminSaveOdds()">Enregistrer les cotes</button><div id="oddsMsg" class="small" style="margin-top:8px"></div></div>`;}
+function adminAddMatchInlineHtmlV9(){return `<div class="card"><b>Ajout match</b><br><br><div class="grid2"><select id="addA"></select><select id="addB"></select></div><br><div class="grid2"><div><div class="adminLabel">Date</div><input id="addDate" type="date"></div><div><div class="adminLabel">Heure France</div><input id="addTime" type="time"></div></div><br><select id="addPhase"><option>32e de finale</option><option>16e de finale</option><option>Quart de finale</option><option>Demi-finale</option><option>Finale de bronze</option><option>Finale</option></select><br><br><div class="grid2"><input id="addDiff1" placeholder="Diffuseur 1"><input id="addDiff2" placeholder="Diffuseur 2"></div><br><div class="grid2"><input id="addCote1" type="number" step="0.01" min="1" placeholder="Cote équipe A"><input id="addCoteX" type="number" step="0.01" min="1" placeholder="Cote nul"></div><br><input id="addCote2" type="number" step="0.01" min="1" placeholder="Cote équipe B"><br><br><input id="addPlace" list="stadiumsDL" placeholder="Ville / stade"><br><br><button class="btn" onclick="adminAddMatch()">Ajouter le match</button><div id="addMsg" class="small" style="margin-top:8px"></div></div>`;}
+function adminInlineFillV9(){try{if(user?.isAdmin){fillAdminMatches();fillOddsMatches();fillBonusMatches();fillTeamSelects();ensureStadiumDatalist();updateAdminScoreLabels();updateOddsLabels();resetScorerRows();}}catch(e){}}
+function drawProfile(){
+  let s=classement?.classement?.find(x=>String(x.userId)===String(user.userId))||{};
+  let tabs=[['infos','Mes infos'],['pronos','Mes pronos'],['badges','Mes badges']]; if(user?.isAdmin)tabs.push(['suivi','Admin suivi'],['resultats','Résultats'],['cotes','Correction / ajout cote'],['addmatch','Ajout match'],['bonus','Admin joker bonus'],['coverage','Admin couverture pronos']);
+  let content='';
+  if(activeProfileSectionV8==='infos')content=profileStatsHtmlV8(s)+`<button class="btn btnDanger" onclick="logout()">Déconnexion</button>`;
+  else if(activeProfileSectionV8==='pronos')content=myPronosHtmlV8();
+  else if(activeProfileSectionV8==='badges')content=badgesHtmlV8(s);
+  else if(activeProfileSectionV8==='suivi')content=adminSummaryHtml();
+  else if(activeProfileSectionV8==='resultats')content=adminResultInlineHtmlV9();
+  else if(activeProfileSectionV8==='cotes')content=adminOddsInlineHtmlV9();
+  else if(activeProfileSectionV8==='addmatch')content=adminAddMatchInlineHtmlV9();
+  else if(activeProfileSectionV8==='bonus')content=adminBonusHtml();
+  else if(activeProfileSectionV8==='coverage')content=adminCoverageHtml();
+  document.getElementById('vProfile').innerHTML=`${profileHeaderV9(s)}<div class="profileUnifiedTabs">${tabs.map(t=>`<button class="${activeProfileSectionV8===t[0]?'active':''}" onclick="activeProfileSectionV8='${t[0]}';drawProfile()">${t[1]}</button>`).join('')}</div><div class="profilePanel">${content}</div>`;
+  setTimeout(adminInlineFillV9,0);
+}
+
+(function installV9Css(){
+  if(document.getElementById('stylePatchV9'))return;
+  let s=document.createElement('style');s.id='stylePatchV9';s.textContent=`
+    .matchHeaderClean{text-align:center}.metaClean{justify-content:center;text-align:center}.metaClean span{width:100%;line-height:1.45}.matchCardTitle{text-align:left;font-size:.72rem;font-weight:900;color:var(--gold);margin-bottom:7px;text-transform:uppercase;letter-spacing:.04em}.centeredLine{text-align:center}.bigTeams,.mtop{align-items:start}.bigTeams .team,.mtop .team{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}.bigTeams .flag,.mtop .flag{line-height:1.1}.bigTeams .name,.mtop .name{text-align:center;max-width:100%}.scoreEntryRow{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin:13px 0 8px}.scoreEntryBox input{text-align:center;font-weight:900;min-height:46px}.jokerMiddle{width:70px;min-height:54px;border:1px solid var(--bdr);border-radius:12px;background:#ffffff08;color:var(--txt);font-weight:900;font-size:.78rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px}.jokerMiddle input{width:auto;margin:0}.jokerMiddle span{font-size:1.2rem}.jokerMiddle small{font-size:.66rem;color:var(--muted);font-weight:900}.jokerBonusMiddle{color:var(--gold);font-size:.72rem}.pronoBottomHint{align-items:center}.profileHero{text-align:center}.profileBadgeLine{justify-content:center;margin-top:10px}.profileMiniFilters,.adminCoverageFilters{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px;padding:6px 0}.profileMiniFilters button,.adminCoverageFilters button{background:var(--card);border:1px solid var(--bdr);color:var(--muted);border-radius:99px;padding:7px 12px;font-weight:900;font-size:.68rem;white-space:nowrap}.profileMiniFilters button.active,.adminCoverageFilters button.active{background:var(--g2);color:#fff}.profileMiniFilters button.groupFilter{background:var(--group-bg);border-color:var(--group-border);color:var(--txt)}.profileMiniFilters button.groupFilter.active{background:var(--group-border);color:#fff}.adminBonusCard{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}.adminSmallBtn{width:auto;min-width:74px;padding:8px 10px;font-size:.72rem}.profileUnifiedTabs{top:50px}.pill.open,.pill.finishedP,.pill.lockedP{display:none!important}@media(max-width:520px){.bigPronoCard{padding:12px 10px}.bigTeams{grid-template-columns:1fr 54px 1fr;gap:6px}.scoreEntryRow{grid-template-columns:1fr 62px 1fr;gap:7px}.jokerMiddle{width:62px}.scoreEntryBox input{font-size:.78rem;padding:9px 5px}.metaClean{font-size:.66rem}.statTitleLine{align-items:flex-start}.oddsInline{font-size:.62rem}.adminBonusCard{grid-template-columns:1fr}.adminSmallBtn{justify-self:end}}
+  `;document.head.appendChild(s);
+})();
+
+window.addEventListener('load',()=>setTimeout(()=>{navEmojiV8();drawFilters();drawPronos();drawMatches();drawProfile();},80));
+/* FIN PATCH V9 FINAL */
+
 </script>
 
 </body>
