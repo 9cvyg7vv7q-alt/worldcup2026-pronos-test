@@ -1,5 +1,7 @@
 <!-- PATCH V10 FINAL - fichier prêt à l’emploi -->
+
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -165,6 +167,7 @@ window.addEventListener("load",()=>{let saved=localStorage.getItem("cdmUser");if
 /* PATCH v7 - Pronos swipe / Matchs / risques / admin mobile */
 .pronosSticky,.matchSelectWrap{position:sticky;top:50px;z-index:6;background:var(--bg);margin-left:-12px;margin-right:-12px;padding:8px 12px;box-shadow:0 8px 18px #0006}.matchSelectWrap{top:94px;padding-top:0}.bigPronoCard{min-height:calc(100vh - 230px);display:flex;flex-direction:column;justify-content:space-between}.bigTeams{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin:12px 0}.bigTeams .flag{font-size:2.3rem}.bigTeams .name{font-size:.95rem;white-space:normal}.vsBig{font-size:1.2rem;font-weight:900;color:var(--gold)}.swipeNav{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.progressProno{text-align:center;color:var(--muted);font-weight:900;font-size:.78rem;margin-top:10px}.statBlock{margin-top:9px;border:1px solid #ffffff12;border-radius:12px;padding:10px;background:#ffffff05}.statTitle{font-size:.68rem;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px}.hrow{display:grid;grid-template-columns:74px 1fr 42px;gap:7px;align-items:center;font-size:.72rem;margin:5px 0}.hrow.right{grid-template-columns:42px 1fr 74px}.hbar{height:8px;background:#ffffff14;border-radius:99px;overflow:hidden}.hbar>span{display:block;height:100%;background:var(--g2);border-radius:99px}.hrow.right .hbar>span{margin-left:auto;background:var(--gold)}.riskPill{display:inline-block;border-radius:999px;border:1px solid #ff980055;background:#ff980018;color:#ffcc80;font-size:.68rem;font-weight:900;padding:5px 8px;margin:4px 4px 0 0}.devilPill{border-color:#d066ff66;background:#d066ff18;color:#efc5ff}.pronoGroups{display:flex;flex-direction:column;gap:7px;margin-top:8px}.pronoGroup{border:1px solid #ffffff12;border-radius:12px;padding:9px;background:#ffffff05}.adminSubnav{position:sticky;top:50px;z-index:5;background:var(--bg);margin-left:-12px;margin-right:-12px;padding:8px 12px 7px;display:flex;gap:6px;overflow-x:auto;box-shadow:0 8px 18px #0006}.adminSubnav button{background:var(--card);border:1px solid var(--bdr);color:var(--muted);border-radius:99px;padding:7px 12px;font-weight:900;font-size:.68rem;white-space:nowrap}.adminSubnav button.active{background:var(--g2);color:#fff}.coverageRow{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.coverageRow b{font-size:.82rem}.notice{border:1px solid #ffd70055;background:#ffd70014;border-radius:12px;padding:10px;margin:8px 0}.dangerSoft{border-color:#ef535055;background:#ef535018;color:#ffb4b4}.compactBtn{padding:8px 10px;font-size:.74rem}.match.locked{opacity:1}.match.predicted{opacity:.86}.scoreStatus{font-size:.68rem;color:var(--muted);margin-top:4px}.adminPanelBlock{margin-top:8px}.mirrorGrid{display:grid;grid-template-columns:1fr;gap:8px}@media(min-width:620px){.mirrorGrid{grid-template-columns:1fr 1fr}.bigPronoCard{min-height:540px}}
 </style>
+
 <script>
 /* PATCH v7 - logique front ajoutée sans supprimer l'existant */
 var adminCoverage=null, currentPronoIndex=0, directPronoMatchId=null, activeAdminProfileSection='infos', adminCoverageFilter='all';
@@ -253,6 +256,7 @@ window.addEventListener('load',()=>setTimeout(()=>{prepareV7Layout();drawFilters
 .fun{grid-template-columns:1fr 1fr}
 @media(max-width:380px){.mirrorGrid{grid-template-columns:1fr}.oddsInline{white-space:normal}.pronoTeamsInput{gap:5px}.jokerBox{min-width:50px}.fun{grid-template-columns:1fr}}
 </style>
+
 <script id="patchV8Js">
 /* PATCH V8 - corrections demandées après test site secondaire */
 let groupsAlreadyDrawnV8=false;
@@ -1443,6 +1447,9 @@ window.addEventListener('load',()=>setTimeout(()=>{try{installHeaderLogoutV14();
 const PATCH_V14_1_CLEAN_FINAL = true;
 
 function adminAddMatchInlineHtmlV91(){
+  // Génère les options heures (00h-23h) avec 20h sélectionné par défaut
+  const heures = Array.from({length:24},(_,i)=>{ const h=String(i).padStart(2,'0'); return `<option value="${h}"${i===20?' selected':''}>${h}h</option>`; }).join('');
+  const minutes = '<option value="00" selected>00</option><option value="15">15</option><option value="30">30</option><option value="45">45</option>';
   return `<div class="card"><b>Ajout match</b><br><br>
     <div class="grid2">
       <div><div class="adminLabel">Équipe A</div><input id="addA" list="teamsDLV12" placeholder="Équipe A"></div>
@@ -1450,7 +1457,7 @@ function adminAddMatchInlineHtmlV91(){
     </div><br>
     <div class="grid2">
       <div><div class="adminLabel">Date</div><input id="addDate" type="date"></div>
-      <div><div class="adminLabel">Heure France</div><input id="addTime" type="time"></div>
+      <div><div class="adminLabel">Heure (France)</div><div style="display:flex;gap:4px"><select id="addTimeH" style="flex:1;padding:9px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--txt);border-radius:10px">${heures}</select><select id="addTimeM" style="flex:1;padding:9px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--txt);border-radius:10px">${minutes}</select></div></div>
     </div><br>
     <select id="addPhase">
       <option>32e de finale</option>
@@ -1460,11 +1467,11 @@ function adminAddMatchInlineHtmlV91(){
       <option>Finale de bronze</option>
       <option>Finale</option>
     </select><br><br>
-    <div class="grid2"><input id="addDiff1" placeholder="Diffuseur 1"><input id="addDiff2" placeholder="Diffuseur 2"></div><br>
+    <div class="grid2"><input id="addDiff1" placeholder="Diffuseur 1 (optionnel)"><input id="addDiff2" placeholder="Diffuseur 2 (optionnel)"></div><br>
     <div class="grid2"><input id="addCote1" type="number" step="0.01" min="1" placeholder="Cote équipe A"><input id="addCoteX" type="number" step="0.01" min="1" placeholder="Cote nul"></div><br>
     <input id="addCote2" type="number" step="0.01" min="1" placeholder="Cote équipe B"><br><br>
-    <input id="addPlace" list="stadiumsDL" placeholder="Ville / stade">
-    <div class="hint">Obligatoires : équipes, date, heure, phase, diffuseur 1 et stade. Les cotes restent facultatives.</div><br>
+    <input id="addPlace" list="stadiumsDL" placeholder="Ville / stade (optionnel)">
+    <div class="hint">Obligatoires : équipes, date, heure, phase. Les autres champs sont facultatifs.</div><br>
     <button type="button" class="btn" onclick="adminAddMatch(event)">Ajouter le match</button>
     <div id="addMsg" class="small" style="margin-top:8px"></div>
   </div>`;
@@ -1495,13 +1502,13 @@ function adminAddMatch(ev){
   if(!a || !String(a.value || '').trim()) required.push('équipe A');
   if(!b || !String(b.value || '').trim()) required.push('équipe B');
   if(!d || !String(d.value || '').trim()) required.push('date');
-  if(!t || !String(t.value || '').trim()) required.push('heure');
+  const th=document.getElementById('addTimeH'); if(!th || !String(th.value||'').trim()) required.push('heure');
   if(!phase || !String(phase.value || '').trim()) required.push('phase');
-  if(!diff1 || !String(diff1.value || '').trim()) required.push('diffuseur 1');
-  if(!place || !String(place.value || '').trim()) required.push('ville / stade');
 
   if(required.length){
-    if(msg) msg.innerHTML = '<span class="ko">Champs obligatoires manquants : '+required.join(', ')+'.</span>';
+    const errMsg = 'Champs manquants : ' + required.join(', ');
+    toast('❌ ' + errMsg);
+    if(msg) msg.innerHTML = '<span class="ko">' + errMsg + '.</span>';
     return;
   }
 
@@ -1523,7 +1530,7 @@ function adminAddMatch(ev){
     equipeAId: equipeAId,
     equipeBId: equipeBId,
     dateFR: dateFR,
-    heureFR: t.value,
+    heureFR: (()=>{ const h=document.getElementById('addTimeH'); const m=document.getElementById('addTimeM'); return h&&m ? h.value+':'+m.value : (t?t.value:'20:00'); })(),
     phase: phase.value,
     diff1: diff1.value.trim(),
     diff2: diff2 ? diff2.value.trim() : '',
@@ -1541,11 +1548,14 @@ function adminAddMatch(ev){
 
   runner.then(res => {
     if(res && res.error){
-      if(typeof formMsgV14 === 'function') formMsgV14('addMsg', res.error, false);
-      else if(msg) msg.innerHTML = '<span class="ko">'+res.error+'</span>';
+      const errTxt = res.error;
+      toast('❌ Erreur : ' + errTxt);
+      if(typeof formMsgV14 === 'function') formMsgV14('addMsg', errTxt, false);
+      else if(msg) msg.innerHTML = '<span class="ko">'+errTxt+'</span>';
       return;
     }
 
+    toast('✅ Match ajouté avec succès !');
     if(typeof formMsgV14 === 'function') formMsgV14('addMsg', 'Match ajouté avec succès.', true);
     else if(msg) msg.innerHTML = '<span class="ok">Match ajouté avec succès.</span>';
 
@@ -1565,6 +1575,7 @@ function adminAddMatch(ev){
     if(typeof loadAll === 'function') return loadAll();
   }).catch(e => {
     const text = e && e.message ? e.message : String(e);
+    toast('❌ Erreur réseau : ' + text);
     if(typeof formMsgV14 === 'function') formMsgV14('addMsg', 'Erreur ajout match : '+text, false);
     else if(msg) msg.innerHTML = '<span class="ko">Erreur ajout match : '+text+'</span>';
   }).finally(() => {
