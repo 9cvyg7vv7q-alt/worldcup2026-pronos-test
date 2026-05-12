@@ -1447,7 +1447,6 @@ window.addEventListener('load',()=>setTimeout(()=>{try{installHeaderLogoutV14();
 const PATCH_V14_1_CLEAN_FINAL = true;
 
 function adminAddMatchInlineHtmlV91(){
-  // Génère les options heures (00h-23h) avec 20h sélectionné par défaut
   const heures = Array.from({length:24},(_,i)=>{ const h=String(i).padStart(2,'0'); return `<option value="${h}"${i===20?' selected':''}>${h}h</option>`; }).join('');
   const minutes = '<option value="00" selected>00</option><option value="15">15</option><option value="30">30</option><option value="45">45</option>';
   return `<div class="card"><b>Ajout match</b><br><br>
@@ -1548,10 +1547,9 @@ function adminAddMatch(ev){
 
   runner.then(res => {
     if(res && res.error){
-      const errTxt = res.error;
-      toast('❌ Erreur : ' + errTxt);
-      if(typeof formMsgV14 === 'function') formMsgV14('addMsg', errTxt, false);
-      else if(msg) msg.innerHTML = '<span class="ko">'+errTxt+'</span>';
+      toast('❌ Erreur : ' + res.error);
+      if(typeof formMsgV14 === 'function') formMsgV14('addMsg', res.error, false);
+      else if(msg) msg.innerHTML = '<span class="ko">'+res.error+'</span>';
       return;
     }
 
