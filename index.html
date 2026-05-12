@@ -1447,30 +1447,58 @@ window.addEventListener('load',()=>setTimeout(()=>{try{installHeaderLogoutV14();
 const PATCH_V14_1_CLEAN_FINAL = true;
 
 function adminAddMatchInlineHtmlV91(){
-  const heures = Array.from({length:24},(_,i)=>{ const h=String(i).padStart(2,'0'); return `<option value="${h}"${i===20?' selected':''}>${h}h</option>`; }).join('');
-  const minutes = '<option value="00" selected>00</option><option value="15">15</option><option value="30">30</option><option value="45">45</option>';
-  return `<div class="card"><b>Ajout match</b><br><br>
+  // Options équipes directement dans le HTML du formulaire (pas de timing issue)
+  const teamOpts = (equipes||[])
+    .filter(e => e.actif !== false)
+    .map(e => `<option value="${cleanText(e.nomAffiche||e.nomSource)}">${cleanText(e.nomAffiche||e.nomSource)}</option>`)
+    .join('');
+
+  // Options stades tirées des matchs existants
+  const stadiums = [...new Set((matches||[]).map(m=>m.villeStade).filter(Boolean))].sort();
+  const stadiumOpts = stadiums.map(s=>`<option value="${s}">${s}</option>`).join('');
+
+  // Heures 00h-23h (20h par défaut)
+  const heures = Array.from({length:24},(_,i)=>{
+    const h = String(i).padStart(2,'0');
+    return `<option value="${h}"${i===20?' selected':''}>${h}h</option>`;
+  }).join('');
+
+  const minutes = `<option value="00" selected>00</option>
+    <option value="15">15</option>
+    <option value="30">30</option>
+    <option value="45">45</option>`;
+
+  return `<div class="card"><b>Ajout match phase finale</b><br><br>
+    <datalist id="addTeamsDL">${teamOpts}</datalist>
+    <datalist id="addStadiumsDL">${stadiumOpts}</datalist>
     <div class="grid2">
-      <div><div class="adminLabel">Équipe A</div><input id="addA" list="teamsDLV12" placeholder="Équipe A"></div>
-      <div><div class="adminLabel">Équipe B</div><input id="addB" list="teamsDLV12" placeholder="Équipe B"></div>
+      <div><div class="adminLabel">Équipe A</div><input id="addA" list="addTeamsDL" placeholder="Tape le nom…" autocomplete="off"></div>
+      <div><div class="adminLabel">Équipe B</div><input id="addB" list="addTeamsDL" placeholder="Tape le nom…" autocomplete="off"></div>
     </div><br>
     <div class="grid2">
       <div><div class="adminLabel">Date</div><input id="addDate" type="date"></div>
-      <div><div class="adminLabel">Heure (France)</div><div style="display:flex;gap:4px"><select id="addTimeH" style="flex:1;padding:9px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--txt);border-radius:10px">${heures}</select><select id="addTimeM" style="flex:1;padding:9px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--txt);border-radius:10px">${minutes}</select></div></div>
+      <div><div class="adminLabel">Heure (France)</div>
+        <div style="display:flex;gap:4px">
+          <select id="addTimeH" style="flex:1;padding:9px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--txt);border-radius:10px">${heures}</select>
+          <select id="addTimeM" style="flex:1;padding:9px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--txt);border-radius:10px">${minutes}</select>
+        </div>
+      </div>
     </div><br>
     <select id="addPhase">
-      <option>32e de finale</option>
-      <option>16e de finale</option>
-      <option>Quart de finale</option>
-      <option>Demi-finale</option>
-      <option>Finale de bronze</option>
-      <option>Finale</option>
+      <option>32e de finale</option><option>16e de finale</option><option>Quart de finale</option>
+      <option>Demi-finale</option><option>Finale de bronze</option><option>Finale</option>
     </select><br><br>
-    <div class="grid2"><input id="addDiff1" placeholder="Diffuseur 1 (optionnel)"><input id="addDiff2" placeholder="Diffuseur 2 (optionnel)"></div><br>
-    <div class="grid2"><input id="addCote1" type="number" step="0.01" min="1" placeholder="Cote équipe A"><input id="addCoteX" type="number" step="0.01" min="1" placeholder="Cote nul"></div><br>
+    <div class="grid2">
+      <input id="addDiff1" placeholder="Diffuseur 1 (optionnel)">
+      <input id="addDiff2" placeholder="Diffuseur 2 (optionnel)">
+    </div><br>
+    <div class="grid2">
+      <input id="addCote1" type="number" step="0.01" min="1" placeholder="Cote équipe A">
+      <input id="addCoteX" type="number" step="0.01" min="1" placeholder="Cote nul">
+    </div><br>
     <input id="addCote2" type="number" step="0.01" min="1" placeholder="Cote équipe B"><br><br>
-    <input id="addPlace" list="stadiumsDL" placeholder="Ville / stade (optionnel)">
-    <div class="hint">Obligatoires : équipes, date, heure, phase. Les autres champs sont facultatifs.</div><br>
+    <input id="addPlace" list="addStadiumsDL" placeholder="Ville / stade (optionnel)" autocomplete="off">
+    <div class="hint">Obligatoires : équipes, date, heure, phase.</div><br>
     <button type="button" class="btn" onclick="adminAddMatch(event)">Ajouter le match</button>
     <div id="addMsg" class="small" style="margin-top:8px"></div>
   </div>`;
