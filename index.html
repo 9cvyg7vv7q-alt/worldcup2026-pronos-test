@@ -1447,61 +1447,83 @@ window.addEventListener('load',()=>setTimeout(()=>{try{installHeaderLogoutV14();
 const PATCH_V14_1_CLEAN_FINAL = true;
 
 function adminAddMatchInlineHtmlV91(){
-  // Options équipes directement dans le HTML du formulaire (pas de timing issue)
-  const teamOpts = (equipes||[])
-    .filter(e => e.actif !== false)
-    .map(e => `<option value="${cleanText(e.nomAffiche||e.nomSource)}">${cleanText(e.nomAffiche||e.nomSource)}</option>`)
-    .join('');
+  // Fallback si equipes pas encore chargé
+  if(!equipes || equipes.length === 0){
+    setTimeout(function(){
+      if(typeof ensureCoreV11==='function'){
+        ensureCoreV11().then(function(){
+          if(activeProfileSectionV8==='addmatch') drawProfile();
+        });
+      }
+    }, 50);
+    return '<div class="card"><div class="muted">⏳ Chargement des équipes...</div></div>';
+  }
 
-  // Options stades tirées des matchs existants
-  const stadiums = [...new Set((matches||[]).map(m=>m.villeStade).filter(Boolean))].sort();
-  const stadiumOpts = stadiums.map(s=>`<option value="${s}">${s}</option>`).join('');
+  // Options équipes triées (inline dans le HTML = pas de timing issue)
+  var teamOpts = (equipes||[])
+    .filter(function(e){ return e.actif !== false; })
+    .sort(function(a,b){
+      return (a.nomAffiche||a.nomSource||'').localeCompare(b.nomAffiche||b.nomSource||'');
+    })
+    .map(function(e){
+      var n = cleanText ? cleanText(e.nomAffiche||e.nomSource||'') : (e.nomAffiche||e.nomSource||'');
+      return '<option value="'+n+'">'+(e.emoji||'')+' '+n+'</option>';
+    }).join('');
 
-  // Heures 00h-23h (20h par défaut)
-  const heures = Array.from({length:24},(_,i)=>{
-    const h = String(i).padStart(2,'0');
-    return `<option value="${h}"${i===20?' selected':''}>${h}h</option>`;
-  }).join('');
+  // Options stades depuis les matchs existants
+  var seen = {}, stadiums = [];
+  (matches||[]).forEach(function(m){
+    if(m.villeStade && !seen[m.villeStade]){ seen[m.villeStade]=1; stadiums.push(m.villeStade); }
+  });
+  stadiums.sort();
+  var stadiumOpts = stadiums.map(function(s){ return '<option value="'+s+'">'+s+'</option>'; }).join('');
 
-  const minutes = `<option value="00" selected>00</option>
-    <option value="15">15</option>
-    <option value="30">30</option>
-    <option value="45">45</option>`;
+  // Sélecteur heures 00h-23h, 20h par défaut
+  var heureOptions = '';
+  for(var i=0;i<24;i++){
+    var h = i<10?'0'+i:String(i);
+    heureOptions += '<option value="'+h+'"'+(i===20?' selected':'')+'>'+h+'h</option>';
+  }
 
-  return `<div class="card"><b>Ajout match phase finale</b><br><br>
-    <datalist id="addTeamsDL">${teamOpts}</datalist>
-    <datalist id="addStadiumsDL">${stadiumOpts}</datalist>
-    <div class="grid2">
-      <div><div class="adminLabel">Équipe A</div><input id="addA" list="addTeamsDL" placeholder="Tape le nom…" autocomplete="off"></div>
-      <div><div class="adminLabel">Équipe B</div><input id="addB" list="addTeamsDL" placeholder="Tape le nom…" autocomplete="off"></div>
-    </div><br>
-    <div class="grid2">
-      <div><div class="adminLabel">Date</div><input id="addDate" type="date"></div>
-      <div><div class="adminLabel">Heure (France)</div>
-        <div style="display:flex;gap:4px">
-          <select id="addTimeH" style="flex:1;padding:9px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--txt);border-radius:10px">${heures}</select>
-          <select id="addTimeM" style="flex:1;padding:9px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--txt);border-radius:10px">${minutes}</select>
-        </div>
-      </div>
-    </div><br>
-    <select id="addPhase">
-      <option>32e de finale</option><option>16e de finale</option><option>Quart de finale</option>
-      <option>Demi-finale</option><option>Finale de bronze</option><option>Finale</option>
-    </select><br><br>
-    <div class="grid2">
-      <input id="addDiff1" placeholder="Diffuseur 1 (optionnel)">
-      <input id="addDiff2" placeholder="Diffuseur 2 (optionnel)">
-    </div><br>
-    <div class="grid2">
-      <input id="addCote1" type="number" step="0.01" min="1" placeholder="Cote équipe A">
-      <input id="addCoteX" type="number" step="0.01" min="1" placeholder="Cote nul">
-    </div><br>
-    <input id="addCote2" type="number" step="0.01" min="1" placeholder="Cote équipe B"><br><br>
-    <input id="addPlace" list="addStadiumsDL" placeholder="Ville / stade (optionnel)" autocomplete="off">
-    <div class="hint">Obligatoires : équipes, date, heure, phase.</div><br>
-    <button type="button" class="btn" onclick="adminAddMatch(event)">Ajouter le match</button>
-    <div id="addMsg" class="small" style="margin-top:8px"></div>
-  </div>`;
+  return '<div class="card"><b>Ajout match phase finale</b><br><br>'
+    +'<datalist id="addTeamsDL">'+teamOpts+'</datalist>'
+    +'<datalist id="addStadiumsDL">'+stadiumOpts+'</datalist>'
+    +'<div class="grid2">'
+    +'<div><div class="adminLabel">Équipe A</div>'
+    +'<input id="addA" list="addTeamsDL" placeholder="Commence à taper…" autocomplete="off"></div>'
+    +'<div><div class="adminLabel">Équipe B</div>'
+    +'<input id="addB" list="addTeamsDL" placeholder="Commence à taper…" autocomplete="off"></div>'
+    +'</div><br>'
+    +'<div class="grid2">'
+    +'<div><div class="adminLabel">Date</div><input id="addDate" type="date"></div>'
+    +'<div><div class="adminLabel">Heure (France)</div>'
+    +'<div style="display:flex;gap:4px">'
+    +'<select id="addTimeH" style="flex:1;padding:9px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--txt);border-radius:10px">'+heureOptions+'</select>'
+    +'<select id="addTimeM" style="flex:1;padding:9px;border:1.5px solid var(--bdr);background:var(--bg);color:var(--txt);border-radius:10px">'
+    +'<option value="00" selected>00 min</option>'
+    +'<option value="15">15 min</option>'
+    +'<option value="30">30 min</option>'
+    +'<option value="45">45 min</option>'
+    +'</select></div></div></div><br>'
+    +'<select id="addPhase">'
+    +'<option>32e de finale</option><option>16e de finale</option>'
+    +'<option>Quart de finale</option><option>Demi-finale</option>'
+    +'<option>Finale de bronze</option><option>Finale</option>'
+    +'</select><br><br>'
+    +'<div class="grid2">'
+    +'<input id="addDiff1" placeholder="Diffuseur 1 (optionnel)">'
+    +'<input id="addDiff2" placeholder="Diffuseur 2 (optionnel)">'
+    +'</div><br>'
+    +'<div class="grid2">'
+    +'<input id="addCote1" type="number" step="0.01" min="1" placeholder="Cote équipe A">'
+    +'<input id="addCoteX" type="number" step="0.01" min="1" placeholder="Cote nul">'
+    +'</div><br>'
+    +'<input id="addCote2" type="number" step="0.01" min="1" placeholder="Cote équipe B"><br><br>'
+    +'<input id="addPlace" list="addStadiumsDL" placeholder="Ville / stade (optionnel)" autocomplete="off"><br><br>'
+    +'<div class="hint">Champs obligatoires : équipes A et B, date, heure, phase.</div><br>'
+    +'<button type="button" class="btn" onclick="adminAddMatch(event)">✅ Ajouter le match</button>'
+    +'<div id="addMsg" class="small" style="margin-top:8px"></div>'
+    +'</div>';
 }
 
 function adminAddMatch(ev){
@@ -1529,13 +1551,13 @@ function adminAddMatch(ev){
   if(!a || !String(a.value || '').trim()) required.push('équipe A');
   if(!b || !String(b.value || '').trim()) required.push('équipe B');
   if(!d || !String(d.value || '').trim()) required.push('date');
-  const th=document.getElementById('addTimeH'); if(!th || !String(th.value||'').trim()) required.push('heure');
+  var th=container.querySelector('#addTimeH')||document.getElementById('addTimeH'); if(!th || !String(th.value||'').trim()) required.push('heure');
   if(!phase || !String(phase.value || '').trim()) required.push('phase');
 
   if(required.length){
-    const errMsg = 'Champs manquants : ' + required.join(', ');
-    toast('❌ ' + errMsg);
-    if(msg) msg.innerHTML = '<span class="ko">' + errMsg + '.</span>';
+    var errMsg='Champs manquants : '+required.join(', ');
+    toast('❌ '+errMsg);
+    if(msg) msg.innerHTML='<span class="ko">'+errMsg+'</span>';
     return;
   }
 
@@ -1557,7 +1579,7 @@ function adminAddMatch(ev){
     equipeAId: equipeAId,
     equipeBId: equipeBId,
     dateFR: dateFR,
-    heureFR: (()=>{ const h=document.getElementById('addTimeH'); const m=document.getElementById('addTimeM'); return h&&m ? h.value+':'+m.value : (t?t.value:'20:00'); })(),
+    heureFR: (function(){ var h=document.getElementById('addTimeH'); var m=document.getElementById('addTimeM'); return (h&&m) ? h.value+':'+m.value : '20:00'; })(),
     phase: phase.value,
     diff1: diff1.value.trim(),
     diff2: diff2 ? diff2.value.trim() : '',
@@ -1575,13 +1597,11 @@ function adminAddMatch(ev){
 
   runner.then(res => {
     if(res && res.error){
-      toast('❌ Erreur : ' + res.error);
       if(typeof formMsgV14 === 'function') formMsgV14('addMsg', res.error, false);
       else if(msg) msg.innerHTML = '<span class="ko">'+res.error+'</span>';
       return;
     }
 
-    toast('✅ Match ajouté avec succès !');
     if(typeof formMsgV14 === 'function') formMsgV14('addMsg', 'Match ajouté avec succès.', true);
     else if(msg) msg.innerHTML = '<span class="ok">Match ajouté avec succès.</span>';
 
@@ -1601,7 +1621,6 @@ function adminAddMatch(ev){
     if(typeof loadAll === 'function') return loadAll();
   }).catch(e => {
     const text = e && e.message ? e.message : String(e);
-    toast('❌ Erreur réseau : ' + text);
     if(typeof formMsgV14 === 'function') formMsgV14('addMsg', 'Erreur ajout match : '+text, false);
     else if(msg) msg.innerHTML = '<span class="ko">Erreur ajout match : '+text+'</span>';
   }).finally(() => {
