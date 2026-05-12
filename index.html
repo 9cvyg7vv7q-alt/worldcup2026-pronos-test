@@ -58,38 +58,10 @@ input,select,textarea{width:100%;background:var(--bg);border:1.5px solid var(--b
 </div>
 <div class="bnav hide" id="nav"><button data-view="Home" class="active" onclick="show('Home',this)"><span class="ico"></span><span>Accueil</span></button><button data-view="Summary" onclick="show('Summary',this)"><span class="ico">️</span><span>Résumé</span></button><button data-view="Groups" onclick="show('Groups',this)"><span class="ico"></span><span>Poules</span></button><button data-view="Matches" onclick="show('Matches',this)"><span class="ico">⚽</span><span>Pronos</span></button><button data-view="Rank" onclick="show('Rank',this)"><span class="ico"></span><span>Classement</span></button><button data-view="Profile" onclick="show('Profile',this)"><span class="ico"></span><span>Profil</span></button></div>
 <div class="modal" id="pronoModal"><div class="sheet"><div class="drag"></div><div id="pronoContent"></div></div></div>
-<div class="modal" id="adminModal"><div class="sheet"><div class="drag"></div><h3 style="color:var(--gold);margin:0 0 12px">⚙️ Admin</h3>
-<div class="card"><b>Renseigner un résultat + buteurs</b><br><br>
-<select id="adminMatch" onchange="updateAdminScoreLabels();resetScorerRows()"></select><br><br>
-<div class="grid2"><div><div class="adminLabel" id="adminScoreALabel">Score équipe A</div><input id="adminScoreA" type="number" min="0" placeholder="Score équipe A"></div><div><div class="adminLabel" id="adminScoreBLabel">Score équipe B</div><input id="adminScoreB" type="number" min="0" placeholder="Score équipe B"></div></div>
-<div class="sec">Buteurs du match</div>
-<div class="hint">Une ligne = un but. Si un joueur marque deux fois, ajoute deux lignes. La liste est filtrée sur les deux équipes du match.</div><br>
-<div id="scorerRows"></div><button class="btn btn2" onclick="addScorerRow()">+ Ajouter un but</button><br><br>
-<button class="btn" onclick="adminSaveResult()">Valider résultat + calcul points</button><div id="adminMsg" class="small" style="margin-top:8px"></div></div>
-<div class="card"><b>Ajouter / modifier les cotes d’un match</b><br><br>
-<select id="oddsMatch" onchange="updateOddsLabels()"></select><br><br>
-<div class="grid2"><div><div class="adminLabel" id="oddsALabel">Cote équipe A</div><input id="oddsA" type="number" step="0.01" min="1" placeholder="ex : 1.80"></div><div><div class="adminLabel">Cote match nul</div><input id="oddsX" type="number" step="0.01" min="1" placeholder="ex : 3.20"></div></div><br>
-<div><div class="adminLabel" id="oddsBLabel">Cote équipe B</div><input id="oddsB" type="number" step="0.01" min="1" placeholder="ex : 2.10"></div><br>
-<button class="btn" onclick="adminSaveOdds()">Enregistrer les cotes</button><div id="oddsMsg" class="small" style="margin-top:8px"></div></div>
-<div class="card"><b>Joker bonus sur un match</b><br><br>
-<div class="hint">Double les points de tous les pronostics sur le match choisi, sans ajouter de colonne dans la base. Le réglage est stocké dans les propriétés du script.</div><br>
-<select id="bonusMatch"></select><br><br>
-<div class="grid2"><button class="btn" onclick="adminSaveBonusJoker(true)">Activer bonus</button><button class="btn btn2" onclick="adminSaveBonusJoker(false)">Retirer bonus</button></div>
-<div id="bonusMsg" class="small" style="margin-top:8px"></div></div>
-<div class="card"><b>Ajouter un match de phase finale</b><br><br>
-<div class="grid2"><select id="addA"></select><select id="addB"></select></div><br>
-<div class="grid2"><div><div class="adminLabel">Date</div><input id="addDate" type="date"></div><div><div class="adminLabel">Heure France</div><input id="addTime" type="time"></div></div><br>
-<select id="addPhase"><option>32e de finale</option><option>16e de finale</option><option>Quart de finale</option><option>Demi-finale</option><option>Finale de bronze</option><option>Finale</option></select><br><br>
-<div class="grid2"><input id="addDiff1" placeholder="Diffuseur 1"><input id="addDiff2" placeholder="Diffuseur 2"></div><br>
-<div class="grid2"><input id="addCote1" type="number" step="0.01" min="1" placeholder="Cote équipe A"><input id="addCoteX" type="number" step="0.01" min="1" placeholder="Cote nul"></div><br>
-<input id="addCote2" type="number" step="0.01" min="1" placeholder="Cote équipe B"><br><br>
-<input id="addPlace" list="stadiumsDL" placeholder="Ville / stade"><div class="hint">Les équipes viennent de l’onglet EQUIPES.</div><br>
-<button class="btn" onclick="adminAddMatch()">Ajouter le match</button><div id="addMsg" class="small" style="margin-top:8px"></div></div>
-<button class="btn btn2" onclick="closeAdmin()">Fermer</button></div></div>
 <div id="toast" class="toast hide"></div>
 <div id="loadingOverlay" class="loadingOverlay hide"><div class="loadingBox"><div class="spinner"></div><b id="loadingText">Chargement...</b><br><span class="muted">La base Google Sheets répond, deux secondes.</span></div></div>
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbw9TnMzwBuITaQ9K6F5PowQO_ErtSRvrTiTN_eUsjV7b67rvOa5NFp_Fsew84eeEMv-Cg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbydM3pNC_GBcdDrojIzMOzSFBRqWDSpzx4A89fdP9jV2WNBnRWlTOwOpERlm6mz9lj_BQ/exec";
 const FLAGS={France:"",Mexico:"","South Africa":"","South Korea":"","Czech Republic":"",Canada:"","Bosnia & Herzegovina":"",Qatar:"",Switzerland:"",Brazil:"",Morocco:"",Haiti:"",Scotland:"",USA:"",Paraguay:"",Australia:"",Turkey:"",Germany:"","Curaçao":"","Ivory Coast":"",Ecuador:"",Netherlands:"",Japan:"",Sweden:"",Tunisia:"",Belgium:"",Egypt:"",Iran:"","New Zealand":"",Spain:"","Cape Verde":"","Saudi Arabia":"",Uruguay:"",Senegal:"",Iraq:"",Norway:"",Argentina:"",Algeria:"",Austria:"",Jordan:"",Portugal:"","DR Congo":"",Uzbekistan:"",Colombia:"",England:"",Croatia:"",Ghana:"",Panama:""};
 const FUN_ICONS={leader:"",target:"",rate:"",joker:"⭐",active:"",fire:"",lanterne:"",blackcat:"‍⬛",zero:"",boom:"",topScorerVote:"⚽",scorerVote:"⚽",drawExpert:"",curse:"",optimist:""};
 let mode="login", user=null, matches=[], pronos={}, classement=null, buteur=null, joueurs=[], butsMatch={}, pronosticStats={}, recentSummary={}, bonusJokers=[], equipes=[], teamMap={}, currentFilter="all", selectedMatch=null, selectedPlayer=null, rankHistoryCharts={}, activeRankSection="records", currentProfileFilter="all";
@@ -1500,20 +1472,24 @@ function adminAddMatchInlineHtmlV91(){
 
 function adminAddMatch(ev){
   const btn = ev && ev.currentTarget ? ev.currentTarget : null;
-  const msg = document.getElementById('addMsg');
+  // Cherche les champs dans le card parent du bouton pour éviter les conflits d'IDs
+  const container = btn ? btn.closest('.card') : document;
+  const q = (id) => container ? container.querySelector('#'+id) : document.getElementById(id);
+
+  const msg = q('addMsg');
   if(msg) msg.innerHTML = '';
 
-  const a = document.getElementById('addA');
-  const b = document.getElementById('addB');
-  const d = document.getElementById('addDate');
-  const t = document.getElementById('addTime');
-  const phase = document.getElementById('addPhase');
-  const diff1 = document.getElementById('addDiff1');
-  const diff2 = document.getElementById('addDiff2');
-  const place = document.getElementById('addPlace');
-  const c1 = document.getElementById('addCote1');
-  const cx = document.getElementById('addCoteX');
-  const c2 = document.getElementById('addCote2');
+  const a = q('addA');
+  const b = q('addB');
+  const d = q('addDate');
+  const t = q('addTime');
+  const phase = q('addPhase');
+  const diff1 = q('addDiff1');
+  const diff2 = q('addDiff2');
+  const place = q('addPlace');
+  const c1 = q('addCote1');
+  const cx = q('addCoteX');
+  const c2 = q('addCote2');
 
   const required = [];
   if(!a || !String(a.value || '').trim()) required.push('équipe A');
@@ -1540,7 +1516,7 @@ function adminAddMatch(ev){
     return;
   }
 
-  const dateFR = typeof frDateFromInputV14 === 'function' ? frDateFromInputV14() : frDateFromInput();
+  const dateFR = (function(){ if(!d||!d.value)return ''; const p=d.value.split('-'); return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:d.value; })();
   const payload = {
     userId: user.userId,
     groupe: 'PF',
