@@ -1,476 +1,499 @@
-<!-- VERSION UNIFIÉE V14.1 - Suppression des conflits de fonctions -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>CdM 2026 Pronos</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root{--g:#1a5c38;--g2:#2e8b57;--gold:#FFD700;--bg:#0d1117;--card:#161b22;--bdr:#30363d;--txt:#e6edf3;--muted:#8b949e;--red:#ef5350}
-        *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-        body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--txt);padding-bottom:86px}
-        .hide{display:none!important}
-        .view{display:none;padding:12px}
-        .view.active{display:block}
-        
-        /* Header & Nav */
-        .hdr{position:sticky;top:0;z-index:50;background:var(--g);padding:12px 15px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 12px #0008}
-        .hdr h1{font-size:1rem;margin:0;color:var(--gold);font-weight:900}
-        .badge{background:#ffffff1f;border-radius:999px;padding:5px 10px;font-size:.72rem;font-weight:800}
-        .admin-badge{background:var(--gold);color:#111;margin-left:5px}
-        .topLogoutBtn{background:#ffffff14;border:1px solid var(--bdr);color:var(--txt);border-radius:999px;padding:5px 9px;font-size:.68rem;font-weight:900;margin-left:6px;cursor:pointer}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>CdM 2026 Pronos</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+/* --- BASE CSS (Original V14) --- */
+:root{--g:#1a5c38;--g2:#2e8b57;--gold:#FFD700;--bg:#0d1117;--card:#161b22;--bdr:#30363d;--txt:#e6edf3;--muted:#8b949e;--red:#ef5350}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--txt);padding-bottom:86px}
+.hide{display:none!important}
+.view{display:none;padding:12px}
+.view.active{display:block}
 
-        .bnav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--bdr);display:flex;z-index:100;padding:4px 0 env(safe-area-inset-bottom)}
-        .bnav button{flex:1;background:none;border:0;color:var(--muted);font-size:.64rem;padding:7px 2px 6px;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
-        .bnav button.active{color:var(--gold)}
-        .bnav .ico{font-size:1.25rem}
+/* Header & Nav */
+.hdr{position:sticky;top:0;z-index:50;background:var(--g);padding:12px 15px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 12px #0008}
+.hdr h1{font-size:1rem;margin:0;color:var(--gold);font-weight:900}
+.badge{background:#ffffff1f;border-radius:999px;padding:5px 10px;font-size:.72rem;font-weight:800}
+.admin{background:var(--gold);color:#111;margin-left:5px}
+.topLogoutBtn{background:#ffffff14;border:1px solid var(--bdr);color:var(--txt);border-radius:999px;padding:5px 9px;font-size:.68rem;font-weight:900;margin-left:6px;cursor:pointer}
 
-        /* Cards & Components */
-        .card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:13px;margin-bottom:10px;animation:softIn .2s ease-out}
-        .hero{text-align:center;background:linear-gradient(135deg,var(--g),#092d1b);padding:22px;border-radius:16px;margin-bottom:12px}
-        .hero h2{margin:8px 0 4px;color:var(--gold);font-size:1.1rem}
-        .muted{color:var(--muted);font-size:.76rem}
-        .sec{font-size:.7rem;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.08em;margin:16px 0 8px}
-        .btn{width:100%;border:0;border-radius:10px;padding:12px;font-weight:900;color:#fff;background:var(--g2);cursor:pointer;transition:transform 0.1s}
-        .btn:active{transform:scale(0.98)}
-        .btn:disabled{opacity:0.6;cursor:wait}
-        .btn2{background:transparent;border:1px solid var(--bdr);color:var(--muted)}
-        .btnDanger{background:#45151a;color:#ff8a80}
-        
-        /* Match Styles */
-        .match{background:var(--card);border:1px solid var(--bdr);border-radius:13px;padding:12px;margin-bottom:8px;position:relative}
-        .match.predicted{border-left:4px solid var(--g2)}
-        .match.finished{border-left:4px solid var(--gold)}
-        .mtop{display:grid;grid-template-columns:1fr auto 1fr;gap:7px;align-items:start;text-align:center}
-        .flag{font-size:1.45rem;line-height:1}
-        .name{font-size:.7rem;font-weight:900}
-        .score{font-size:1.25rem;font-weight:900;background:var(--bg);border-radius:10px;padding:4px 10px;min-width:70px}
-        .meta{display:flex;justify-content:center;margin-top:8px;font-size:.68rem;color:var(--muted);text-align:center;line-height:1.4}
-        
-        /* Specific layouts for Pronos */
-        .scoreEntryRow{display:grid;grid-template-columns:1fr 70px 1fr;gap:10px;align-items:center;margin:15px 0}
-        .scoreEntryBox input{width:100%;text-align:center;font-weight:900;padding:12px;background:var(--bg);border:1.5px solid var(--bdr);color:var(--txt);border-radius:10px;font-size:1.1rem}
-        .jokerMiddle{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60px;border:1px solid var(--bdr);border-radius:12px;background:#ffffff08;font-size:.65rem;font-weight:900;color:var(--muted)}
-        .jokerMiddle input{margin-bottom:4px}
-        .jokerBonusMiddle{color:var(--gold);border-color:var(--gold)}
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--bdr);display:flex;z-index:100;padding:4px 0 env(safe-area-inset-bottom)}
+.bnav button{flex:1;background:none;border:0;color:var(--muted);font-size:.64rem;padding:7px 2px 6px;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:2px}
+.bnav button.active{color:var(--gold)}
+.bnav button .ico{font-size:1.28rem;min-height:1.35rem}
 
-        /* Filters */
-        .filters, .tabs-scroll{display:flex;gap:6px;overflow-x:auto;padding:8px 0;margin-bottom:10px;position:sticky;top:50px;background:var(--bg);z-index:40}
-        .filters button, .tabs-scroll button{background:var(--card);border:1px solid var(--bdr);color:var(--muted);border-radius:99px;padding:7px 14px;font-weight:900;font-size:.68rem;white-space:nowrap;cursor:pointer}
-        .filters button.active, .tabs-scroll button.active{background:var(--g2);color:#fff}
-        
-        /* Modal & UI */
-        .modal{display:none;position:fixed;inset:0;z-index:200;background:#000d;align-items:flex-end}
-        .modal.open{display:flex}
-        .sheet{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-height:92vh;overflow:auto;padding:20px}
-        .drag{width:40px;height:4px;background:var(--bdr);border-radius:4px;margin:0 auto 15px}
-        .loadingOverlay{position:fixed;inset:0;background:#0009;z-index:300;display:flex;align-items:center;justify-content:center;padding:20px}
-        .spinner{width:34px;height:34px;border:4px solid #ffffff22;border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
-        
-        @keyframes spin{to{transform:rotate(360deg)}}
-        @keyframes softIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-        
-        /* Admin specific */
-        .scorerRowV12{display:grid;grid-template-columns:1fr 1fr 60px 80px 30px;gap:6px;align-items:end;margin-bottom:8px}
-        .adminLabel{font-size:.62rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase}
-        .ko{color:var(--red);font-weight:700}.ok{color:#66bb6a;font-weight:700}
-    </style>
+/* Cards & UI */
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:13px;margin-bottom:10px;animation:softIn .2s ease-out}
+.hero{text-align:center;background:linear-gradient(135deg,var(--g),#092d1b);padding:22px;border-radius:16px;margin-bottom:12px}
+.hero h2{margin:8px 0 4px;color:var(--gold);font-size:1.1rem}
+.muted{color:var(--muted);font-size:.76rem}
+.sec{font-size:.7rem;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.08em;margin:16px 0 8px}
+.btn{width:100%;border:0;border-radius:10px;padding:12px;font-weight:900;color:#fff;background:var(--g2);cursor:pointer}
+.btn:active{transform:scale(.98)}
+.btn2{background:transparent;border:1px solid var(--bdr);color:var(--muted)}
+.btnDanger{background:#45151a;color:#ff8a80}
+
+/* Match UI (V10/V14 Style) */
+.match{background:var(--card);border:1px solid var(--bdr);border-radius:13px;padding:12px;margin-bottom:8px}
+.match.predicted{border-left:4px solid var(--g2)}
+.match.finished{border-left:4px solid var(--gold)}
+.matchCardTitle{font-size:.72rem;font-weight:900;color:var(--gold);margin-bottom:7px;text-transform:uppercase;letter-spacing:.04em}
+.mtop{display:grid;grid-template-columns:1fr auto 1fr;gap:7px;align-items:start;text-align:center}
+.flag{font-size:1.45rem;line-height:1.1}
+.name{font-size:.7rem;font-weight:900}
+.score{font-size:1.25rem;font-weight:900;background:var(--bg);border-radius:10px;padding:4px 10px;min-width:70px;text-align:center}
+.meta{display:flex;justify-content:center;margin-top:8px;font-size:.68rem;color:var(--muted);line-height:1.45;text-align:center}
+
+/* Swipe Pronos */
+.scoreEntryRow{display:grid;grid-template-columns:1fr 70px 1fr;gap:10px;align-items:center;margin:13px 0 8px}
+.scoreEntryBox input{width:100%;text-align:center;font-weight:900;padding:12px;background:var(--bg);border:1.5px solid var(--bdr);color:var(--txt);border-radius:10px;font-size:1.1rem}
+.jokerMiddle{width:70px;min-height:54px;border:1px solid var(--bdr);border-radius:12px;background:#ffffff08;color:var(--txt);font-weight:900;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.78rem}
+.jokerMiddle input{margin:0;accent-color:var(--gold)}
+.jokerMiddle small{font-size:.66rem;color:var(--muted)}
+.jokerBonusMiddle{color:var(--gold);border-color:var(--gold)}
+
+/* Stats & Risks */
+.statBlock{margin-top:9px;border:1px solid #ffffff12;border-radius:12px;padding:10px;background:#ffffff05}
+.statTitle{font-size:.68rem;color:var(--muted);font-weight:900;text-transform:uppercase;margin-bottom:7px}
+.hrow{display:grid;grid-template-columns:42px 1fr 42px;gap:7px;align-items:center;font-size:.72rem;margin:5px 0}
+.hbar{height:8px;background:#ffffff14;border-radius:99px;overflow:hidden}
+.hbar>span{display:block;height:100%;background:var(--g2)}
+.riskPill{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;border:1px solid #ff980055;background:#ff980018;color:#ffcc80;font-size:.68rem;font-weight:900;padding:5px 8px;margin:4px 4px 0 0}
+
+/* Filters & Tabs */
+.filters, .tabs-scroll, .profileUnifiedTabs, .adminSubnav{display:flex;gap:6px;overflow-x:auto;padding:8px 12px;background:var(--bg);position:sticky;top:50px;z-index:40;box-shadow:0 8px 18px #0006;margin:0 -12px}
+.filters button, .tabs-scroll button, .profileUnifiedTabs button, .adminSubnav button{background:var(--card);border:1px solid var(--bdr);color:var(--muted);border-radius:99px;padding:7px 12px;font-weight:900;font-size:.68rem;white-space:nowrap;cursor:pointer}
+.filters button.active, .tabs-scroll button.active, .profileUnifiedTabs button.active, .adminSubnav button.active{background:var(--g2);color:#fff}
+
+/* Modal */
+.modal{display:none;position:fixed;inset:0;z-index:200;background:#000d;align-items:flex-end}
+.modal.open{display:flex}
+.sheet{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-height:92vh;overflow:auto;padding:20px}
+.drag{width:38px;height:4px;background:var(--bdr);border-radius:4px;margin:0 auto 12px}
+
+/* Admin Panels */
+.scorerRowV12{display:grid;grid-template-columns:1.25fr .9fr .55fr .75fr 30px;align-items:end;gap:6px;margin-bottom:10px}
+.adminLabel{font-size:.62rem;color:var(--muted);margin:0 0 4px;text-transform:uppercase}
+.ko{color:var(--red);font-weight:700}.ok{color:#66bb6a;font-weight:700}
+
+/* Loading */
+.loadingOverlay{position:fixed;inset:0;background:#0009;z-index:300;display:flex;align-items:center;justify-content:center}
+.loadingBox{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:20px;text-align:center}
+.spinner{width:34px;height:34px;border:4px solid #ffffff22;border-top-color:var(--gold);border-radius:50%;margin:0 auto 10px;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes softIn{from{opacity:0.45;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+</style>
 </head>
 <body>
 
-    <!-- AUTHENTICATION -->
-    <div id="login">
-        <div style="max-width:360px;width:100%;padding:20px">
-            <div class="hero">
-                <div style="font-size:3rem">⚽</div>
-                <h2>CdM 2026 Pronos</h2>
+<div id="login">
+    <div style="max-width:370px;width:100%;padding:20px">
+        <div class="hero">
+            <div style="font-size:3rem">⚽</div>
+            <h2>CdM 2026 Pronos</h2>
+            <div class="muted">Pronostics Coupe du Monde 2026</div>
+        </div>
+        <div class="card">
+            <div style="display:flex;background:var(--bg);border-radius:10px;padding:4px;margin-bottom:12px">
+                <button id="btnTabLogin" style="flex:1;border:0;background:var(--g2);color:#fff;padding:9px;border-radius:8px;font-weight:900" onclick="setAuthMode('login')">Connexion</button>
+                <button id="btnTabReg" style="flex:1;border:0;background:transparent;color:var(--muted);padding:9px;border-radius:8px;font-weight:900" onclick="setAuthMode('register')">Inscription</button>
             </div>
+            <input id="pseudo" placeholder="Pseudo" style="width:100%;padding:11px;margin-bottom:10px;background:var(--bg);border:1.5px solid var(--bdr);color:#fff;border-radius:10px">
+            <input id="pin" type="password" inputmode="numeric" placeholder="Code PIN" style="width:100%;padding:11px;margin-bottom:15px;background:var(--bg);border:1.5px solid var(--bdr);color:#fff;border-radius:10px">
+            <button class="btn" id="btnAuth" onclick="handleAuth()">Se connecter</button>
+            <div id="authErr" class="ko small" style="margin-top:10px;text-align:center"></div>
+        </div>
+    </div>
+</div>
+
+<div id="app" class="hide">
+    <div class="hdr">
+        <h1>⚽ CdM 2026</h1>
+        <div>
+            <span class="badge" id="uBadge"></span>
+            <span class="badge admin hide" id="aBadge">ADMIN</span>
+            <button class="topLogoutBtn" onclick="logout()">Quitter</button>
+        </div>
+    </div>
+
+    <!-- VUES -->
+    <div id="vHome" class="view active"><div id="homeSummary"></div></div>
+    <div id="vPronos" class="view">
+        <div class="filters" id="pronosFilters"></div>
+        <div class="card" style="margin-top:10px;padding:5px">
+            <select id="pronoMatchSelect" style="width:100%;background:none;border:0;color:#fff;padding:8px" onchange="selectPronoMatch(this.value)"></select>
+        </div>
+        <div id="pronoSwipeBox"></div>
+    </div>
+    <div id="vMatches" class="view">
+        <div class="filters" id="matchesFilters"></div>
+        <div id="matchList"></div>
+    </div>
+    <div id="vRank" class="view">
+        <div class="tabs-scroll">
+            <button class="active" onclick="setRankSec('records',this)">Records</button>
+            <button onclick="setRankSec('classement',this)">Classement</button>
+            <button onclick="setRankSec('buteurs',this)">Buteurs</button>
+        </div>
+        <div id="rankRecords">
+            <div class="sec">Records du tournoi</div>
+            <div id="funBox" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
+        </div>
+        <div id="rankClassement" class="hide">
+            <div class="sec">Classement général</div>
+            <div id="rankList"></div>
+        </div>
+        <div id="rankButeurs" class="hide">
+            <div class="sec">Suivi buteurs</div>
+            <div id="rankScorerBlock"></div>
+        </div>
+    </div>
+    <div id="vProfile" class="view">
+        <div id="profileHeadBox"></div>
+        <div class="profileUnifiedTabs" id="profileTabs"></div>
+        <div id="profileContent" class="profilePanel"></div>
+    </div>
+
+    <!-- NAV -->
+    <div class="bnav" id="nav">
+        <button class="active" onclick="showView('Home',this)"><span class="ico">🏠</span><span>Accueil</span></button>
+        <button onclick="showView('Pronos',this)"><span class="ico">⚽</span><span>Pronos</span></button>
+        <button onclick="showView('Matches',this)"><span class="ico">📅</span><span>Matchs</span></button>
+        <button onclick="showView('Rank',this)"><span class="ico">🏆</span><span>Classement</span></button>
+        <button onclick="showView('Profile',this)"><span class="ico">👤</span><span>Profil</span></button>
+    </div>
+</div>
+
+<!-- MODAL PRONO -->
+<div class="modal" id="modalProno">
+    <div class="sheet">
+        <div class="drag"></div>
+        <div id="modalPronoContent"></div>
+    </div>
+</div>
+
+<!-- LOADING -->
+<div id="loading" class="loadingOverlay hide">
+    <div class="loadingBox">
+        <div class="spinner"></div>
+        <b id="loadingTxt">Chargement...</b>
+    </div>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbw9TnMzwBuITaQ9K6F5PowQO_ErtSRvrTiTN_eUsjV7b67rvOa5NFp_Fsew84eeEMv-Cg/exec";
+
+let user = null, mode = 'login';
+let matches = [], pronos = {}, classement = null, buteur = null, equipes = [], joueurs = [], stats = {}, bonusJokers = [], adminCoverage = null;
+let currentFilter = 'all', activeRankSec = 'records', activeProfileSec = 'infos', swipeIdx = 0;
+
+// --- API ---
+function api(action, params = {}) {
+    let url = API_URL + "?action=" + action;
+    for (let k in params) url += `&${k}=${encodeURIComponent(params[k])}`;
+    return fetch(url).then(r => r.json()).then(j => {
+        if (!j.ok) throw new Error(j.error);
+        return j.data;
+    });
+}
+
+// --- UI ---
+function setLoading(on, txt = "Chargement...") {
+    document.getElementById('loading').classList.toggle('hide', !on);
+    document.getElementById('loadingTxt').textContent = txt;
+}
+function toast(msg) { console.log("Toast: " + msg); }
+
+// --- AUTH ---
+function setAuthMode(m) {
+    mode = m;
+    document.getElementById('btnTabLogin').style.background = m === 'login' ? 'var(--g2)' : 'transparent';
+    document.getElementById('btnTabReg').style.background = m === 'register' ? 'var(--g2)' : 'transparent';
+    document.getElementById('btnAuth').textContent = m === 'login' ? 'Se connecter' : 'Inscription';
+}
+function handleAuth() {
+    const p = document.getElementById('pseudo').value.trim();
+    const pin = document.getElementById('pin').value.trim();
+    if(!p || !pin) return;
+    setLoading(true, "Authentification...");
+    api(mode, { pseudo: p, pin: pin }).then(d => {
+        user = d;
+        localStorage.setItem('cdmUser', JSON.stringify(user));
+        startApp();
+    }).catch(e => document.getElementById('authErr').textContent = e.message).finally(() => setLoading(false));
+}
+function logout() { localStorage.removeItem('cdmUser'); location.reload(); }
+
+// --- CORE ---
+function startApp() {
+    document.getElementById('login').classList.add('hide');
+    document.getElementById('app').classList.remove('hide');
+    document.getElementById('uBadge').textContent = user.pseudo;
+    document.getElementById('aBadge').classList.toggle('hide', !user.isAdmin);
+    loadAll();
+}
+function loadAll() {
+    setLoading(true, "Synchronisation...");
+    api("init", { userId: user.userId }).then(d => {
+        matches = d.matches || [];
+        pronos = d.myPronos || {};
+        classement = d.classement || {};
+        buteur = d.buteur || {};
+        equipes = d.equipes || [];
+        stats = d.pronosticStats || {};
+        bonusJokers = d.bonusJokers || [];
+        adminCoverage = d.adminCoverage || null;
+        render();
+    }).catch(e => alert(e.message)).finally(() => setLoading(false));
+}
+
+function showView(v, btn) {
+    document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+    document.getElementById('v' + v).classList.add('active');
+    document.querySelectorAll('.bnav button').forEach(x => x.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+    render();
+}
+
+function render() {
+    const v = document.querySelector('.view.active').id;
+    if(v === 'vHome') drawHome();
+    if(v === 'vPronos') drawPronos();
+    if(v === 'vMatches') drawMatches();
+    if(v === 'vRank') drawRank();
+    if(v === 'vProfile') drawProfile();
+}
+
+// --- RENDERS MATCHS ---
+function teamName(m, side) { return side === 'A' ? (m.nomAfficheA || m.equipeA) : (m.nomAfficheB || m.equipeB); }
+function teamEmoji(m, side) { return side === 'A' ? (m.emojiA || '🏳️') : (m.emojiB || '🏳️'); }
+
+function drawHome() {
+    let rest = matches.filter(m => m.status === 'OPEN' && !pronos[m.id]).length;
+    let welcome = `
+        <div class="hero"><h2>Salut ${user.pseudo} !</h2><div class="muted">Prêt pour la Coupe du Monde ?</div></div>
+        <div class="card" style="text-align:center"><b>${rest}</b><br><span class="muted">matchs à pronostiquer</span></div>
+        <div class="sec">Joker Bonus du jour</div>
+        ${bonusJokers.length ? bonusJokers.map(b => `<div class="card" style="border-color:var(--gold)">⭐ <b>Joker Bonus actif</b> sur ${b.label} !</div>`).join('') : '<div class="card muted">Aucun joker bonus pour le moment.</div>'}
+    `;
+    document.getElementById('homeSummary').innerHTML = welcome;
+}
+
+function drawPronos() {
+    const list = matches.filter(m => m.status === 'OPEN' && !pronos[m.id]);
+    const box = document.getElementById('pronoSwipeBox');
+    const sel = document.getElementById('pronoMatchSelect');
+    
+    if(!list.length) {
+        box.innerHTML = '<div class="card muted" style="text-align:center;padding:40px">Tous tes pronostics sont à jour ! ✅</div>';
+        sel.innerHTML = '<option>Aucun match en attente</option>';
+        return;
+    }
+    
+    if(swipeIdx >= list.length) swipeIdx = 0;
+    const m = list[swipeIdx];
+    
+    sel.innerHTML = list.map((x, i) => `<option value="${i}" ${i === swipeIdx ? 'selected' : ''}>${i+1}. ${teamName(x,'A')} - ${teamName(x,'B')}</option>`).join('');
+    
+    box.innerHTML = `
+        <div class="card" style="margin-top:10px">
+            <div class="matchCardTitle">Match n°${swipeIdx+1} / ${list.length}</div>
+            <div class="mtop">
+                <div><div class="flag">${teamEmoji(m,'A')}</div><div class="name">${teamName(m,'A')}</div></div>
+                <div class="score">VS</div>
+                <div><div class="flag">${teamEmoji(m,'B')}</div><div class="name">${teamName(m,'B')}</div></div>
+            </div>
+            <div class="meta"><span>${m.dateFR} · ${m.heureFR} · ${m.villeStade || 'Stade'}</span></div>
+            <div class="scoreEntryRow">
+                <div class="scoreEntryBox"><input type="number" id="swA" placeholder="0"></div>
+                <div class="jokerMiddle"><input type="checkbox" id="swJ"><span>🃏</span><small>Joker</small></div>
+                <div class="scoreEntryBox"><input type="number" id="swB" placeholder="0"></div>
+            </div>
+            <button class="btn" onclick="submitSwipe('${m.id}')">Valider mon prono</button>
+            <div style="display:flex;gap:8px;margin-top:10px">
+                <button class="btn btn2" style="flex:1" onclick="moveSwipe(-1)">Précédent</button>
+                <button class="btn btn2" style="flex:1" onclick="moveSwipe(1)">Suivant</button>
+            </div>
+        </div>
+    `;
+}
+
+function moveSwipe(d) { swipeIdx += d; drawPronos(); }
+function selectPronoMatch(idx) { swipeIdx = parseInt(idx); drawPronos(); }
+
+function submitSwipe(mid) {
+    const sA = document.getElementById('swA').value, sB = document.getElementById('swB').value, j = document.getElementById('swJ').checked;
+    if(sA === "" || sB === "") return alert("Saisis un score !");
+    setLoading(true, "Envoi...");
+    api("submitPronostic", { userId: user.userId, matchId: mid, scoreA: sA, scoreB: sB, joker: j })
+        .then(() => loadAll()).catch(e => alert(e.message)).finally(() => setLoading(false));
+}
+
+function drawMatches() {
+    const list = matches.sort((a,b) => a.id - b.id);
+    document.getElementById('matchList').innerHTML = list.map(m => {
+        const p = pronos[m.id];
+        return `
+            <div class="match ${p?'predicted':''} ${m.status==='FINISHED'?'finished':''}">
+                <div class="matchCardTitle">${m.status}</div>
+                <div class="mtop">
+                    <div><div class="flag">${teamEmoji(m,'A')}</div><div class="name">${teamName(m,'A')}</div></div>
+                    <div class="score">${m.status==='FINISHED' ? m.scoreA+' - '+m.scoreB : 'VS'}</div>
+                    <div><div class="flag">${teamEmoji(m,'B')}</div><div class="name">${teamName(m,'B')}</div></div>
+                </div>
+                <div class="meta"><span>${m.dateFR} · ${m.heureFR}</span></div>
+                ${p ? `<div class="card statBlock" style="margin:8px 0 0;text-align:center;padding:5px;border-color:var(--g2)">✅ Prono : <b>${p.scoreA}-${p.scoreB}</b> ${p.joker?'⭐':''} ${p.points!==null?`(+${p.points} pts)`:''}</div>` : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+// --- RANK ---
+function setRankSec(s, btn) {
+    activeRankSec = s;
+    document.getElementById('rankRecords').classList.toggle('hide', s !== 'records');
+    document.getElementById('rankClassement').classList.toggle('hide', s !== 'classement');
+    document.getElementById('rankButeurs').classList.toggle('hide', s !== 'buteurs');
+    document.querySelectorAll('#vRank .tabs-scroll button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    drawRank();
+}
+function drawRank() {
+    if(activeRankSec === 'classement') {
+        const list = classement.classement || [];
+        document.getElementById('rankList').innerHTML = list.map(s => `
+            <div class="card" style="display:flex;justify-content:space-between;align-items:center">
+                <div style="font-weight:900;width:30px">${s.rank}.</div>
+                <div style="flex:1">${s.pseudo}</div>
+                <div style="color:var(--gold);font-weight:900">${s.total} pts</div>
+            </div>
+        `).join('');
+    }
+}
+
+// --- PROFILE & ADMIN (LES FIXES SONT ICI) ---
+function setProfileSec(s) { activeProfileSec = s; drawProfile(); }
+
+function drawProfile() {
+    const s = (classement?.classement || []).find(x => String(x.userId) === String(user.userId)) || {};
+    const usedJokers = Object.values(pronos).filter(p => p.joker).length;
+    
+    document.getElementById('profileHeadBox').innerHTML = `
+        <div class="card" style="text-align:center"><div style="font-size:2.4rem">👤</div><h2>${user.pseudo}</h2><div class="muted">${3-usedJokers} joker(s) restant(s)</div></div>
+    `;
+
+    const tabs = [['infos', 'Infos'], ['mespronos', 'Mes Pronos']];
+    if(user.isAdmin) {
+        tabs.push(['suivi', 'Admin Suivi'], ['resultats', 'Saisie Résultat'], ['addmatch', 'Ajout Match']);
+    }
+    
+    document.getElementById('profileTabs').innerHTML = tabs.map(t => `
+        <button class="${activeProfileSec === t[0] ? 'active' : ''}" onclick="setProfileSec('${t[0]}')">${t[1]}</button>
+    `).join('');
+
+    const content = document.getElementById('profileContent');
+    if(activeProfileSec === 'infos') {
+        content.innerHTML = `
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <div class="card" style="text-align:center"><div style="font-size:1.2rem;font-weight:900">${s.total || 0}</div><div class="muted">Points</div></div>
+                <div class="card" style="text-align:center"><div style="font-size:1.2rem;font-weight:900">${s.exact || 0}</div><div class="muted">Exacts</div></div>
+            </div>
+            <button class="btn btnDanger" style="margin-top:10px" onclick="logout()">Déconnexion</button>
+        `;
+    } 
+    else if(activeProfileSec === 'addmatch') {
+        content.innerHTML = `
             <div class="card">
-                <div id="authTabs" style="display:flex;background:var(--bg);border-radius:10px;padding:4px;margin-bottom:15px">
-                    <button style="flex:1;border:0;background:var(--g2);color:#fff;padding:10px;border-radius:8px;font-weight:900" id="btnModeLogin" onclick="setAuthMode('login')">Connexion</button>
-                    <button style="flex:1;border:0;background:transparent;color:var(--muted);padding:10px;border-radius:8px;font-weight:900" id="btnModeReg" onclick="setAuthMode('register')">Inscription</button>
-                </div>
-                <input id="pseudo" placeholder="Pseudo" style="width:100%;padding:12px;margin-bottom:10px;background:var(--bg);border:1px solid var(--bdr);color:#fff;border-radius:8px">
-                <input id="pin" type="password" inputmode="numeric" placeholder="Code PIN (4 chiffres)" style="width:100%;padding:12px;margin-bottom:15px;background:var(--bg);border:1px solid var(--bdr);color:#fff;border-radius:8px">
-                <button class="btn" id="btnAuth" onclick="handleAuth()">Se connecter</button>
-                <div id="authErr" class="ko" style="font-size:0.75rem;margin-top:10px;text-align:center"></div>
+                <div class="sec">Ajouter un match de Phase Finale</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                    <div><div class="adminLabel">Equipe A</div><select id="addA" style="width:100%;padding:8px;background:var(--bg);color:#fff;border-radius:8px"></select></div>
+                    <div><div class="adminLabel">Equipe B</div><select id="addB" style="width:100%;padding:8px;background:var(--bg);color:#fff;border-radius:8px"></select></div>
+                </div><br>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                    <div><div class="adminLabel">Date</div><input type="date" id="addDate" style="width:100%;padding:8px;background:var(--bg);color:#fff;border-radius:8px"></div>
+                    <div><div class="adminLabel">Heure</div><input type="time" id="addTime" style="width:100%;padding:8px;background:var(--bg);color:#fff;border-radius:8px"></div>
+                </div><br>
+                <div class="adminLabel">Lieu / Stade</div>
+                <input id="addPlace" placeholder="Ville, Stade" style="width:100%;padding:8px;background:var(--bg);color:#fff;border-radius:8px"><br><br>
+                <button class="btn" id="btnAddMatch" onclick="adminAddMatchSubmit()">Valider l'ajout</button>
+                <div id="addMsg" style="margin-top:10px"></div>
             </div>
-        </div>
-    </div>
-
-    <!-- MAIN APP -->
-    <div id="app" class="hide">
-        <div class="hdr">
-            <h1>⚽ CdM 2026</h1>
-            <div>
-                <span class="badge" id="uBadge"></span>
-                <span class="badge admin-badge hide" id="aBadge">ADMIN</span>
-                <button class="topLogoutBtn" onclick="logout()">Quitter</button>
+        `;
+        const opts = equipes.map(e => `<option value="${e.id}">${e.nomAffiche}</option>`).join('');
+        document.getElementById('addA').innerHTML = opts;
+        document.getElementById('addB').innerHTML = opts;
+    }
+    else if(activeProfileSec === 'resultats') {
+        const list = matches.filter(m => m.status !== 'FINISHED');
+        content.innerHTML = `
+            <div class="card">
+                <div class="sec">Saisie du résultat final</div>
+                <select id="resMid" style="width:100%;padding:10px;background:var(--bg);color:#fff;border-radius:8px;margin-bottom:12px">
+                    ${list.map(m => `<option value="${m.id}">${m.nomAfficheA} - ${m.nomAfficheB}</option>`).join('')}
+                </select>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                    <div><div class="adminLabel">Score A</div><input type="number" id="resA" style="width:100%;padding:10px;background:var(--bg);color:#fff;border-radius:8px"></div>
+                    <div><div class="adminLabel">Score B</div><input type="number" id="resB" style="width:100%;padding:10px;background:var(--bg);color:#fff;border-radius:8px"></div>
+                </div><br>
+                <button class="btn" onclick="adminSaveResultSubmit()">Calculer les points</button>
+                <div id="resMsg" style="margin-top:10px"></div>
             </div>
-        </div>
+        `;
+    }
+}
 
-        <!-- Home -->
-        <div id="vHome" class="view active">
-            <div id="homeContent"></div>
-        </div>
+// --- FONCTIONS ADMIN CORRIGÉES ---
+function adminAddMatchSubmit() {
+    const a = document.getElementById('addA').value;
+    const b = document.getElementById('addB').value;
+    const d = document.getElementById('addDate').value;
+    const t = document.getElementById('addTime').value;
+    const place = document.getElementById('addPlace').value;
+    const msg = document.getElementById('addMsg');
 
-        <!-- Pronos (Swipe) -->
-        <div id="vPronos" class="view">
-            <div class="filters" id="pronosFilters"></div>
-            <div id="pronoSwipeBox"></div>
-        </div>
+    if(!d || !t) { msg.innerHTML = "<span class='ko'>Date/Heure requises</span>"; return; }
+    
+    // Formatage date pour Sheets (YYYY-MM-DD -> DD/MM/YYYY)
+    const dt = d.split('-').reverse().join('/');
 
-        <!-- All Matches -->
-        <div id="vMatches" class="view">
-            <div class="filters" id="matchesFilters"></div>
-            <div id="matchList"></div>
-        </div>
+    setLoading(true, "Ajout...");
+    api("adminAddMatch", {
+        userId: user.userId, equipeAId: a, equipeBId: b, 
+        dateFR: dt, heureFR: t, phase: "Phase finale", villeStade: place
+    }).then(() => {
+        msg.innerHTML = "<span class='ok'>Match ajouté !</span>";
+        loadAll();
+    }).catch(e => msg.innerHTML = `<span class='ko'>${e.message}</span>`)
+    .finally(() => setLoading(false));
+}
 
-        <!-- Rank -->
-        <div id="vRank" class="view">
-            <div class="tabs-scroll">
-                <button class="active" onclick="setRankSec('records',this)">Records</button>
-                <button onclick="setRankSec('classement',this)">Classement</button>
-                <button onclick="setRankSec('buteurs',this)">Buteurs</button>
-            </div>
-            <div id="rankContent"></div>
-        </div>
+function adminSaveResultSubmit() {
+    const mid = document.getElementById('resMid').value;
+    const sA = document.getElementById('resA').value;
+    const sB = document.getElementById('resB').value;
+    const msg = document.getElementById('resMsg');
 
-        <!-- Profile / Admin -->
-        <div id="vProfile" class="view">
-            <div id="profileHeader"></div>
-            <div class="tabs-scroll" id="profileTabs"></div>
-            <div id="profileContent"></div>
-        </div>
+    if(sA === "" || sB === "") return;
 
-        <!-- Navigation -->
-        <div class="bnav" id="nav">
-            <button class="active" onclick="nav('Home',this)"><span>🏠</span><span>Accueil</span></button>
-            <button onclick="nav('Pronos',this)"><span>⚽</span><span>Pronos</span></button>
-            <button onclick="nav('Matches',this)"><span>📅</span><span>Matchs</span></button>
-            <button onclick="nav('Rank',this)"><span>🏆</span><span>Classement</span></button>
-            <button onclick="nav('Profile',this)"><span>👤</span><span>Profil</span></button>
-        </div>
-    </div>
+    setLoading(true, "Calcul des points...");
+    api("adminResult", { userId: user.userId, matchId: mid, scoreA: sA, scoreB: sB })
+        .then(() => {
+            msg.innerHTML = "<span class='ok'>Résultat validé et points distribués !</span>";
+            loadAll();
+        }).catch(e => msg.innerHTML = `<span class='ko'>${e.message}</span>`)
+        .finally(() => setLoading(false));
+}
 
-    <!-- MODALS -->
-    <div class="modal" id="modalProno">
-        <div class="sheet">
-            <div class="drag"></div>
-            <div id="modalPronoContent"></div>
-        </div>
-    </div>
-
-    <div id="loading" class="loadingOverlay hide">
-        <div style="text-align:center">
-            <div class="spinner"></div>
-            <p id="loadingTxt" style="margin-top:15px;font-weight:700">Chargement...</p>
-        </div>
-    </div>
-
-    <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbw9TnMzwBuITaQ9K6F5PowQO_ErtSRvrTiTN_eUsjV7b67rvOa5NFp_Fsew84eeEMv-Cg/exec";
-        
-        let user = null;
-        let authMode = 'login';
-        let matches = [], pronos = {}, classement = null, buteur = null, equipes = [], joueurs = [], stats = {}, bonusJokers = [];
-        let currentFilter = 'all';
-        let activeRankSec = 'records';
-        let activeProfileSec = 'infos';
-        let swipeIdx = 0;
-
-        // API Helper
-        function api(action, params = {}) {
-            let url = API_URL + "?action=" + action;
-            for (let key in params) url += `&${key}=${encodeURIComponent(params[key])}`;
-            return fetch(url).then(r => r.json()).then(j => {
-                if (!j.ok) throw new Error(j.error);
-                return j.data;
-            });
-        }
-
-        // Global UI
-        function setLoading(show, txt = "Chargement...") {
-            document.getElementById('loading').classList.toggle('hide', !show);
-            document.getElementById('loadingTxt').textContent = txt;
-        }
-
-        function toast(msg) {
-            console.log("Toast: " + msg); // Simplement log pour l'exemple, tu peux remettre ton toast UI
-        }
-
-        // Auth Logic
-        function setAuthMode(m) {
-            authMode = m;
-            document.getElementById('btnModeLogin').style.background = m === 'login' ? 'var(--g2)' : 'transparent';
-            document.getElementById('btnModeReg').style.background = m === 'register' ? 'var(--g2)' : 'transparent';
-            document.getElementById('btnAuth').textContent = m === 'login' ? 'Se connecter' : 'Créer mon compte';
-        }
-
-        function handleAuth() {
-            const p = document.getElementById('pseudo').value.trim();
-            const pin = document.getElementById('pin').value.trim();
-            if (!p || !pin) return;
-            
-            setLoading(true, "Authentification...");
-            api(authMode, { pseudo: p, pin: pin }).then(d => {
-                user = d;
-                localStorage.setItem('cdmUser', JSON.stringify(user));
-                initApp();
-            }).catch(e => {
-                document.getElementById('authErr').textContent = e.message;
-            }).finally(() => setLoading(false));
-        }
-
-        function logout() {
-            localStorage.removeItem('cdmUser');
-            location.reload();
-        }
-
-        // Init App
-        function initApp() {
-            document.getElementById('login').classList.add('hide');
-            document.getElementById('app').classList.remove('hide');
-            document.getElementById('uBadge').textContent = user.pseudo;
-            document.getElementById('aBadge').classList.toggle('hide', !user.isAdmin);
-            loadData();
-        }
-
-        function loadData() {
-            setLoading(true, "Récupération des données...");
-            api("init", { userId: user.userId }).then(d => {
-                matches = d.matches || [];
-                pronos = d.myPronos || {};
-                classement = d.classement || {};
-                buteur = d.buteur || {};
-                equipes = d.equipes || [];
-                stats = d.pronosticStats || {};
-                bonusJokers = d.bonusJokers || [];
-                render();
-            }).catch(e => toast("Erreur: " + e.message)).finally(() => setLoading(false));
-        }
-
-        // Navigation
-        function nav(v, btn) {
-            document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
-            document.getElementById('v' + v).classList.add('active');
-            document.querySelectorAll('.bnav button').forEach(x => x.classList.remove('active'));
-            if(btn) btn.classList.add('active');
-            render();
-        }
-
-        // Renders
-        function render() {
-            const activeView = document.querySelector('.view.active').id;
-            if (activeView === 'vHome') drawHome();
-            if (activeView === 'vPronos') drawPronos();
-            if (activeView === 'vMatches') drawMatches();
-            if (activeView === 'vRank') drawRank();
-            if (activeView === 'vProfile') drawProfile();
-        }
-
-        function drawHome() {
-            let rest = matches.filter(m => m.status === 'OPEN' && !pronos[m.id]).length;
-            document.getElementById('homeContent').innerHTML = `
-                <div class="hero"><h2>Bonjour ${user.pseudo}</h2><div class="muted">Il te reste ${rest} match(es) à pronostiquer</div></div>
-                <div class="card"><b>Règles rapides</b><br><span class="muted">Score exact: 3pts | Bon résultat: 1pt | Joker: x2</span></div>
-            `;
-        }
-
-        function drawPronos() {
-            const list = matches.filter(m => m.status === 'OPEN' && !pronos[m.id]);
-            const box = document.getElementById('pronoSwipeBox');
-            if (!list.length) {
-                box.innerHTML = '<div class="card muted">Tous tes pronostics sont à jour !</div>';
-                return;
-            }
-            if (swipeIdx >= list.length) swipeIdx = 0;
-            const m = list[swipeIdx];
-            box.innerHTML = `
-                <div class="card">
-                    <div class="mtop">
-                        <div><div class="flag">${m.emojiA}</div><div class="name">${m.nomAfficheA}</div></div>
-                        <div style="font-weight:900">VS</div>
-                        <div><div class="flag">${m.emojiB}</div><div class="name">${m.nomAfficheB}</div></div>
-                    </div>
-                    <div class="scoreEntryRow">
-                        <div class="scoreEntryBox"><input type="number" id="swA" placeholder="0"></div>
-                        <div class="jokerMiddle"><input type="checkbox" id="swJ"><span>🃏</span><small>Joker</small></div>
-                        <div class="scoreEntryBox"><input type="number" id="swB" placeholder="0"></div>
-                    </div>
-                    <button class="btn" onclick="submitPronoSwipe('${m.id}')">Valider</button>
-                    <div class="muted" style="text-align:center;margin-top:10px">${swipeIdx+1} / ${list.length}</div>
-                </div>
-            `;
-        }
-
-        function submitPronoSwipe(mid) {
-            const sA = document.getElementById('swA').value;
-            const sB = document.getElementById('swB').value;
-            const joker = document.getElementById('swJ').checked;
-            if (sA === "" || sB === "") return toast("Saisis les scores !");
-            
-            setLoading(true, "Enregistrement...");
-            api("submitPronostic", { userId: user.userId, matchId: mid, scoreA: sA, scoreB: sB, joker: joker })
-                .then(() => {
-                    toast("Prono enregistré !");
-                    loadData();
-                })
-                .catch(e => toast(e.message))
-                .finally(() => setLoading(false));
-        }
-
-        function drawMatches() {
-            const list = matches.sort((a,b) => a.id - b.id);
-            document.getElementById('matchList').innerHTML = list.map(m => {
-                const p = pronos[m.id];
-                return `
-                    <div class="match ${p?'predicted':''} ${m.status==='FINISHED'?'finished':''}">
-                        <div class="mtop">
-                            <div><div class="flag">${m.emojiA}</div><div class="name">${m.nomAfficheA}</div></div>
-                            <div class="score">${m.status==='FINISHED' ? m.scoreA+' - '+m.scoreB : 'VS'}</div>
-                            <div><div class="flag">${m.emojiB}</div><div class="name">${m.nomAfficheB}</div></div>
-                        </div>
-                        <div class="meta">${m.dateFR} · ${m.heureFR}</div>
-                        ${p ? `<div style="font-size:0.75rem;color:var(--g2);text-align:center;font-weight:700">Ton prono: ${p.scoreA}-${p.scoreB} ${p.points!==null?`(${p.points} pts)` : ''}</div>` : ''}
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function drawRank() {
-            const list = classement.classement || [];
-            document.getElementById('rankContent').innerHTML = `
-                <div class="card">
-                    <table style="width:100%;border-collapse:collapse">
-                        ${list.map(s => `
-                            <tr style="border-bottom:1px solid var(--bdr)">
-                                <td style="padding:10px;font-weight:900">${s.rank}.</td>
-                                <td style="padding:10px">${s.pseudo}</td>
-                                <td style="padding:10px;text-align:right;color:var(--gold);font-weight:900">${s.total} pts</td>
-                            </tr>
-                        `).join('')}
-                    </table>
-                </div>
-            `;
-        }
-
-        // Profile & Admin Logic
-        function drawProfile() {
-            const tabs = [['infos', 'Infos'], ['pronos', 'Mes Pronos']];
-            if (user.isAdmin) {
-                tabs.push(['addMatch', 'Admin: Matchs'], ['results', 'Admin: Résultats']);
-            }
-            
-            document.getElementById('profileTabs').innerHTML = tabs.map(t => `
-                <button class="${activeProfileSec===t[0]?'active':''}" onclick="setProfileSec('${t[0]}')">${t[1]}</button>
-            `).join('');
-
-            const content = document.getElementById('profileContent');
-            if (activeProfileSec === 'infos') {
-                content.innerHTML = `<div class="card">Pseudo: <b>${user.pseudo}</b><br>ID: ${user.userId}</div>`;
-            } else if (activeProfileSec === 'addMatch') {
-                content.innerHTML = drawAdminAddMatchForm();
-                fillTeamLists();
-            } else if (activeProfileSec === 'results') {
-                content.innerHTML = drawAdminResultsForm();
-                fillMatchesList();
-            }
-        }
-
-        function setProfileSec(s) { activeProfileSec = s; drawProfile(); }
-
-        // --- ADMIN FUNCTIONS (FIXED) ---
-        function drawAdminAddMatchForm() {
-            return `
-                <div class="card">
-                    <div class="sec">Ajouter un match (Phase Finale)</div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-                        <select id="addA"></select><select id="addB"></select>
-                    </div><br>
-                    <input type="date" id="addDate" style="margin-bottom:10px">
-                    <input type="time" id="addTime" style="margin-bottom:10px">
-                    <input id="addPlace" placeholder="Ville / Stade" style="margin-bottom:15px">
-                    <button class="btn" onclick="submitAdminAddMatch()">Ajouter le match</button>
-                    <div id="addMsg"></div>
-                </div>
-            `;
-        }
-
-        function fillTeamLists() {
-            const opts = equipes.map(e => `<option value="${e.id}">${e.nomAffiche}</option>`).join('');
-            document.getElementById('addA').innerHTML = opts;
-            document.getElementById('addB').innerHTML = opts;
-        }
-
-        function submitAdminAddMatch() {
-            const payload = {
-                userId: user.userId,
-                equipeAId: document.getElementById('addA').value,
-                equipeBId: document.getElementById('addB').value,
-                dateFR: document.getElementById('addDate').value.split('-').reverse().join('/'),
-                heureFR: document.getElementById('addTime').value,
-                phase: "Phase finale",
-                villeStade: document.getElementById('addPlace').value
-            };
-
-            if(!payload.dateFR || !payload.heureFR) return alert("Date/Heure requises");
-
-            setLoading(true, "Ajout match...");
-            api("adminAddMatch", payload).then(() => {
-                document.getElementById('addMsg').innerHTML = "<span class='ok'>Match ajouté !</span>";
-                loadData();
-            }).catch(e => {
-                document.getElementById('addMsg').innerHTML = `<span class='ko'>${e.message}</span>`;
-            }).finally(() => setLoading(false));
-        }
-
-        function drawAdminResultsForm() {
-            return `
-                <div class="card">
-                    <div class="sec">Saisir un résultat</div>
-                    <select id="resMid" style="margin-bottom:10px" onchange="updateScoreLabels()"></select>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-                        <input type="number" id="resA" placeholder="Score A">
-                        <input type="number" id="resB" placeholder="Score B">
-                    </div><br>
-                    <button class="btn" onclick="submitAdminResult()">Valider le résultat</button>
-                    <div id="resMsg"></div>
-                </div>
-            `;
-        }
-
-        function fillMatchesList() {
-            const list = matches.filter(m => m.status !== 'FINISHED');
-            document.getElementById('resMid').innerHTML = list.map(m => `<option value="${m.id}">${m.nomAfficheA} vs ${m.nomAfficheB}</option>`).join('');
-        }
-
-        function submitAdminResult() {
-            const mid = document.getElementById('resMid').value;
-            const sA = document.getElementById('resA').value;
-            const sB = document.getElementById('resB').value;
-            if(sA === "" || sB === "") return;
-
-            setLoading(true, "Validation...");
-            api("adminResult", { userId: user.userId, matchId: mid, scoreA: sA, scoreB: sB })
-                .then(() => {
-                    document.getElementById('resMsg').innerHTML = "<span class='ok'>Points calculés !</span>";
-                    loadData();
-                }).catch(e => {
-                    document.getElementById('resMsg').innerHTML = `<span class='ko'>${e.message}</span>`;
-                }).finally(() => setLoading(false));
-        }
-
-        // Auto-login
-        window.onload = () => {
-            const saved = localStorage.getItem('cdmUser');
-            if (saved) {
-                user = JSON.parse(saved);
-                initApp();
-            }
-        };
-    </script>
+// Auto-login
+window.onload = () => {
+    const saved = localStorage.getItem('cdmUser');
+    if(saved) { user = JSON.parse(saved); startApp(); }
+};
+</script>
 </body>
 </html>
