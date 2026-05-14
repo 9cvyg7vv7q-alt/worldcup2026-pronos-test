@@ -4,461 +4,81 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>CdM 2026 Pronos</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-:root{--g:#1a5c38;--g2:#2e8b57;--gold:#FFD700;--bg:#0d1117;--card:#161b22;--bdr:#30363d;--txt:#e6edf3;--muted:#8b949e;--red:#ef5350;--blue:#58a6ff}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--txt);padding-bottom:84px}
-.hide{display:none!important}.view{display:none;padding:12px}.view.active{display:block}
-.hdr{position:sticky;top:0;z-index:10;background:var(--g);padding:12px 14px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 12px #0008}
-.hdr h1{font-size:1rem;margin:0;color:var(--gold);font-weight:900}.badge{background:#ffffff1f;border-radius:999px;padding:5px 10px;font-size:.72rem;font-weight:800}.adminBadge{background:var(--gold);color:#111;margin-left:6px}
-.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--bdr);display:flex;z-index:30;padding:4px 0 env(safe-area-inset-bottom)}
-.bnav button{flex:1;background:none;border:0;color:var(--muted);font-size:.64rem;padding:7px 2px 6px;font-weight:800;display:flex;flex-direction:column;gap:2px;align-items:center}
-.bnav button .ico{font-size:1.25rem;line-height:1.25}.bnav button.active{color:var(--gold)}
-.card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:13px;margin-bottom:10px}.hero{text-align:center;background:linear-gradient(135deg,var(--g),#092d1b);padding:22px;border-radius:16px;margin-bottom:12px}
-.hero h2{margin:8px 0 4px;color:var(--gold);font-size:1.12rem}.muted{color:var(--muted);font-size:.78rem}.sec{font-size:.7rem;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.08em;margin:16px 0 8px}.small{font-size:.72rem}.ok{color:#66bb6a}.ko{color:var(--red)}
-input,select,textarea{width:100%;background:var(--bg);border:1.5px solid var(--bdr);color:var(--txt);border-radius:10px;padding:11px;font-size:.9rem}
-select{appearance:auto}button{cursor:pointer}.btn{width:100%;border:0;border-radius:10px;padding:12px;font-weight:900;color:#fff;background:var(--g2)}.btn2{background:transparent;border:1px solid var(--bdr);color:var(--muted)}.btnDanger{background:#45151a;color:#ff8a80}.btnGold{background:var(--gold);color:#111}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}
-#loginScreen{min-height:100vh;display:flex;justify-content:center;align-items:center;padding:22px;background:linear-gradient(160deg,#0d1117,#0d2b1d)}.loginbox{max-width:390px;width:100%}.tabs{display:flex;background:var(--bg);border-radius:10px;padding:3px;margin:12px 0}.tabs button{flex:1;border:0;background:transparent;color:var(--muted);padding:9px;border-radius:8px;font-weight:900}.tabs button.active{background:var(--g2);color:#fff}
-.filters{position:sticky;top:50px;z-index:8;background:var(--bg);margin-left:-12px;margin-right:-12px;padding:8px 12px 7px;display:flex;gap:6px;overflow-x:auto;box-shadow:0 8px 18px #0006}.filters button{background:var(--card);border:1px solid var(--bdr);color:var(--muted);border-radius:99px;padding:7px 12px;font-weight:900;font-size:.68rem;white-space:nowrap}.filters button.active{background:var(--g2);color:#fff}
-.match{background:var(--card);border:1px solid var(--bdr);border-radius:13px;padding:12px;margin-bottom:8px}.match.open{border-left:4px solid var(--g2)}.match.finished{border-left:4px solid var(--gold)}.match.locked{opacity:.68}.match.predicted{border-left:4px solid var(--blue)}
-.mtop{display:grid;grid-template-columns:1fr auto 1fr;gap:7px;align-items:center}.team{text-align:center;min-width:0}.flag{font-size:1.45rem}.name{font-size:.72rem;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.score{font-size:1.25rem;font-weight:900;background:var(--bg);border-radius:10px;padding:4px 10px;min-width:70px;text-align:center}.meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:.68rem;color:var(--muted);gap:8px}.pill{border-radius:999px;padding:3px 8px;font-size:.62rem;font-weight:900}.pOpen{background:#2e8b5730;color:#66bb6a}.pLocked{background:#c6282830;color:#ef5350}.pFinished{background:#ffd70026;color:var(--gold)}.pBonus{background:#ffd70026;color:var(--gold)}
-.tv,.voteStats{margin-top:7px;color:#9bd0ff;font-size:.68rem}.pronoLine{margin-top:9px;padding:10px 11px;border-radius:11px;background:#2e8b5726;color:#7dff9e;font-size:.82rem;font-weight:900;display:flex;justify-content:space-between;align-items:center;border:1px solid #2e8b5755}
-.rankRow{display:flex;align-items:center;gap:10px}.rankRow .pos{font-size:1.1rem;min-width:28px;text-align:center}.rankRow .nm{flex:1;font-weight:900}.pts{color:var(--gold);font-size:1.1rem;font-weight:900}
-.table{width:100%;border-collapse:collapse}.table th,.table td{font-size:.72rem;padding:7px 4px;border-bottom:1px solid #ffffff12;text-align:center}.table th:first-child,.table td:first-child{text-align:left}.table th{color:var(--muted)}
-.modal{display:none;position:fixed;inset:0;z-index:60;background:#000d;align-items:flex-end}.modal.open{display:flex}.sheet{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-height:92vh;overflow:auto;padding:14px}.drag{width:38px;height:4px;background:var(--bdr);border-radius:4px;margin:0 auto 12px}
-.toast{position:fixed;left:12px;right:12px;bottom:92px;background:#102e1f;border:1px solid #2e8b57;color:#d8ffe5;border-radius:12px;padding:12px;text-align:center;font-weight:900;z-index:99}.loadingOverlay{position:fixed;inset:0;background:#0009;z-index:120;display:flex;align-items:center;justify-content:center;padding:20px}.loadingBox{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:18px;text-align:center;max-width:320px;box-shadow:0 10px 30px #000b}.spinner{width:34px;height:34px;border:4px solid #ffffff22;border-top-color:var(--gold);border-radius:50%;margin:0 auto 12px;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
-.adminPanel .card{border-color:#ffd70030}.adminLabel{font-size:.68rem;color:var(--muted);font-weight:900;text-transform:uppercase;margin:8px 0 5px}.hint{font-size:.67rem;color:var(--muted);margin-top:5px}.goalRow{display:grid;grid-template-columns:1fr 72px 78px 30px;gap:6px;margin-bottom:6px}.goalRow button{border:0;border-radius:8px;background:#45151a;color:#ff8a80;font-weight:900}.player{display:flex;align-items:center;gap:9px}.player .info{flex:1}.bar{height:6px;background:var(--bg);border-radius:9px;overflow:hidden;margin-top:7px}.bar div{height:100%;background:var(--g2)}
+:root{--g:#1a5c38;--g2:#2e8b57;--gold:#FFD700;--bg:#0d1117;--card:#161b22;--bdr:#30363d;--txt:#e6edf3;--muted:#8b949e;--red:#ef5350;--blue:#2e75b6}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--txt);padding-bottom:86px}.hide{display:none!important}.view{display:none;padding:12px}.view.active{display:block}.hdr{position:sticky;top:0;z-index:5;background:var(--g);padding:12px 15px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 12px #0008}.hdr h1{font-size:1rem;margin:0;color:var(--gold);font-weight:900}.badge{background:#ffffff1f;border-radius:999px;padding:5px 10px;font-size:.72rem;font-weight:800}.admin{background:var(--gold);color:#111;margin-left:5px}.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--bdr);display:flex;z-index:20;padding:4px 0 env(safe-area-inset-bottom)}.bnav button{flex:1;background:none;border:0;color:var(--muted);font-size:.64rem;padding:7px 2px 6px;font-weight:800;display:flex;flex-direction:column;gap:2px;align-items:center}.bnav button .ico{font-size:1.25rem}.bnav button.active{color:var(--gold)}.card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:13px;margin-bottom:10px}.hero{text-align:center;background:linear-gradient(135deg,var(--g),#092d1b);padding:22px;border-radius:16px;margin-bottom:12px}.hero h2{margin:8px 0 4px;color:var(--gold);font-size:1.1rem}.muted{color:var(--muted);font-size:.76rem}.sec{font-size:.7rem;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.08em;margin:16px 0 8px}.small{font-size:.72rem}.ok{color:#66bb6a}.ko{color:var(--red)}input,select,textarea{width:100%;background:var(--bg);border:1.5px solid var(--bdr);color:var(--txt);border-radius:10px;padding:11px;font-size:.9rem}button{cursor:pointer}.btn{width:100%;border:0;border-radius:10px;padding:12px;font-weight:900;color:#fff;background:var(--g2)}.btn2{background:transparent;border:1px solid var(--bdr);color:var(--muted)}.btnDanger{background:#45151a;color:#ff8a80}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}#login{min-height:100vh;display:flex;justify-content:center;align-items:center;padding:22px;background:linear-gradient(160deg,#0d1117,#0d2b1d)}.loginbox{max-width:370px;width:100%}.tabs{display:flex;background:var(--bg);border-radius:10px;padding:3px;margin:12px 0}.tabs button{flex:1;border:0;background:transparent;color:var(--muted);padding:9px;border-radius:8px;font-weight:900}.tabs button.active{background:var(--g2);color:#fff}.filters,.rankTabs,.profileFilters{position:sticky;top:50px;z-index:4;background:var(--bg);margin-left:-12px;margin-right:-12px;padding:8px 12px 7px;display:flex;gap:6px;overflow-x:auto;box-shadow:0 8px 18px #0006}.filters button,.rankTabs button,.profileFilters button{background:var(--card);border:1px solid var(--bdr);color:var(--muted);border-radius:99px;padding:7px 12px;font-weight:900;font-size:.68rem;white-space:nowrap}.filters button.active,.rankTabs button.active,.profileFilters button.active{background:var(--g2);color:#fff}.match{background:var(--card);border:1px solid var(--bdr);border-radius:13px;padding:12px;margin-bottom:8px}.match.has{border-left:4px solid var(--g2)}.match.finished{border-left:4px solid var(--gold)}.match.locked,.match.predicted{opacity:.65}.mtop{display:grid;grid-template-columns:1fr auto 1fr;gap:7px;align-items:center}.team{text-align:center;min-width:0}.flag{font-size:1.45rem}.name{font-size:.72rem;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.score{font-size:1.25rem;font-weight:900;background:var(--bg);border-radius:10px;padding:4px 10px;min-width:70px;text-align:center}.meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:.68rem;color:var(--muted);gap:8px}.pill{border-radius:999px;padding:3px 8px;font-size:.62rem;font-weight:900}.open{background:#2e8b5730;color:#66bb6a}.lockedP{background:#c6282830;color:#ef5350}.finishedP{background:#ffd70026;color:var(--gold)}.bonusPill{background:#ffd70026;color:var(--gold)}.prono{margin-top:9px;padding:10px 11px;border-radius:11px;background:#2e8b5726;color:#7dff9e;font-size:.82rem;font-weight:900;display:flex;justify-content:space-between;align-items:center;border:1px solid #2e8b5755}.goals,.tv,.voteStats,.countdown{margin-top:7px;font-size:.68rem}.goals{color:var(--gold)}.tv{color:#9bd0ff}.voteStats{color:#c4d8ff}.countdown{color:#ffdf80;font-weight:900}.voteGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.voteGrid .card{margin:0}.bar{height:6px;background:var(--bg);border-radius:9px;overflow:hidden;margin-top:6px}.bar div{height:100%;background:var(--g2)}.rank{display:flex;align-items:center;gap:10px}.rank .pos{font-size:1.1rem;min-width:28px;text-align:center}.rank .nm{flex:1;font-weight:900}.pts{color:var(--gold);font-size:1.1rem;font-weight:900}.fun{display:grid;grid-template-columns:1fr 1fr;gap:8px}.fun .card{text-align:center;margin:0}.fun .em{font-size:1.4rem}.table{width:100%;border-collapse:collapse;table-layout:fixed}.table th,.table td{font-size:.68rem;padding:6px 4px;border-bottom:1px solid #ffffff0a;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.table th:first-child,.table td:first-child{text-align:left;width:34%}.modal{display:none;position:fixed;inset:0;z-index:50;background:#000d;align-items:flex-end}.modal.open{display:flex}.sheet{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-height:92vh;overflow:auto;padding:14px}.drag{width:38px;height:4px;background:var(--bdr);border-radius:4px;margin:0 auto 12px}.toast{position:fixed;left:12px;right:12px;bottom:90px;background:#102e1f;border:1px solid #2e8b57;color:#d8ffe5;border-radius:12px;padding:12px;text-align:center;font-weight:900;z-index:99}.loadingOverlay{position:fixed;inset:0;background:#0009;z-index:120;display:flex;align-items:center;justify-content:center;padding:20px}.loadingBox{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:18px;text-align:center;max-width:310px;box-shadow:0 10px 30px #000b}.spinner{width:34px;height:34px;border:4px solid #ffffff22;border-top-color:var(--gold);border-radius:50%;margin:0 auto 12px;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.adminLabel{font-size:.68rem;color:var(--muted);font-weight:900;text-transform:uppercase;margin:8px 0 5px}.scorerRow{display:grid;grid-template-columns:1fr .8fr .45fr .65fr 30px;gap:6px;margin-bottom:6px}.scorerRow button{border:0;border-radius:8px;background:#45151a;color:#ff8a80;font-weight:900}.player{display:flex;align-items:center;gap:9px}.player .info{flex:1}.selectedPlayer{outline:2px solid var(--gold)}.homeAction{margin-top:9px}.bonusBanner{border-color:#ffd70066;background:#ffd70012}.badgeLine{display:flex;flex-wrap:wrap;gap:6px}.badgeMini{border:1px solid var(--bdr);border-radius:999px;padding:6px 9px;background:#ffffff08;font-size:.7rem;font-weight:900;color:var(--txt)}
 </style>
 </head>
 <body>
-
-<div id="loginScreen">
-  <div class="loginbox">
-    <div class="hero"><div style="font-size:3rem">⚽</div><h2>CdM 2026 Pronos</h2><div class="muted">Entre collègues, mais avec une pression de finale.</div></div>
-    <div class="card">
-      <div class="tabs"><button id="tabLogin" class="active" onclick="setAuthMode('login')">Connexion</button><button id="tabRegister" onclick="setAuthMode('register')">Inscription</button></div>
-      <div id="authErr" class="ko small"></div><br>
-      <input id="pseudo" placeholder="Pseudo" autocapitalize="none"><br><br>
-      <input id="pin" placeholder="Code PIN" type="password" inputmode="numeric"><br><br>
-      <button class="btn" id="authBtn" onclick="auth()">Se connecter</button>
-    </div>
-  </div>
+<div id="login"><div class="loginbox"><div class="hero"><div style="font-size:3rem">⚽</div><h2>CdM 2026 Pronos</h2><div class="muted">Pronostics Coupe du Monde 2026</div></div><div class="card"><div class="tabs"><button id="tabLogin" class="active" onclick="mode='login';drawAuth()">Connexion</button><button id="tabReg" onclick="mode='register';drawAuth()">Inscription</button></div><div id="authErr" class="ko small"></div><br><input id="pseudo" placeholder="Pseudo" autocapitalize="none"><br><br><input id="pin" placeholder="Code PIN" type="password" inputmode="numeric"><br><br><button class="btn" id="authBtn" onclick="auth()">Se connecter</button></div></div></div>
+<div id="app" class="hide"><div class="hdr"><h1>⚽ CdM 2026</h1><div><span class="badge" id="uBadge"></span><span class="badge admin hide" id="aBadge">ADMIN</span></div></div>
+<div id="vHome" class="view active"><div class="hero"><h2>Pronostics Coupe du Monde 2026</h2><div class="muted">Pronostique les scores, utilise tes jokers et suis le classement.</div></div><div id="homeSummary"></div><div class="sec">Règles</div><div class="card"><b>Score exact</b> : 3 points<br><span class="muted">Le score pronostiqué correspond exactement au résultat final.</span></div><div class="card">✅ <b>Bon résultat</b> : 1 point<br><span class="muted">Bon vainqueur ou bon match nul, sans le score exact.</span></div><div class="card">⭐ <b>Joker</b> : points ×2<br><span class="muted">3 jokers disponibles sur l’ensemble de la compétition.</span></div><div class="card">⚽ <b>Meilleur buteur</b> : 0 point<br><span class="muted">Pari secondaire. En cas d’égalité, le mieux classé au général gagne la prime.</span></div></div>
+<div id="vSummary" class="view"><div class="sec">Résumé récent</div><div id="summary3Days"></div></div>
+<div id="vGroups" class="view"><div class="sec">Classement des poules</div><div id="groups"></div></div>
+<div id="vMatches" class="view"><div class="filters" id="filters"></div><div id="matchList"></div></div>
+<div id="vRank" class="view"><div class="rankTabs" id="rankTabs"><button class="active" onclick="showRankSection('records',this)">Records</button><button onclick="showRankSection('classement',this)">Classement</button><button onclick="showRankSection('buteurs',this)">Buteurs</button></div><div id="rankRecords"><div class="sec">Records du tournoi</div><div class="fun" id="funBox"></div></div><div id="rankClassement" class="hide"><div class="sec">Classement pronostiqueurs</div><div id="rankList"></div></div><div id="rankButeurs" class="hide"><div class="sec">Suivi meilleur buteur</div><div id="rankScorerBlock"></div></div></div>
+<div id="vScorers" class="view"><div class="sec">Mon pari meilleur buteur</div><div class="card" id="myScorerVote"></div><input id="playerSearch" placeholder="Rechercher un joueur ou une équipe…" oninput="drawPlayers()"><br><br><div id="playerPick"></div><button class="btn" id="btnVoteScorer" onclick="confirmScorerVote()">Valider mon choix de meilleur buteur</button><div id="scorerMsg" class="small" style="margin-top:8px"></div></div>
+<div id="vProfile" class="view"><div class="card" style="text-align:center"><div style="font-size:2.4rem">👤</div><h2 id="profileName"></h2><div id="jokerLine" class="muted"></div></div><button id="adminBtn" class="btn hide" onclick="openAdmin()">⚙️ Panneau admin</button><br><br><div class="grid2" id="statsBox"></div><div class="sec">Mes pronostics</div><div class="profileFilters" id="profileFilters"></div><div id="profileHistory"></div><div class="sec">Mes badges</div><div id="profileBadges" class="badgeLine"></div><br><button class="btn btnDanger" onclick="logout()">Déconnexion</button></div>
 </div>
-
-<div id="app" class="hide">
-  <div class="hdr"><h1>⚽ CdM 2026</h1><div><span class="badge" id="uBadge"></span><span class="badge adminBadge hide" id="aBadge">ADMIN</span></div></div>
-
-  <div id="vHome" class="view active">
-    <div class="hero"><div style="font-size:2.5rem">🏆</div><h2>Pronostics Coupe du Monde 2026</h2><div class="muted">Scores, jokers, buteurs et mauvaise foi contrôlée.</div></div>
-    <div id="homeSummary"></div>
-    <div class="sec">Règles</div>
-    <div class="card"><b>Score exact</b> : 3 points<br><span class="muted">Le score pronostiqué correspond exactement au résultat final.</span></div>
-    <div class="card">✅ <b>Bon résultat</b> : 1 point<br><span class="muted">Bon vainqueur ou bon match nul, sans le score exact.</span></div>
-    <div class="card">⭐ <b>Joker</b> : points ×2<br><span class="muted">3 jokers disponibles sur l'ensemble de la compétition. Si un match a un joker bonus admin, le joker personnel est bloqué.</span></div>
-    <div class="card">⚽ <b>Meilleur buteur</b> : 0 point<br><span class="muted">Pari secondaire pour suivre les buteurs. En cas d'égalité sur le buteur, le mieux classé au général l'emporte.</span></div>
-  </div>
-
-  <div id="vPronos" class="view">
-    <div class="filters" id="pronoFilters"></div>
-    <div id="matchList"></div>
-  </div>
-
-  <div id="vRank" class="view">
-    <div class="filters"><button class="active" onclick="rankMode='classement';drawRank()">Classement</button><button onclick="rankMode='buteurs';drawRank()">Buteurs</button></div>
-    <div id="rankContent"></div>
-  </div>
-
-  <div id="vGroups" class="view"><div class="sec">Classement des poules</div><div id="groupsContent"></div></div>
-
-  <div id="vScorers" class="view">
-    <div class="sec">Mon pari meilleur buteur</div>
-    <div id="myScorerVote"></div>
-    <input id="playerSearch" placeholder="Rechercher un joueur ou une équipe..." oninput="drawPlayers()"><br><br>
-    <div id="playerPick"></div>
-  </div>
-
-  <div id="vProfile" class="view">
-    <div class="card" style="text-align:center"><div style="font-size:2.4rem">👤</div><h2 id="profileName"></h2><div id="profileState" class="muted"></div></div>
-    <button id="adminOpenBtn" class="btn btnGold hide" onclick="openAdmin()">⚙️ Panneau admin</button><br><br>
-    <div class="grid2" id="profileStats"></div>
-    <div class="sec">Mes pronostics</div>
-    <div id="profileHistory"></div>
-    <div id="adminBox" class="adminPanel hide"></div>
-    <br><button class="btn btnDanger" onclick="logout()">Déconnexion</button>
-  </div>
-</div>
-
-<div class="bnav hide" id="nav">
-  <button data-view="Home" class="active" onclick="showView('Home',this)"><span class="ico">🏠</span><span>Accueil</span></button>
-  <button data-view="Pronos" onclick="showView('Pronos',this)"><span class="ico">⚽</span><span>Pronos</span></button>
-  <button data-view="Groups" onclick="showView('Groups',this)"><span class="ico">📊</span><span>Poules</span></button>
-  <button data-view="Rank" onclick="showView('Rank',this)"><span class="ico">🏆</span><span>Classement</span></button>
-  <button data-view="Scorers" onclick="showView('Scorers',this)"><span class="ico">🎯</span><span>Buteur</span></button>
-  <button data-view="Profile" onclick="showView('Profile',this)"><span class="ico">👤</span><span>Profil</span></button>
-</div>
-
-<div class="modal" id="pronoModal"><div class="sheet"><div class="drag"></div><div id="pronoContent"></div></div></div>
-<div class="toast hide" id="toast"></div>
-<div class="loadingOverlay hide" id="loadingOverlay"><div class="loadingBox"><div class="spinner"></div><b id="loadingText">Chargement...</b><br><span class="muted">Google Sheets mouline. Pas vite, mais propre.</span></div></div>
-
+<div class="bnav hide" id="nav"><button data-view="Home" class="active" onclick="show('Home',this)"><span class="ico">🏠</span><span>Accueil</span></button><button data-view="Summary" onclick="show('Summary',this)"><span class="ico">🗞️</span><span>Résumé</span></button><button data-view="Groups" onclick="show('Groups',this)"><span class="ico">🏆</span><span>Poules</span></button><button data-view="Matches" onclick="show('Matches',this)"><span class="ico">⚽</span><span>Pronos</span></button><button data-view="Rank" onclick="show('Rank',this)"><span class="ico">📊</span><span>Classement</span></button><button data-view="Profile" onclick="show('Profile',this)"><span class="ico">👤</span><span>Profil</span></button></div>
+<div class="modal" id="pronoModal"><div class="sheet"><div class="drag"></div><div id="pronoContent"></div></div></div><div class="modal" id="adminModal"><div class="sheet"><div class="drag"></div><div id="adminContent"></div></div></div><div id="toast" class="toast hide"></div><div id="loadingOverlay" class="loadingOverlay hide"><div class="loadingBox"><div class="spinner"></div><b id="loadingText">Chargement...</b><br><span class="muted">La base Google Sheets répond.</span></div></div>
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzBIuGzYTrF6MGocc2uKVaIqcV7vdufYvF-_MIosGR5Hm8cCfn8XWEMLQE9wOoSDyCg/exec";
-
-let authMode="login";
-let user=null;
-let lightLoaded=false;
-let homeData={};
-let userState={};
-let bonusJokers=null;
-
-let pronosLoaded=false, rankLoaded=false, groupsLoaded=false, scorersLoaded=false, profileLoaded=false, adminLoaded=false;
-let matches=[], myPronos={}, pronoStats={}, classement=[], topScorers=[], groups=[], players=[], scorerVotes=[], myScorer=null, adminData=null;
-let currentFilter="todo", rankMode="classement", selectedPlayerId=null;
-
-function api(action, params={}){
-  if(!API_URL || API_URL.includes("COLLE_TON_URL")) return Promise.reject(new Error("Renseigne API_URL dans index.html avec l'URL de ton Web App Apps Script."));
-  let url=API_URL+"?action="+encodeURIComponent(action);
-  Object.keys(params).forEach(k=>url+="&"+encodeURIComponent(k)+"="+encodeURIComponent(params[k] ?? ""));
-  return fetch(url).then(r=>r.json()).then(j=>{ if(!j.ok) throw new Error(j.error || "Erreur API"); return j.data; });
-}
-function $(id){return document.getElementById(id)}
-function toast(t){let e=$("toast");e.textContent=t;e.classList.remove("hide");setTimeout(()=>e.classList.add("hide"),2600)}
-function setLoading(on,msg="Chargement..."){$("loadingText").textContent=msg;$("loadingOverlay").classList.toggle("hide",!on)}
-function esc(v){return String(v ?? "").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
-function pct(n,t){return t?Math.round(Number(n||0)/Number(t||0)*100):0}
-function asBool(v){return v===true || String(v).toLowerCase()==="true"}
-function byId(arr,id,key="id"){return (arr||[]).find(x=>String(x[key])===String(id))}
-function opt(v,l){return `<option value="${esc(v)}">${esc(l)}</option>`}
-
-function setAuthMode(m){
-  authMode=m;
-  $("tabLogin").classList.toggle("active",m==="login");
-  $("tabRegister").classList.toggle("active",m==="register");
-  $("authBtn").textContent=m==="login"?"Se connecter":"Créer mon compte";
-  $("authErr").textContent="";
-}
-function auth(){
-  $("authErr").textContent="";
-  api(authMode==="login"?"login":"register",{pseudo:$("pseudo").value.trim(), pin:$("pin").value.trim()})
-    .then(d=>{ if(d.error){$("authErr").textContent=d.error;return} user=d; localStorage.setItem("cdmUser",JSON.stringify(user)); startApp(); })
-    .catch(e=>$("authErr").textContent=e.message);
-}
+const API_URL = "https://script.google.com/macros/s/AKfycbyiys4lX54SzcutqfDN3qtVGWHJVVuDSisEt7XPk7ye7Ia8VlRpNNhI4TNKuS592JTLiw/exec";
+let mode="login", user=null, light=null, matches=[], pronos={}, pronosticStats={}, butsMatch={}, classement=[], funRecords=[], scorerBoardData=[], groupsData={}, summaryData=null, scorersData=null, adminData=null, currentFilter="todo", activeRankSection="records", selectedMatch=null, selectedPlayer=null, currentProfileFilter="all";
+function cleanText(v){return String(v??"").replace(/[<>]/g,s=>({"<":"&lt;",">":"&gt;"}[s]));}
+function api(action,params={}){let url=API_URL+"?action="+encodeURIComponent(action);Object.keys(params).forEach(k=>url+="&"+encodeURIComponent(k)+"="+encodeURIComponent(params[k]));return fetch(url).then(r=>r.json()).then(j=>{if(!j.ok)throw new Error(j.error);return j.data;});}
+function toast(t){let e=document.getElementById("toast");e.textContent=t;e.classList.remove("hide");setTimeout(()=>e.classList.add("hide"),2400)}
+function setLoading(on,msg="Chargement..."){loadingText.textContent=msg;loadingOverlay.classList.toggle("hide",!on)}
+function drawAuth(){tabLogin.classList.toggle("active",mode==="login");tabReg.classList.toggle("active",mode==="register");authBtn.textContent=mode==="login"?"Se connecter":"Créer mon compte";authErr.textContent=""}
+function auth(){api(mode==="login"?"login":"register",{pseudo:pseudo.value.trim(),pin:pin.value.trim()}).then(d=>{if(d.error){authErr.textContent=d.error;return}user=d;localStorage.setItem("cdmUser",JSON.stringify(user));startApp()}).catch(e=>authErr.textContent=e.message)}
 function logout(){localStorage.removeItem("cdmUser");location.reload()}
-
-function startApp(){
-  $("loginScreen").classList.add("hide");
-  $("app").classList.remove("hide");
-  $("nav").classList.remove("hide");
-  $("uBadge").textContent=user.pseudo;
-  $("aBadge").classList.toggle("hide",!user.isAdmin);
-  $("adminOpenBtn").classList.toggle("hide",!user.isAdmin);
-  $("profileName").textContent=user.pseudo;
-  loadLight();
-}
-function loadLight(){
-  lightLoaded=false;
-  bonusJokers=null; // important : rien ne s'affiche tant que la base n'a pas répondu
-  drawHome();
-  setLoading(true,"Chargement de l'accueil...");
-  api("initLight",{userId:user.userId}).then(d=>{
-    if(d.error){toast(d.error);return}
-    user=d.user||user;
-    homeData=d.home||{};
-    userState=d.userState||{};
-    bonusJokers=d.bonusJokers||[];
-    lightLoaded=true;
-    drawHome();
-    drawProfileHeader();
-  }).catch(e=>toast("Erreur API : "+e.message)).finally(()=>setLoading(false));
-}
-
-function showView(v,btn){
-  document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));
-  $("v"+v).classList.add("active");
-  document.querySelectorAll(".bnav button").forEach(x=>x.classList.remove("active"));
-  if(btn) btn.classList.add("active");
-  if(v==="Pronos") loadPronos();
-  if(v==="Rank") loadRank();
-  if(v==="Groups") loadGroups();
-  if(v==="Scorers") loadScorers();
-  if(v==="Profile") loadProfile();
-}
-
-function drawHome(){
-  if(!lightLoaded){
-    $("homeSummary").innerHTML=`<div class="card muted">Chargement de tes infos...</div>`;
-    return;
-  }
-  let bonusHtml="";
-  if(bonusJokers!==null && bonusJokers.length){
-    bonusHtml=bonusJokers.map(b=>`<div class="card" style="border-color:#ffd70066;background:#ffd70012">⭐ <b>Joker bonus</b> sur <b>${esc(b.labelMatch)}</b><br><span class="muted">Tu ne l'as pas encore pronostiqué et le match n'est pas terminé.</span><button class="btn btnGold" style="margin-top:9px" onclick="goMatch('${esc(b.matchId)}')">Faire ce prono</button></div>`).join("");
-  }
-  let scorerHtml = asBool(userState.hasScorerVote)
-    ? `<div class="card">🎯 <b>Pari buteur enregistré</b><br><span class="muted">Tu es tranquille de ce côté-là.</span></div>`
-    : `<div class="card">🎯 <b>Ton pari meilleur buteur n'est pas encore fait</b><br><span class="muted">Ce pari ne donne pas de points, mais peut rapporter la prime buteur.</span><button class="btn" style="margin-top:9px" onclick="showView('Scorers',document.querySelector('[data-view=Scorers]'))">Choisir mon buteur</button></div>`;
-
-  $("homeSummary").innerHTML = bonusHtml + scorerHtml + `
-    <div class="grid2">
-      <div class="card"><b>${esc(userState.todoCount ?? "—")}</b><br><span class="muted">matchs à pronostiquer</span></div>
-      <div class="card"><b>${esc(homeData.leaderPseudo || "—")}</b><br><span class="muted">leader actuel</span></div>
-    </div>
-    <div class="card">
-      Matchs ouverts : <b>${esc(homeData.openMatchesCount || 0)}</b><br>
-      Meilleur buteur actuel : <b>${esc(homeData.topScorer || "—")}</b> ${homeData.topScorerGoals?`(${esc(homeData.topScorerGoals)})`:""}
-      <button class="btn" style="margin-top:9px" onclick="goTodo()">Aller au pronostic</button>
-    </div>`;
-}
-function goTodo(){currentFilter="todo";showView("Pronos",document.querySelector("[data-view=Pronos]"))}
-function goMatch(id){currentFilter="all";showView("Pronos",document.querySelector("[data-view=Pronos]"));setTimeout(()=>{let m=byId(matches,id,"matchId"); if(m) openProno(m)},350)}
-
-function loadPronos(force=false){
-  if(pronosLoaded && !force){drawPronos();return}
-  setLoading(true,"Chargement des matchs...");
-  api("getPronosView",{userId:user.userId}).then(d=>{
-    matches=(d.matches||[]).sort((a,b)=>String(a.sortKey).localeCompare(String(b.sortKey)));
-    myPronos=d.myPronos||{};
-    pronoStats=d.stats||{};
-    pronosLoaded=true;
-    drawPronoFilters();
-    drawPronos();
-  }).catch(e=>toast("Erreur pronos : "+e.message)).finally(()=>setLoading(false));
-}
-function drawPronoFilters(){
-  const arr=[["todo","Non pronostiqués"],["all","Tous"],["open","Ouverts"],["locked","Verrouillés"],["finished","Terminés"],["A","A"],["B","B"],["C","C"],["D","D"],["E","E"],["F","F"],["G","G"],["H","H"],["I","I"],["J","J"],["K","K"],["L","L"]];
-  $("pronoFilters").innerHTML=arr.map(([k,l])=>`<button class="${currentFilter===k?'active':''}" onclick="currentFilter='${k}';drawPronoFilters();drawPronos()">${l}</button>`).join("");
-}
-function passMatchFilter(m){
-  if(currentFilter==="all")return true;
-  if(currentFilter==="todo")return m.status==="OPEN" && !myPronos[String(m.matchId)];
-  if(currentFilter==="open")return m.status==="OPEN";
-  if(currentFilter==="locked")return m.status==="LOCKED";
-  if(currentFilter==="finished")return m.status==="FINISHED";
-  return String(m.groupe)===currentFilter;
-}
-function drawPronos(){
-  let list=matches.filter(passMatchFilter);
-  if(!list.length){$("matchList").innerHTML=`<div class="card muted">Aucun match dans ce filtre.</div>`;return}
-  $("matchList").innerHTML=list.map(matchCard).join("");
-}
-function matchCard(m){
-  let p=myPronos[String(m.matchId)];
-  let cls=m.status==="FINISHED"?"finished":m.status==="LOCKED"?"locked":"open";
-  if(p) cls+=" predicted";
-  let pill=m.status==="FINISHED"?`<span class="pill pFinished">Terminé</span>`:m.status==="LOCKED"?`<span class="pill pLocked">Verrouillé</span>`:`<span class="pill pOpen">Ouvert</span>`;
-  let score=m.status==="FINISHED"?`${esc(m.scoreA)} - ${esc(m.scoreB)}`:"VS";
-  let odds = (m.cote1||m.coteX||m.cote2)?`<div class="tv">Cotes : ${esc(m.cote1||"-")} / ${esc(m.coteX||"-")} / ${esc(m.cote2||"-")}</div>`:"";
-  let tv = m.diffuseursLabel?`<div class="tv">📺 ${esc(m.diffuseursLabel)}</div>`:"";
-  let stats = pronoStats[String(m.matchId)];
-  let statLine = stats && Number(stats.totalPronos)>0 ? `<div class="voteStats">Votes : ${esc(m.nomA)} <b>${pct(stats.aWin,stats.totalPronos)}%</b> · Nul <b>${pct(stats.draw,stats.totalPronos)}%</b> · ${esc(m.nomB)} <b>${pct(stats.bWin,stats.totalPronos)}%</b> <span class="muted">(${esc(stats.totalPronos)})</span></div>` : "";
-  let prono = p ? `<div class="pronoLine"><span>Ton prono : ${esc(p.scoreA)} - ${esc(p.scoreB)} ${asBool(p.joker)?"⭐":""}</span><b>${esc(p.points || 0)} pt</b></div>` : "";
-  let action = m.status==="OPEN" && !p ? `onclick="openPronoById('${esc(m.matchId)}')"` : "";
-  let bonus=asBool(m.bonusJoker)?` <span class="pill pBonus">⭐ Bonus</span>`:"";
-  return `<div class="match ${cls}" ${action}>
-    <div class="mtop"><div class="team"><div class="flag">${esc(m.emojiA)}</div><div class="name">${esc(m.nomA)}</div></div><div class="score">${score}</div><div class="team"><div class="flag">${esc(m.emojiB)}</div><div class="name">${esc(m.nomB)}</div></div></div>
-    <div class="meta"><span>${esc(m.dateFR)} · ${esc(m.heureFR)} · ${esc(m.groupe||m.phase)}</span><span>${pill}${bonus}</span></div>
-    ${tv}${odds}${statLine}${prono}
-  </div>`;
-}
-function openPronoById(id){let m=byId(matches,id,"matchId"); if(m) openProno(m)}
-function openProno(m){
-  if(m.status!=="OPEN"){toast("Match verrouillé");return}
-  if(myPronos[String(m.matchId)]){toast("Tu as déjà pronostiqué ce match");return}
-  let bonus=asBool(m.bonusJoker);
-  $("pronoContent").innerHTML=`<h3>${esc(m.labelMatch)}</h3>
-    <div class="muted">${esc(m.dateFR)} · ${esc(m.heureFR)} · ${esc(m.stadeLabel||"")}</div><br>
-    <div class="grid2"><div><div class="adminLabel">${esc(m.nomA)}</div><input id="scoreA" type="number" min="0" inputmode="numeric" value="1"></div><div><div class="adminLabel">${esc(m.nomB)}</div><input id="scoreB" type="number" min="0" inputmode="numeric" value="1"></div></div>
-    <br>
-    <label class="card" style="display:block"><input id="useJoker" type="checkbox" ${bonus?"disabled":""} style="width:auto"> Utiliser un joker ${bonus?'<span class="muted">(bloqué : joker bonus admin actif)</span>':''}</label>
-    ${bonus?'<div class="card" style="border-color:#ffd70066">⭐ Ce match compte double automatiquement.</div>':''}
-    <button class="btn" onclick="submitProno('${esc(m.matchId)}')">Valider mon pronostic</button><br><br>
-    <button class="btn btn2" onclick="closeModal()">Annuler</button>`;
-  $("pronoModal").classList.add("open");
-}
-function closeModal(){$("pronoModal").classList.remove("open")}
-function submitProno(matchId){
-  setLoading(true,"Enregistrement du prono...");
-  api("submitPronostic",{userId:user.userId,matchId:matchId,scoreA:$("scoreA").value,scoreB:$("scoreB").value,joker:$("useJoker").checked})
-    .then(d=>{ if(d.error){toast(d.error);return} closeModal(); toast("Pronostic enregistré"); pronosLoaded=false; profileLoaded=false; loadLight(); loadPronos(true); })
-    .catch(e=>toast("Erreur : "+e.message)).finally(()=>setLoading(false));
-}
-
-function loadRank(force=false){
-  if(rankLoaded && !force){drawRank();return}
-  setLoading(true,"Chargement du classement...");
-  api("getRankView").then(d=>{classement=d.classement||[];topScorers=d.topScorers||[];rankLoaded=true;drawRank()})
-  .catch(e=>toast("Erreur classement : "+e.message)).finally(()=>setLoading(false));
-}
-function drawRank(){
-  let buttons=document.querySelectorAll("#vRank .filters button");
-  buttons.forEach(b=>b.classList.remove("active"));
-  if(rankMode==="classement") buttons[0]?.classList.add("active"); else buttons[1]?.classList.add("active");
-  if(rankMode==="buteurs"){
-    $("rankContent").innerHTML=`<div class="sec">Buteurs</div>`+topScorers.slice(0,30).map((s,i)=>`<div class="card rankRow"><div class="pos">${i+1}</div><div class="nm">${esc(s.nom)}<br><span class="muted">${esc(s.equipe||"")}</span></div><div class="pts">${esc(s.buts)} ⚽</div></div>`).join("");
-    return;
-  }
-  $("rankContent").innerHTML=`<div class="sec">Classement pronostiqueurs</div>`+classement.map(r=>`<div class="card rankRow"><div class="pos">${esc(r.rank)}</div><div class="nm">${esc(r.pseudo)}<br><span class="muted">Exact ${esc(r.exact||0)} · Bon résultat ${esc(r.good||0)} · Jokers ${esc(r.jokersUsed||0)}</span></div><div class="pts">${esc(r.points||0)} pt</div></div>`).join("");
-}
-
-function loadGroups(force=false){
-  if(groupsLoaded && !force){drawGroups();return}
-  setLoading(true,"Chargement des poules...");
-  api("getGroupsView").then(d=>{groups=d||[];groupsLoaded=true;drawGroups()}).catch(e=>toast("Erreur poules : "+e.message)).finally(()=>setLoading(false));
-}
-function drawGroups(){
-  let byGroup={}; groups.forEach(g=>{(byGroup[g.groupe] ||= []).push(g)});
-  $("groupsContent").innerHTML=Object.keys(byGroup).sort().map(g=>`<div class="card"><b>Groupe ${esc(g)}</b><table class="table"><tr><th>Équipe</th><th>Pts</th><th>J</th><th>Diff</th></tr>${byGroup[g].map(t=>`<tr><td>${esc(t.emoji||"")} ${esc(t.nom)}</td><td><b>${esc(t.pts)}</b></td><td>${esc(t.j)}</td><td>${esc(t.diff)}</td></tr>`).join("")}</table></div>`).join("");
-}
-
-function loadScorers(force=false){
-  if(scorersLoaded && !force){drawScorers();return}
-  setLoading(true,"Chargement des joueurs...");
-  api("getScorersView",{userId:user.userId}).then(d=>{players=d.players||[];scorerVotes=d.votes||[];myScorer=d.myVote||null;scorersLoaded=true;drawScorers()}).catch(e=>toast("Erreur buteurs : "+e.message)).finally(()=>setLoading(false));
-}
-function drawScorers(){
-  $("myScorerVote").innerHTML=myScorer?`<div class="card">✅ Ton choix : <b>${esc(myScorer.joueur)}</b></div>`:`<div class="card muted">Aucun buteur choisi pour l'instant.</div>`;
-  drawPlayers();
-}
-function drawPlayers(){
-  let q=($("playerSearch")?.value||"").toLowerCase();
-  let list=players.filter(p=>(p.nomComplet+" "+p.equipe).toLowerCase().includes(q)).slice(0,80);
-  $("playerPick").innerHTML=list.map(p=>`<div class="card player" onclick="selectPlayer('${esc(p.id)}')"><div class="info"><b>${esc(p.nomComplet||p.initialNom)}</b><br><span class="muted">${esc(p.equipe||"")} · ${esc(p.buts||0)} but(s)</span></div><button class="btn" style="width:auto;padding:9px 12px">Choisir</button></div>`).join("");
-}
-function selectPlayer(id){
-  if(myScorer){toast("Ton choix est déjà enregistré");return}
-  let p=byId(players,id);
-  if(!confirm("Valider "+(p?.nomComplet||"ce joueur")+" comme meilleur buteur ?"))return;
-  setLoading(true,"Enregistrement du buteur...");
-  api("voteButeur",{userId:user.userId,joueurId:id}).then(d=>{ if(d.error){toast(d.error);return} toast("Buteur enregistré");scorersLoaded=false;loadLight();loadScorers(true);}).catch(e=>toast("Erreur : "+e.message)).finally(()=>setLoading(false));
-}
-
-function drawProfileHeader(){
-  $("profileState").textContent=`${userState.todoCount ?? "—"} match(s) à pronostiquer · ${userState.jokersUsed ?? 0} joker(s) utilisé(s)`;
-}
-function loadProfile(force=false){
-  drawProfileHeader();
-  if(profileLoaded && !force){drawProfile();return}
-  setLoading(true,"Chargement du profil...");
-  api("getProfileView",{userId:user.userId}).then(d=>{profileLoaded=true;window.profileData=d;drawProfile()}).catch(e=>toast("Erreur profil : "+e.message)).finally(()=>setLoading(false));
-}
-function drawProfile(){
-  let d=window.profileData||{};
-  let ps=d.pronos||[];
-  $("profileStats").innerHTML=`<div class="card"><b>${esc(d.state?.todoCount ?? userState.todoCount ?? "—")}</b><br><span class="muted">à pronostiquer</span></div><div class="card"><b>${esc(d.state?.jokersUsed ?? userState.jokersUsed ?? 0)}</b><br><span class="muted">jokers utilisés</span></div>`;
-  $("profileHistory").innerHTML=ps.slice().reverse().map(p=>{let m=d.matches?.[String(p.matchId)]||{};return `<div class="card"><b>${esc(m.labelMatch||"Match "+p.matchId)}</b><br><span class="muted">Prono : ${esc(p.scoreA)}-${esc(p.scoreB)} ${asBool(p.joker)?"⭐":""} · ${esc(p.points||0)} pt</span></div>`}).join("") || `<div class="card muted">Aucun prono enregistré.</div>`;
-}
-
-/* ADMIN : vrai select mobile, pas datalist */
-function openAdmin(){
-  $("adminBox").classList.toggle("hide");
-  if(!$("adminBox").classList.contains("hide")) loadAdmin();
-}
-function loadAdmin(force=false){
-  if(adminLoaded && !force){drawAdmin();return}
-  setLoading(true,"Chargement admin...");
-  api("getAdminView",{userId:user.userId}).then(d=>{adminData=d;adminLoaded=true;drawAdmin()}).catch(e=>toast("Erreur admin : "+e.message)).finally(()=>setLoading(false));
-}
-function teamOptions(){return (adminData.equipes||[]).map(e=>opt(e.id,(e.emoji?e.emoji+" ":"")+e.nomAffiche)).join("")}
-function stadiumOptions(){return `<option value="">Stade non renseigné</option>`+(adminData.stades||[]).map(s=>opt(s.id,s.labelAffiche)).join("")}
-function diffOptions(){return `<option value="">Aucun</option>`+(adminData.diffuseurs||[]).map(d=>opt(d.id,d.nom)).join("")}
-function matchOptions(){return (adminData.matches||[]).map(m=>opt(m.matchId,m.labelMatch+" · "+m.dateFR+" "+m.heureFR)).join("")}
-function playerOptions(){return `<option value="">Buteur</option>`+(adminData.players||[]).map(p=>opt(p.id,(p.nomComplet||p.initialNom)+" · "+(p.equipe||""))).join("")}
-
-function drawAdmin(){
-  $("adminBox").innerHTML=`<div class="sec">Panneau admin</div>
-  <div class="card">
-    <h3>Ajouter un match</h3>
-    <form onsubmit="adminAddMatch(event)">
-      <div class="adminLabel">Phase</div><select id="admPhase"><option>Groupe</option><option>16e de finale</option><option>8e de finale</option><option>Quart de finale</option><option>Demi-finale</option><option>Finale</option></select>
-      <div class="adminLabel">Groupe</div><select id="admGroupe"><option value="">Hors groupe</option>${"ABCDEFGHIJKL".split("").map(g=>opt(g,g)).join("")}</select>
-      <div class="grid2"><div><div class="adminLabel">Équipe A</div><select id="admEquipeA">${teamOptions()}</select></div><div><div class="adminLabel">Équipe B</div><select id="admEquipeB">${teamOptions()}</select></div></div>
-      <div class="grid2"><div><div class="adminLabel">Date</div><input id="admDate" type="date"></div><div><div class="adminLabel">Heure</div><input id="admHeure" type="time"></div></div>
-      <div class="adminLabel">Stade</div><select id="admStade">${stadiumOptions()}</select>
-      <div class="grid2"><div><div class="adminLabel">Diffuseur 1</div><select id="admDiff1">${diffOptions()}</select></div><div><div class="adminLabel">Diffuseur 2</div><select id="admDiff2">${diffOptions()}</select></div></div>
-      <div class="grid3"><div><div class="adminLabel">Cote 1</div><input id="admCote1" inputmode="decimal"></div><div><div class="adminLabel">Cote X</div><input id="admCoteX" inputmode="decimal"></div><div><div class="adminLabel">Cote 2</div><input id="admCote2" inputmode="decimal"></div></div><br>
-      <button class="btn btnGold" type="submit">Ajouter le match</button>
-      <div class="hint">Sur téléphone, ce sont de vrais menus déroulants, pas des datalist capricieuses.</div>
-    </form>
-  </div>
-
-  <div class="card">
-    <h3>Résultat d'un match</h3>
-    <div class="adminLabel">Match</div><select id="resMatch">${matchOptions()}</select>
-    <div class="grid2"><div><div class="adminLabel">Score A</div><input id="resA" type="number" min="0" inputmode="numeric"></div><div><div class="adminLabel">Score B</div><input id="resB" type="number" min="0" inputmode="numeric"></div></div>
-    <div class="sec">Buteurs</div><div id="goalRows"></div><button class="btn btn2" onclick="addGoalRow()">+ Ajouter un buteur</button><br><br>
-    <button class="btn" onclick="adminSetResult()">Valider le résultat</button>
-  </div>
-
-  <div class="card">
-    <h3>Cotes</h3>
-    <div class="adminLabel">Match</div><select id="coteMatch">${matchOptions()}</select>
-    <div class="grid3"><input id="c1" placeholder="1" inputmode="decimal"><input id="cx" placeholder="X" inputmode="decimal"><input id="c2" placeholder="2" inputmode="decimal"></div><br>
-    <button class="btn" onclick="adminAddCotes()">Mettre à jour les cotes</button>
-  </div>
-
-  <div class="card">
-    <h3>Joker bonus</h3>
-    <div class="adminLabel">Match</div><select id="bonusMatch">${matchOptions()}</select>
-    <div class="grid2"><button class="btn btnGold" onclick="adminSetBonus(true)">Activer</button><button class="btn btn2" onclick="adminSetBonus(false)">Désactiver</button></div>
-  </div>
-
-  <div class="card">
-    <h3>Maintenance</h3>
-    <button class="btn" onclick="adminRefreshCaches()">Reconstruire les caches</button><br><br>
-    <button class="btn btn2" onclick="adminInstallTrigger()">Installer le trigger background 5 min</button>
-    <div class="hint">Le trigger recalcule les tables CACHE_* en arrière-plan côté Apps Script. C'est utile pour garder l'accueil et les onglets rapides.</div>
-  </div>`;
-  addGoalRow();
-}
-function dateInputToFR(v){if(!v)return"";let [y,m,d]=v.split("-");return `${d}/${m}/${y}`}
-function adminAddMatch(ev){
-  ev.preventDefault();
-  let a=$("admEquipeA").value,b=$("admEquipeB").value;
-  if(a===b){toast("Deux équipes différentes, sinon c'est entraînement.");return}
-  setLoading(true,"Ajout du match...");
-  api("adminAddMatch",{userId:user.userId,phase:$("admPhase").value,groupe:$("admGroupe").value,equipeAId:a,equipeBId:b,dateFR:dateInputToFR($("admDate").value),heureFR:$("admHeure").value,stadeId:$("admStade").value,diffuseur1Id:$("admDiff1").value,diffuseur2Id:$("admDiff2").value,cote1:$("admCote1").value,coteX:$("admCoteX").value,cote2:$("admCote2").value})
-  .then(d=>{if(d.error){toast(d.error);return}toast("Match ajouté");adminLoaded=false;pronosLoaded=false;loadAdmin(true);loadPronos(true);loadLight()})
-  .catch(e=>toast("Erreur ajout match : "+e.message)).finally(()=>setLoading(false));
-}
-function addGoalRow(){
-  let id="g"+Math.random().toString(36).slice(2);
-  $("goalRows").insertAdjacentHTML("beforeend",`<div class="goalRow" id="${id}"><select class="goalPlayer">${playerOptions()}</select><input class="goalMinute" placeholder="min" inputmode="numeric"><select class="goalType"><option value="normal">normal</option><option value="penalty">penalty</option><option value="CSC">CSC</option></select><button onclick="$('${id}').remove()">×</button></div>`);
-}
-function readGoals(){
-  return [...document.querySelectorAll(".goalRow")].map(r=>({joueurId:r.querySelector(".goalPlayer").value,minute:r.querySelector(".goalMinute").value,type:r.querySelector(".goalType").value})).filter(g=>g.joueurId);
-}
-function adminSetResult(){
-  setLoading(true,"Enregistrement du résultat...");
-  api("adminSetResult",{userId:user.userId,matchId:$("resMatch").value,scoreA:$("resA").value,scoreB:$("resB").value,buteurs:JSON.stringify(readGoals())})
-  .then(d=>{if(d.error){toast(d.error);return}toast("Résultat enregistré");adminLoaded=false;pronosLoaded=false;rankLoaded=false;groupsLoaded=false;scorersLoaded=false;profileLoaded=false;loadAdmin(true);loadLight()})
-  .catch(e=>toast("Erreur résultat : "+e.message)).finally(()=>setLoading(false));
-}
-function adminAddCotes(){
-  setLoading(true,"Mise à jour des cotes...");
-  api("adminAddCotes",{userId:user.userId,matchId:$("coteMatch").value,cote1:$("c1").value,coteX:$("cx").value,cote2:$("c2").value})
-  .then(d=>{if(d.error){toast(d.error);return}toast("Cotes mises à jour");adminLoaded=false;pronosLoaded=false;loadAdmin(true);})
-  .catch(e=>toast("Erreur cotes : "+e.message)).finally(()=>setLoading(false));
-}
-function adminSetBonus(enabled){
-  setLoading(true,"Mise à jour joker bonus...");
-  api("adminSetBonusJoker",{userId:user.userId,matchId:$("bonusMatch").value,enabled:enabled})
-  .then(d=>{if(d.error){toast(d.error);return}toast("Joker bonus mis à jour");adminLoaded=false;pronosLoaded=false;loadAdmin(true);loadLight();})
-  .catch(e=>toast("Erreur joker : "+e.message)).finally(()=>setLoading(false));
-}
-function adminRefreshCaches(){
-  setLoading(true,"Reconstruction des caches...");
-  api("refreshCaches",{userId:user.userId}).then(d=>{toast("Caches reconstruits");adminLoaded=false;pronosLoaded=false;rankLoaded=false;groupsLoaded=false;profileLoaded=false;scorersLoaded=false;loadLight();})
-  .catch(e=>toast("Erreur caches : "+e.message)).finally(()=>setLoading(false));
-}
-function adminInstallTrigger(){
-  setLoading(true,"Installation du trigger...");
-  api("installBackgroundTrigger",{userId:user.userId}).then(d=>toast(d.message||"Trigger installé")).catch(e=>toast("Erreur trigger : "+e.message)).finally(()=>setLoading(false));
-}
-
-window.addEventListener("load",()=>{
-  try{let saved=localStorage.getItem("cdmUser"); if(saved){user=JSON.parse(saved);startApp();}}catch(e){}
-});
-$("pronoModal").addEventListener("click",e=>{if(e.target.id==="pronoModal")closeModal()});
+function startApp(){login.classList.add("hide");app.classList.remove("hide");nav.classList.remove("hide");uBadge.textContent=user.pseudo;aBadge.classList.toggle("hide",!user.isAdmin);adminBtn.classList.toggle("hide",!user.isAdmin);profileName.textContent=user.pseudo;loadLight(true)}
+function loadLight(first=false){if(first)setLoading(true,"Chargement de l’accueil...");api("initLight",{userId:user.userId}).then(d=>{light=d;drawHome();drawProfileSkeleton();if(first)return Promise.all([loadPronos(false),loadRank(false)]);}).catch(e=>toast("Erreur API : "+e.message)).finally(()=>{if(first)setLoading(false)})}
+function loadPronos(spin=true){if(spin)setLoading(true,"Chargement des pronostics...");return api("getPronosView",{userId:user.userId}).then(d=>{matches=d.matches||[];pronos=d.myPronos||{};pronosticStats=d.pronosticStats||{};butsMatch=d.butsMatch||{};drawFilters();drawMatches();drawHome()}).catch(e=>toast("Erreur pronos : "+e.message)).finally(()=>{if(spin)setLoading(false)})}
+function loadRank(spin=true){if(spin)setLoading(true,"Chargement du classement...");return api("getRankView",{userId:user.userId}).then(d=>{classement=d.classement||[];funRecords=d.fun||[];scorerBoardData=d.buteur||[];drawRank();drawHome()}).catch(e=>toast("Erreur classement : "+e.message)).finally(()=>{if(spin)setLoading(false)})}
+function show(v,btn){document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));document.getElementById("v"+v).classList.add("active");document.querySelectorAll(".bnav button").forEach(x=>x.classList.remove("active"));if(btn)btn.classList.add("active");if(v==="Matches"&&!matches.length)loadPronos();if(v==="Rank")loadRank();if(v==="Groups")loadGroups();if(v==="Summary")loadSummary();if(v==="Scorers")loadScorers();if(v==="Profile")loadProfile();window.scrollTo(0,0)}
+function drawHome(){let h=light?.home||{}, st=light?.userState||{}, bj=Array.isArray(light?.bonusJokers)?light.bonusJokers:[];let bonus=bj.length?bj.map(b=>`<div class="card bonusBanner">⭐ <b>Joker bonus</b> sur <b>${cleanText(b.label)}</b><br><span class="muted">Tu ne l’as pas encore pronostiqué. Les points compteront double.</span><button class="btn homeAction" onclick="goMatch('${b.matchId}')">Pronostiquer ce match</button></div>`).join(""):"";let scorer=st.hasScorerVote?`<div class="card">⚽ <b>Meilleur buteur validé</b><br><span class="muted">Ton choix est enregistré.</span></div>`:`<div class="card bonusBanner">⚽ <b>Ton pari meilleur buteur n’est pas encore fait</b><br><span class="muted">Ce pari ne donne pas de points, mais peut rapporter la prime.</span><button class="btn homeAction" onclick="show('Scorers',null)">Choisir mon buteur</button></div>`;homeSummary.innerHTML=bonus+scorer+`<div class="grid2"><div class="card"><b>${st.todoCount??"—"}</b><br><span class="muted">matchs à pronostiquer</span></div><div class="card"><b>${cleanText(h.leaderPseudo||"—")}</b><br><span class="muted">leader · ${h.leaderPoints||0} pt(s)</span></div></div><div class="card"><b>Matchs ouverts :</b> ${h.openMatchesCount||0}<br><b>Matchs du jour :</b> ${h.matchesTodayCount||0}<br><b>Meilleur buteur :</b> ${cleanText(h.topScorer||"—")} (${h.topScorerGoals||0})<button class="btn homeAction" onclick="goTodo()">Aller au pronostic</button></div>`}
+function goTodo(){currentFilter="todo";show("Matches",document.querySelector('.bnav button[data-view="Matches"]'));drawFilters();drawMatches()}
+function goMatch(id){currentFilter="all";show("Matches",document.querySelector('.bnav button[data-view="Matches"]'));setTimeout(()=>{let el=document.getElementById("match_"+id);if(el)el.scrollIntoView({behavior:"smooth",block:"center"});},100)}
+function passFilter(m){let today=new Date().toLocaleDateString("fr-FR");if(currentFilter==="all")return true;if(currentFilter==="todo")return m.status==="OPEN"&&!pronos[m.matchId];if(currentFilter==="today")return m.dateFR===today;if(currentFilter==="open")return m.status==="OPEN";if(currentFilter==="finished")return m.status==="FINISHED";return m.groupe===currentFilter}
+function drawFilters(){let groups=[...new Set(matches.map(m=>m.groupe).filter(Boolean))].sort();let arr=[['all','Toutes'],['todo','Non pronostiqués'],['today',"Aujourd'hui"],['open','Ouverts'],['finished','Terminés'],...groups.map(g=>[g,g])];filters.innerHTML=arr.map(([k,l])=>`<button class="${currentFilter===k?'active':''}" onclick="currentFilter='${k}';drawFilters();drawMatches()">${l}</button>`).join("")}
+function statusPill(m){if(m.status==="FINISHED")return'<span class="pill finishedP">Terminé</span>';if(m.status==="LOCKED")return'<span class="pill lockedP">Verrouillé</span>';return'<span class="pill open">Ouvert</span>'}
+function oddsHtml(m){return (m.cote1||m.coteX||m.cote2)?`<div class="tv">Cotes : ${m.cote1||'—'} · ${m.coteX||'—'} · ${m.cote2||'—'}</div>`:""}
+function goalHtml(m){let arr=butsMatch[String(m.matchId)]||[];if(!arr.length)return"";return `<div class="goals">${arr.map(g=>`${cleanText(g.minute||"")}’ ${cleanText(g.nomAffiche||g.nom||"")} ${g.type&&g.type!=="normal"?"("+cleanText(g.type)+")":""}`).join(" · ")}</div>`}
+function voteStatsLine(m){let s=pronosticStats[String(m.matchId)];if(!s||!s.total)return"";let p=n=>s.total?Math.round(n/s.total*100):0;return `<div class="voteStats">Pronostics : ${cleanText(m.nomAfficheA)} <b>${p(s.aWin)}%</b> · Nul <b>${p(s.draw)}%</b> · ${cleanText(m.nomAfficheB)} <b>${p(s.bWin)}%</b> <span class="muted">(${s.total})</span></div>`}
+function matchCard(m){let p=pronos[String(m.matchId)], cls=p?' has predicted':(m.status==='FINISHED'?' finished':(m.status==='LOCKED'?' locked':''));let score=m.status==='FINISHED'?`${m.scoreA} - ${m.scoreB}`:'vs';let pr=p?`<div class="prono"><span>Ton prono : ${p.scoreA} - ${p.scoreB}${p.joker?' ⭐':''}</span><b>${p.points||0} pt</b></div>`:"";let click=(m.status==='OPEN'&&!p)?`onclick="openProno('${m.matchId}')"`:"";return `<div class="match${cls}" id="match_${m.matchId}" ${click}><div class="mtop"><div class="team"><div class="flag">${m.emojiA||''}</div><div class="name">${cleanText(m.nomAfficheA)}</div></div><div class="score">${score}</div><div class="team"><div class="flag">${m.emojiB||''}</div><div class="name">${cleanText(m.nomAfficheB)}</div></div></div><div class="meta"><span>${cleanText(m.dateFR)} · ${cleanText(m.heureFR)}</span>${statusPill(m)}</div>${m.bonusJoker?'<div class="countdown">⭐ Joker bonus collectif actif</div>':''}${m.stadeLabel?`<div class="muted small">📍 ${cleanText(m.stadeLabel)}</div>`:''}${m.diffuseursLabel?`<div class="tv">📺 ${cleanText(m.diffuseursLabel)}</div>`:''}${oddsHtml(m)}${voteStatsLine(m)}${goalHtml(m)}${pr}</div>`}
+function drawMatches(){let list=matches.filter(passFilter);matchList.innerHTML=list.length?list.map(matchCard).join(""):'<div class="card muted">Aucun match pour ce filtre.</div>'}
+function scoreDistributionHtml(m){let s=pronosticStats[String(m.matchId)];if(!s||!s.total)return'<div class="card muted">Aucun pronostic enregistré pour l’instant.</div>';let keys=[...new Set([...Object.keys(s.scoreA||{}),...Object.keys(s.scoreB||{}),"0","1","2","3","4","5"])].map(Number).filter(x=>!isNaN(x)).sort((a,b)=>a-b);let table=(name,obj)=>`<div class="card"><b>${cleanText(name)}</b>${keys.map(k=>{let v=obj[k]||0;return `<div class="small" style="margin-top:7px">${k} but${k>1?'s':''} <b style="float:right">${v}</b><div class="bar"><div style="width:${s.total?Math.round(v/s.total*100):0}%"></div></div></div>`}).join("")}</div>`;return `<div class="sec">Histogramme des scores pronostiqués</div><div class="voteGrid">${table(m.nomAfficheA,s.scoreA||{})}${table(m.nomAfficheB,s.scoreB||{})}</div>`}
+function openProno(id){selectedMatch=matches.find(m=>String(m.matchId)===String(id));if(!selectedMatch)return;pronoContent.innerHTML=`<h3>${selectedMatch.emojiA} ${cleanText(selectedMatch.nomAfficheA)} - ${cleanText(selectedMatch.nomAfficheB)} ${selectedMatch.emojiB}</h3><div class="grid2"><input id="pScoreA" type="number" min="0" inputmode="numeric" placeholder="Score ${cleanText(selectedMatch.nomAfficheA)}"><input id="pScoreB" type="number" min="0" inputmode="numeric" placeholder="Score ${cleanText(selectedMatch.nomAfficheB)}"></div><br><label class="small"><input id="pJoker" type="checkbox" style="width:auto" ${selectedMatch.bonusJoker?'disabled':''}> Utiliser un joker ${selectedMatch.bonusJoker?'(désactivé : joker bonus collectif)':''}</label><br><br><button class="btn" onclick="submitProno()">Valider mon prono</button><br><br><button class="btn btn2" onclick="closeProno()">Fermer</button>${scoreDistributionHtml(selectedMatch)}`;pronoModal.classList.add("open")}
+function closeProno(){pronoModal.classList.remove("open")}
+function submitProno(){api("submitPronostic",{userId:user.userId,matchId:selectedMatch.matchId,scoreA:pScoreA.value,scoreB:pScoreB.value,joker:pJoker.checked}).then(d=>{toast("Prono enregistré");closeProno();light=d.light;matches=d.pronosView.matches;pronos=d.pronosView.myPronos;pronosticStats=d.pronosView.pronosticStats;butsMatch=d.pronosView.butsMatch;drawHome();drawMatches();drawProfileSkeleton()}).catch(e=>toast(e.message))}
+function showRankSection(s,btn){activeRankSection=s;rankRecords.classList.toggle("hide",s!=="records");rankClassement.classList.toggle("hide",s!=="classement");rankButeurs.classList.toggle("hide",s!=="buteurs");document.querySelectorAll("#rankTabs button").forEach(b=>b.classList.remove("active"));if(btn)btn.classList.add("active")}
+function drawRank(){funBox.innerHTML=funRecords.map(r=>`<div class="card"><div class="em">${r.emoji}</div><b>${cleanText(r.label)}</b><br>${cleanText(r.pseudo||'—')}<br><span class="muted">${cleanText(r.value||'')}</span></div>`).join("");rankList.innerHTML=classement.map(r=>`<div class="card rank"><div class="pos">#${r.rank}</div><div class="nm">${cleanText(r.pseudo)}<br><span class="muted">Exact ${r.exact} · Bon ${r.good} · Raté ${r.wrong} · Réussite ${r.successRate}%</span></div><div class="pts">${r.points}</div></div>`).join("");rankScorerBlock.innerHTML=scorerBoardData.slice(0,30).map((s,i)=>`<div class="card rank"><div class="pos">#${i+1}</div><div class="nm">${cleanText(s.nom)}<br><span class="muted">${cleanText(s.equipe||'')}</span></div><div class="pts">${s.buts}</div></div>`).join("")}
+function loadGroups(){setLoading(true,"Chargement des poules...");api("getGroupsView").then(d=>{groupsData=d;drawGroups()}).catch(e=>toast(e.message)).finally(()=>setLoading(false))}
+function drawGroups(){groups.innerHTML=Object.keys(groupsData).sort().map(g=>`<div class="card"><b>Groupe ${g}</b><table class="table"><tr><th>Équipe</th><th>Pts</th><th>J</th><th>Diff</th><th>BP</th><th>BC</th></tr>${groupsData[g].map(r=>`<tr><td>${r.emoji||''} ${cleanText(r.nom)}</td><td>${r.pts}</td><td>${r.j}</td><td>${r.diff}</td><td>${r.gf}</td><td>${r.ga}</td></tr>`).join("")}</table></div>`).join("")||'<div class="card muted">Aucun résultat terminé pour le moment.</div>'}
+function loadSummary(){setLoading(true,"Chargement du résumé...");api("getSummaryView").then(d=>{summaryData=d;drawSummary()}).catch(e=>toast(e.message)).finally(()=>setLoading(false))}
+function drawSummary(){let arr=summaryData?.matches||[];summary3Days.innerHTML=arr.length?arr.map(m=>matchCard(m)).join(""):'<div class="card muted">Pas encore de résultats récents.</div>'}
+function loadScorers(){setLoading(true,"Chargement des joueurs...");api("getScorersView",{userId:user.userId}).then(d=>{scorersData=d;drawScorers()}).catch(e=>toast(e.message)).finally(()=>setLoading(false))}
+function drawScorers(){let my=scorersData?.myVote;myScorerVote.innerHTML=my?`<b>Ton choix : ${cleanText(my.joueur)}</b><br><span class="muted">Vote verrouillé.</span>`:(scorersData?.closed?'<b>Vote fermé</b><br><span class="muted">Aucun choix enregistré.</span>':'<b>Aucun buteur choisi</b><br><span class="muted">Choisis avant la limite.</span>');btnVoteScorer.classList.toggle("hide",!!my||!!scorersData?.closed);drawPlayers()}
+function selectPlayer(id){selectedPlayer={id:String(id)};drawPlayers()}
+function drawPlayers(){let q=(playerSearch.value||"").toLowerCase();let arr=(scorersData?.joueurs||[]).filter(j=>(j.nomComplet+" "+j.equipe).toLowerCase().includes(q)).slice(0,80);playerPick.innerHTML=arr.map(j=>`<div class="card player ${selectedPlayer&&String(selectedPlayer.id)===String(j.id)?'selectedPlayer':''}" onclick="selectPlayer('${String(j.id).replace(/'/g,"\'")}')"><div>⚽</div><div class="info"><b>${cleanText(j.initialNom||j.nomComplet)}</b><br><span class="muted">${cleanText(j.equipe)} · ${j.buts||0} but(s)</span></div></div>`).join("")}
+function confirmScorerVote(){if(!selectedPlayer){toast("Choisis un joueur");return}api("voteButeur",{userId:user.userId,joueurId:selectedPlayer.id}).then(d=>{toast("Buteur enregistré");scorersData=d.scorersView;light=d.light;drawScorers();drawHome()}).catch(e=>toast(e.message))}
+function loadProfile(){api("getProfileView",{userId:user.userId}).then(d=>drawProfile(d)).catch(e=>toast(e.message))}
+function drawProfileSkeleton(){let st=light?.userState||{};jokerLine.textContent=`Jokers utilisés : ${st.jokersUsed??0} / 3 · Restants : ${st.todoCount??'—'} match(s)`}
+function drawProfile(d){drawProfileSkeleton();let r=d.rank||{};statsBox.innerHTML=`<div class="card"><b>${r.points||0}</b><br><span class="muted">points</span></div><div class="card"><b>#${r.rank||'—'}</b><br><span class="muted">rang</span></div><div class="card"><b>${r.exact||0}</b><br><span class="muted">scores exacts</span></div><div class="card"><b>${r.successRate||0}%</b><br><span class="muted">réussite</span></div>`;profileBadges.innerHTML=(d.badges||[]).map(b=>`<span class="badgeMini">${cleanText(b)}</span>`).join("");profileFilters.innerHTML=[['all','Tous'],['points','Avec points'],['joker','Jokers']].map(x=>`<button class="${currentProfileFilter===x[0]?'active':''}" onclick="currentProfileFilter='${x[0]}';loadProfile()">${x[1]}</button>`).join("");let rows=(d.pronos||[]).filter(p=>currentProfileFilter==='all'||(currentProfileFilter==='points'&&Number(p.points)>0)||(currentProfileFilter==='joker'&&p.joker));profileHistory.innerHTML=rows.map(p=>{let m=matches.find(x=>String(x.matchId)===String(p.matchId))||{};return `<div class="card"><b>${cleanText(m.nomAfficheA||p.matchId)} - ${cleanText(m.nomAfficheB||'')}</b><br>Prono : ${p.scoreA} - ${p.scoreB}${p.joker?' ⭐':''} · <b>${p.points||0} pt</b></div>`}).join("")||'<div class="card muted">Aucun prono à afficher.</div>'}
+function openAdmin(){setLoading(true,"Chargement admin...");api("getAdminView",{userId:user.userId}).then(d=>{adminData=d;drawAdmin();adminModal.classList.add("open")}).catch(e=>toast(e.message)).finally(()=>setLoading(false))}
+function closeAdmin(){adminModal.classList.remove("open")}
+function opt(arr,label){return (arr||[]).map(x=>`<option value="${x.id||x.matchId}">${cleanText(label(x))}</option>`).join("")}
+function drawAdmin(){adminContent.innerHTML=`<h3>⚙️ Panneau admin</h3><button class="btn btn2" onclick="closeAdmin()">Fermer</button><div class="sec">Ajouter un match</div><form onsubmit="adminAddMatch(event)" class="card"><div class="grid2"><select id="amA">${opt(adminData.equipes,e=>`${e.emoji||''} ${e.nomAffiche}`)}</select><select id="amB">${opt(adminData.equipes,e=>`${e.emoji||''} ${e.nomAffiche}`)}</select></div><div class="grid2"><input id="amDate" placeholder="JJ/MM/AAAA"><input id="amHeure" placeholder="HH:MM"></div><div class="grid2"><input id="amGroupe" placeholder="Groupe"><input id="amPhase" placeholder="Phase" value="Groupe"></div><select id="amStade"><option value="">Stade</option>${opt(adminData.stades,s=>s.labelAffiche)}</select><div class="grid2"><select id="amD1"><option value="">Diffuseur 1</option>${opt(adminData.diffuseurs,d=>d.nom)}</select><select id="amD2"><option value="">Diffuseur 2</option>${opt(adminData.diffuseurs,d=>d.nom)}</select></div><div class="grid3"><input id="amC1" placeholder="Cote 1"><input id="amCX" placeholder="Cote X"><input id="amC2" placeholder="Cote 2"></div><br><button class="btn">Ajouter le match</button></form><div class="sec">Résultat / cotes / joker bonus</div><div class="card"><select id="adminMatch">${opt(adminData.matches,m=>`${m.dateFR} ${m.heureFR} · ${m.nomAfficheA} - ${m.nomAfficheB}`)}</select><div class="grid2"><input id="resA" type="number" placeholder="Score A"><input id="resB" type="number" placeholder="Score B"></div><div class="sec">Buteurs du match</div><div id="goalRows"></div><button class="btn btn2" onclick="addGoalRow()" type="button">+ Ajouter un buteur</button><br><br><button class="btn" onclick="adminSetResult()">Valider résultat</button><br><br><div class="grid3"><input id="od1" placeholder="Cote 1"><input id="odx" placeholder="Cote X"><input id="od2" placeholder="Cote 2"></div><br><button class="btn btn2" onclick="adminSetOdds()">Mettre à jour les cotes</button><br><br><button class="btn btn2" onclick="adminBonus(true)">Activer joker bonus</button><br><br><button class="btn btnDanger" onclick="adminBonus(false)">Désactiver joker bonus</button></div><div class="sec">Maintenance</div><div class="card"><button class="btn" onclick="adminRebuild()">Reconstruire les caches</button><br><br><button class="btn btn2" onclick="adminTrigger()">Installer trigger background 5 min</button></div><div class="sec">Couverture pronos</div>${(adminData.coverage||[]).slice(0,30).map(c=>`<div class="card"><b>${cleanText(c.label)}</b><br><span class="muted">${c.count}/${c.totalUsers} pronos · ${c.pct}%</span></div>`).join("")}`;addGoalRow()}
+function adminAddMatch(e){e.preventDefault();api("adminAddMatch",{userId:user.userId,equipeAId:amA.value,equipeBId:amB.value,dateFR:amDate.value,heureFR:amHeure.value,groupe:amGroupe.value,phase:amPhase.value,stadeId:amStade.value,diffuseur1Id:amD1.value,diffuseur2Id:amD2.value,cote1:amC1.value,coteX:amCX.value,cote2:amC2.value}).then(d=>{toast("Match ajouté");adminData=d.adminView;drawAdmin();loadPronos(false);loadLight(false)}).catch(e=>toast(e.message))}
+function addGoalRow(){let i=document.querySelectorAll(".goalRow").length;let players=adminData?.joueurs||[];let teams=adminData?.equipes||[];let div=document.createElement("div");div.className="scorerRow goalRow";div.innerHTML=`<select class="gPlayer"><option value="">Buteur manuel</option>${players.map(p=>`<option value="${p.id}">${cleanText(p.initialNom||p.nomComplet)} · ${cleanText(p.equipe)}</option>`).join("")}</select><select class="gTeam"><option value="">Équipe</option>${teams.map(t=>`<option value="${t.id}">${t.emoji||''} ${cleanText(t.nomAffiche)}</option>`).join("")}</select><input class="gMin" type="number" placeholder="min"><select class="gType"><option value="normal">normal</option><option value="penalty">P</option><option value="csc">CSC</option></select><button onclick="this.parentElement.remove()" type="button">×</button><input class="gManual" placeholder="Nom manuel" style="grid-column:1/6">`;goalRows.appendChild(div)}
+function collectGoals(){return [...document.querySelectorAll(".goalRow")].map(r=>({joueurId:r.querySelector(".gPlayer").value,equipeId:r.querySelector(".gTeam").value,minute:r.querySelector(".gMin").value,type:r.querySelector(".gType").value,nomAffiche:r.querySelector(".gManual").value})).filter(g=>g.joueurId||g.nomAffiche)}
+function adminSetResult(){api("adminSetResult",{userId:user.userId,matchId:adminMatch.value,scoreA:resA.value,scoreB:resB.value,buteurs:JSON.stringify(collectGoals())}).then(()=>{toast("Résultat validé");loadPronos(false);loadRank(false);openAdmin()}).catch(e=>toast(e.message))}
+function adminSetOdds(){api("adminAddCotes",{userId:user.userId,matchId:adminMatch.value,cote1:od1.value,coteX:odx.value,cote2:od2.value}).then(()=>{toast("Cotes mises à jour");loadPronos(false);openAdmin()}).catch(e=>toast(e.message))}
+function adminBonus(v){api("adminSetBonusJoker",{userId:user.userId,matchId:adminMatch.value,enabled:v}).then(()=>{toast("Joker bonus mis à jour");loadPronos(false);loadLight(false);openAdmin()}).catch(e=>toast(e.message))}
+function adminRebuild(){api("adminRebuildCaches",{userId:user.userId}).then(()=>{toast("Caches reconstruits");loadLight(false);loadPronos(false);loadRank(false)}).catch(e=>toast(e.message))}
+function adminTrigger(){api("adminSetupTrigger",{userId:user.userId}).then(d=>toast(d.message||"Trigger installé")).catch(e=>toast(e.message))}
+window.addEventListener("load",()=>{let u=localStorage.getItem("cdmUser");if(u){try{user=JSON.parse(u);startApp()}catch(e){localStorage.removeItem("cdmUser")}}});
 </script>
 </body>
 </html>
