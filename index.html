@@ -7,17 +7,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-/* =================================================================
- * THÈME GLOBAL
- * ================================================================= */
 :root{--g:#1a5c38;--g2:#2e8b57;--gold:#FFD700;--bg:#0d1117;--card:#161b22;--bdr:#30363d;--txt:#e6edf3;--muted:#8b949e;--red:#ef5350}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--txt);padding-bottom:88px}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--txt);padding-bottom:86px}
 .hide{display:none!important}
 .view{display:none;padding:12px}
 .view.active{display:block}
 
-/* HEADER / NAV */
+/* HEADER & NAV */
 .hdr{position:sticky;top:0;z-index:5;background:var(--g);padding:12px 15px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 12px #0008}
 .hdr h1{font-size:1rem;margin:0;color:var(--gold);font-weight:900}
 .badge{background:#ffffff1f;border-radius:999px;padding:5px 10px;font-size:.72rem;font-weight:800}
@@ -34,8 +31,7 @@ body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(
 .muted{color:var(--muted);font-size:.76rem}
 .sec{font-size:.7rem;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.08em;margin:16px 0 8px}
 .small{font-size:.72rem}
-.ok{color:#66bb6a}
-.ko{color:var(--red)}
+.ok{color:#66bb6a}.ko{color:var(--red)}
 .notice{border:1px solid #ffd70055;background:#ffd70014;border-radius:12px;padding:10px;margin:8px 0}
 input,select,textarea{width:100%;background:var(--bg);border:1.5px solid var(--bdr);color:var(--txt);border-radius:10px;padding:11px;font-size:.9rem}
 button{cursor:pointer}
@@ -43,6 +39,8 @@ button{cursor:pointer}
 .btn2{background:transparent;border:1px solid var(--bdr);color:var(--muted)}
 .btnDanger{background:#45151a;color:#ff8a80}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bonusBanner{border:1px solid #ffd70060;background:#ffd70010;color:#ffe680}
+.summaryHero{background:linear-gradient(135deg,#2e8b5722,#0d2b1d)}
 
 /* LOGIN */
 #login{min-height:100vh;display:flex;justify-content:center;align-items:center;padding:22px;background:linear-gradient(160deg,#0d1117,#0d2b1d)}
@@ -55,14 +53,16 @@ button{cursor:pointer}
 .match{background:var(--card);border:1px solid var(--bdr);border-radius:13px;padding:12px;margin-bottom:8px}
 .match.has{border-left:4px solid var(--g2)}
 .match.finished{border-left:4px solid var(--gold)}
-.match.locked{opacity:.62}
-.match.predicted{opacity:.86;cursor:default}
+.match.predicted{opacity:.92}
+.matchCardTitle{font-size:.68rem;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px}
+.matchHeaderClean{background:transparent}
 .mtop{display:grid;grid-template-columns:1fr auto 1fr;gap:7px;align-items:center}
 .team{text-align:center;min-width:0}
 .flag{font-size:1.45rem}
 .name{font-size:.78rem;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .score{font-size:1.25rem;font-weight:900;background:var(--bg);border-radius:10px;padding:4px 10px;min-width:70px;text-align:center}
 .meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:.68rem;color:var(--muted);gap:8px}
+.metaClean{justify-content:center;text-align:center}
 .pill{border-radius:999px;padding:3px 8px;font-size:.62rem;font-weight:900}
 .open{background:#2e8b5730;color:#66bb6a}
 .lockedP{background:#c6282830;color:#ef5350}
@@ -72,41 +72,51 @@ button{cursor:pointer}
 .teamGoals{margin-top:8px;display:flex;flex-direction:column;gap:4px;align-items:center}
 .teamGoal{font-size:.66rem;line-height:1.15;color:var(--gold);background:#ffd70012;border:1px solid #ffd70025;border-radius:8px;padding:4px 6px;max-width:100%;white-space:normal}
 .tv{margin-top:7px;color:#9bd0ff;font-size:.68rem}
-.oddsLine{margin-top:5px;color:var(--gold);font-size:.68rem}
 .countdown{font-size:.68rem;color:#ffdf80;font-weight:900;margin-top:7px}
-.bonusBanner{border:1px solid #ffd70060;background:#ffd70010;color:#ffe680}
+.centeredLine{text-align:center}
+.bonusPill{border:1px solid #ffd70060;background:#ffd70010;border-radius:10px;padding:5px 8px}
 
-/* FILTRES STICKY */
-.filters{position:sticky;top:50px;z-index:4;background:var(--bg);margin-left:-12px;margin-right:-12px;padding:8px 12px 7px;display:flex;gap:6px;overflow-x:auto;box-shadow:0 8px 18px #0006}
+/* FILTRES */
+.filters{display:flex;gap:6px;overflow-x:auto;padding:4px 0 8px;margin-bottom:6px}
 .filters button{background:var(--card);border:1px solid var(--bdr);color:var(--muted);border-radius:99px;padding:6px 12px;font-weight:900;font-size:.68rem;white-space:nowrap}
 .filters button.active{background:var(--g2);color:#fff}
+.filters button.groupFilter{background:var(--group-bg);border-color:var(--group-border);color:var(--txt)}
+.filters button.groupFilter.active{background:var(--group-border);border-color:var(--group-border);color:#fff}
 .grouped{background:linear-gradient(135deg,var(--group-bg),var(--card) 62%);border-color:var(--group-border)}
 .groupCard{background:linear-gradient(135deg,var(--group-bg),var(--card) 70%);border-color:var(--group-border)}
 .groupTitle{color:var(--group-text);font-weight:900}
-.filters button.groupFilter{background:var(--group-bg);border-color:var(--group-border);color:var(--txt)}
-.filters button.groupFilter.active{background:var(--group-border);border-color:var(--group-border);color:#fff}
 
-/* VUE PRONOS (swipe) */
+/* VUE PRONOS — swipe & sticky */
 .pronosSticky{position:sticky;top:50px;z-index:6;background:var(--bg);margin-left:-12px;margin-right:-12px;padding:8px 12px;box-shadow:0 8px 18px #0006}
-.matchSelectWrap{position:sticky;top:96px;z-index:5;background:var(--bg);margin-left:-12px;margin-right:-12px;padding:0 12px 8px;box-shadow:0 8px 18px #0006}
-.bigPronoCard{min-height:calc(100vh - 240px);display:flex;flex-direction:column;justify-content:space-between}
-.bigTeams{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin:12px 0}
+.matchSelectWrap{margin:8px 0 10px}
+.bigPronoCard{min-height:calc(100vh - 230px);display:flex;flex-direction:column;gap:10px}
+.bigTeams{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin:10px 0}
 .bigTeams .flag{font-size:2.3rem}
 .bigTeams .name{font-size:.95rem;white-space:normal}
 .vsBig{font-size:1.2rem;font-weight:900;color:var(--gold)}
-.swipeNav{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.progressProno{text-align:center;color:var(--muted);font-weight:900;font-size:.78rem;margin-top:10px}
-.statBlock{margin-top:9px;border:1px solid #ffffff12;border-radius:12px;padding:10px;background:#ffffff05}
+.scoreEntryRow{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-top:6px}
+.scoreEntryBox input{font-size:1.05rem;font-weight:900;text-align:center}
+.jokerMiddle{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid var(--bdr);border-radius:12px;padding:6px 10px;background:var(--bg);min-width:60px}
+.jokerMiddle input{width:auto;margin:0}
+.jokerMiddle span{font-size:1.15rem;line-height:1}
+.jokerMiddle small{font-size:.6rem;color:var(--muted);font-weight:900}
+.pronoBottomHint{display:flex;justify-content:space-between;align-items:center;font-size:.66rem;color:var(--muted);font-weight:800;margin-top:6px}
+
+/* STATS MIRROIR */
+.mirrorGrid{display:grid;grid-template-columns:1fr;gap:8px;margin-top:9px}
+@media(min-width:620px){.mirrorGrid{grid-template-columns:1fr 1fr}}
+.statBlock{border:1px solid #ffffff12;border-radius:12px;padding:10px;background:#ffffff05}
 .statTitle{font-size:.68rem;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px}
-.hrow{display:grid;grid-template-columns:90px 1fr 42px;gap:7px;align-items:center;font-size:.72rem;margin:5px 0}
-.hrow.right{grid-template-columns:42px 1fr 90px}
+.statTitleLine{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.oddsInline{font-size:.7rem;color:var(--gold);font-weight:900}
+.hrow{display:grid;grid-template-columns:30px 1fr 42px;gap:7px;align-items:center;font-size:.72rem;margin:5px 0}
+.hrow.right{grid-template-columns:42px 1fr 30px}
 .hbar{height:8px;background:#ffffff14;border-radius:99px;overflow:hidden}
 .hbar>span{display:block;height:100%;background:var(--g2);border-radius:99px}
 .hrow.right .hbar>span{margin-left:auto;background:var(--gold)}
-.mirrorGrid{display:grid;grid-template-columns:1fr;gap:8px}
-@media(min-width:620px){.mirrorGrid{grid-template-columns:1fr 1fr}.bigPronoCard{min-height:540px}}
-.riskPill{display:inline-block;border-radius:999px;border:1px solid #ff980055;background:#ff980018;color:#ffcc80;font-size:.68rem;font-weight:900;padding:5px 8px;margin:4px 4px 0 0}
+.riskPill{display:inline-block;border-radius:999px;border:1px solid #ff980055;background:#ff980018;color:#ffcc80;font-size:.68rem;font-weight:900;padding:5px 8px;margin:3px 3px 0 0}
 .devilPill{border-color:#d066ff66;background:#d066ff18;color:#efc5ff}
+.riskCenter{text-align:center}
 .pronoGroups{display:flex;flex-direction:column;gap:7px;margin-top:8px}
 .pronoGroup{border:1px solid #ffffff12;border-radius:12px;padding:9px;background:#ffffff05}
 
@@ -131,23 +141,15 @@ button{cursor:pointer}
 .player{display:flex;align-items:center;gap:9px}
 .player .info{flex:1}
 .selectedPlayer{border:2px solid var(--gold)}
-.bar{height:6px;background:var(--bg);border-radius:9px;overflow:hidden;margin-top:7px}
-.bar div{height:100%;background:var(--g2)}
 
-/* MODALES */
-.modal{display:none;position:fixed;inset:0;z-index:50;background:#000d;align-items:flex-end}
-.modal.open{display:flex}
-.sheet{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-height:92vh;overflow-y:auto;padding:20px 16px 30px}
-.drag{width:42px;height:5px;background:#444;border-radius:5px;margin:0 auto 10px}
-
-/* TOAST + LOADING */
-.toast{position:fixed;bottom:90px;left:12px;right:12px;background:var(--g);color:#fff;padding:11px;border-radius:10px;text-align:center;font-weight:700;z-index:60;box-shadow:0 8px 20px #0008}
-.loadingOverlay{position:fixed;inset:0;background:#000c;z-index:70;display:flex;align-items:center;justify-content:center}
-.loadingBox{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:20px 24px;text-align:center;max-width:280px}
-.spinner{width:32px;height:32px;border:3px solid #ffffff20;border-top:3px solid var(--gold);border-radius:50%;margin:0 auto 10px;animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* PROFIL + ADMIN */
+/* PROFIL */
+.profileHero{text-align:center}
+.profileHero h2{margin:6px 0}
+.profileBadgeLine{justify-content:center;margin-top:8px}
+.profileUnifiedTabs{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;margin:8px 0 12px;padding-bottom:3px}
+.profileUnifiedTabs button{background:var(--card);border:1px solid var(--bdr);color:var(--muted);border-radius:99px;padding:7px 12px;font-weight:900;font-size:.7rem;white-space:nowrap}
+.profileUnifiedTabs button.active{background:var(--g2);color:#fff}
+.profilePanel{margin-top:6px}
 .badgeLine{display:flex;flex-wrap:wrap;gap:6px}
 .badgeMini{background:var(--bg);border:1px solid var(--bdr);border-radius:999px;padding:5px 10px;font-size:.7rem;font-weight:700}
 .profileFilters{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px;padding-bottom:3px}
@@ -156,24 +158,31 @@ button{cursor:pointer}
 .profileFilters button.groupFilter{background:var(--group-bg);border-color:var(--group-border);color:var(--txt)}
 .profileFilters button.groupFilter.active{background:var(--group-border);color:#fff}
 .profilePronostic{font-size:.86rem}
-.adminSubnav{display:flex;gap:6px;overflow-x:auto;margin:8px 0 12px;padding-bottom:3px}
-.adminSubnav button{background:var(--card);border:1px solid var(--bdr);color:var(--muted);border-radius:99px;padding:7px 12px;font-weight:900;font-size:.68rem;white-space:nowrap}
-.adminSubnav button.active{background:var(--g2);color:#fff}
+
+/* ADMIN INTÉGRÉ AU PROFIL */
 .adminLabel{font-size:.7rem;color:var(--muted);margin-bottom:4px;font-weight:800}
-.scorerRow{display:grid;grid-template-columns:2fr 1.4fr 60px 80px 32px;gap:5px;margin-bottom:6px}
+.scorerRow{display:grid;grid-template-columns:1fr 1fr 60px 80px 32px;gap:5px;margin-bottom:6px}
 .scorerRow input,.scorerRow select{padding:8px;font-size:.78rem}
 .scorerRow button{background:#45151a;color:#ff8a80;border:0;border-radius:8px;font-weight:900}
-.adminBonusCard{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.adminSmallBtn{width:auto;padding:8px 12px;font-size:.74rem}
-.adminCoverageFilters{display:flex;gap:6px;overflow-x:auto;margin-bottom:8px}
+.adminCoverageFilters{display:flex;gap:6px;overflow-x:auto;margin-bottom:8px;padding-bottom:3px}
 .adminCoverageFilters button{background:var(--card);border:1px solid var(--bdr);color:var(--muted);border-radius:99px;padding:6px 10px;font-weight:900;font-size:.68rem;white-space:nowrap}
 .adminCoverageFilters button.active{background:var(--g2);color:#fff}
-.compactBtn{padding:8px 10px;font-size:.78rem}
+
+/* MODALE DÉTAIL MATCH */
+.modal{display:none;position:fixed;inset:0;z-index:50;background:#000d;align-items:flex-end}
+.modal.open{display:flex}
+.sheet{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-height:92vh;overflow-y:auto;padding:20px 16px 30px}
+.drag{width:42px;height:5px;background:#444;border-radius:5px;margin:0 auto 10px}
 table.table{width:100%;border-collapse:collapse;font-size:.74rem}
 table.table th,table.table td{border-bottom:1px solid var(--bdr);padding:5px 4px;text-align:center}
 table.table th{color:var(--muted);font-weight:800;text-transform:uppercase;font-size:.62rem}
 table.table td:first-child,table.table th:first-child{text-align:left}
-.voteStats{font-size:.68rem;color:var(--muted);margin-top:7px}
+
+/* TOAST + LOADING (loading discret seulement sur le badge user, pas en overlay) */
+.toast{position:fixed;bottom:90px;left:12px;right:12px;background:var(--g);color:#fff;padding:11px;border-radius:10px;text-align:center;font-weight:700;z-index:60;box-shadow:0 8px 20px #0008}
+.miniLoad{display:inline-block;width:12px;height:12px;border:2px solid #ffffff30;border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;vertical-align:middle;margin-left:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.viewLoading{padding:30px;text-align:center;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -187,11 +196,11 @@ table.table td:first-child,table.table th:first-child{text-align:left}
       <div class="muted">Identifie-toi pour pronostiquer</div>
     </div>
     <div class="tabs">
-      <button id="tabLogin"    class="active" onclick="setAuthMode('login')">Connexion</button>
-      <button id="tabRegister"               onclick="setAuthMode('register')">Inscription</button>
+      <button id="tabLogin" class="active" onclick="setAuthMode('login')">Connexion</button>
+      <button id="tabRegister"             onclick="setAuthMode('register')">Inscription</button>
     </div>
     <input id="authPseudo" placeholder="Pseudo"><br><br>
-    <input id="authPin"    placeholder="PIN (4+ chiffres)" type="password" inputmode="numeric"><br><br>
+    <input id="authPin" placeholder="PIN (4+ chiffres)" type="password" inputmode="numeric"><br><br>
     <button id="authBtn" class="btn" onclick="doAuth()">Se connecter</button>
     <div id="authErr" class="ko small" style="margin-top:8px;text-align:center"></div>
   </div>
@@ -208,89 +217,92 @@ table.table td:first-child,table.table th:first-child{text-align:left}
     </div>
   </div>
 
-  <!-- Vue Accueil -->
+  <!-- VUE ACCUEIL -->
   <div id="vHome" class="view active">
     <div class="hero">
-      <div style="font-size:2.4rem">🏆</div>
-      <h2 id="heroTitle">Bienvenue</h2>
-      <div class="muted">Mondial 2026 · 13 juin → 19 juillet</div>
+      <div style="font-size:2.5rem">🏆</div>
+      <h2>Pronostics Coupe du Monde 2026</h2>
+      <div class="muted">Pronostique les scores, utilise tes jokers et suis le classement.</div>
     </div>
+
     <div id="homeSummary"></div>
-    <div class="sec">À retenir</div>
-    <div class="notice"><b>⏱️ Temps réglementaire</b><br><span class="muted">Sur un match à élimination directe, seul le score à la fin du temps réglementaire compte. Prolongations et tirs au but ne sont pas pris en compte.</span></div>
-    <div class="card"><b>🛠️ Correction admin</b><br><span class="muted">En cas de grosse erreur sur un pronostic, contacte l'admin avant le coup d'envoi.</span></div>
-    <div class="card"><b>😈 Pari contre-courant</b><br><span class="muted">Un pari sur outsider rare peut rapporter un bonus : +1 sur bon résultat, +2 sur score exact. Le bonus n'est jamais doublé par les jokers.</span></div>
+
+    <div class="sec">Règles</div>
+    <div class="card">🎯 <b>Score exact</b> : 3 points<br><span class="muted">Le score pronostiqué correspond exactement au résultat final.</span></div>
+    <div class="card">✅ <b>Bon résultat</b> : 1 point<br><span class="muted">Bon vainqueur ou bon match nul, sans le score exact.</span></div>
+    <div class="card">⭐ <b>Joker</b> : points ×2<br><span class="muted">3 jokers disponibles sur l'ensemble de la compétition.</span></div>
+    <div class="card">⚽ <b>Meilleur buteur</b> : 0 point<br><span class="muted">Pari secondaire pour suivre les buteurs et les choix des participants.</span></div>
+
+    <div class="card notice"><b>⏱️ Temps réglementaire</b><br><span class="muted">Important : pour les matchs à élimination directe, seul le score à la fin du temps réglementaire est pris en compte. Les prolongations et tirs au but ne sont pas pris en compte.</span></div>
+    <div class="card">🛠️ <b>Correction admin</b><br><span class="muted">En cas de grosse erreur de saisie sur un pronostic, contactez l'admin avant le début du match.</span></div>
+    <div class="card">😈 <b>Pari contre-courant</b><br><span class="muted">Certains paris vraiment risqués peuvent rapporter un bonus : +1 sur bon résultat, +2 sur score exact. Le bonus n'est jamais doublé par les jokers. Avant verrouillage, le site peut seulement indiquer qu'un joueur tente un pari outsider.</span></div>
+
+    <div class="card">
+      🏆 <b>Répartition de la cagnotte</b><br>
+      <span class="muted">La dotation totale est redistribuée selon les performances finales :</span><br>
+      <ul style="margin:8px 0;padding-left:20px;font-size:.8rem;line-height:1.7">
+        <li>🥇 <b>1er :</b> 50% du montant total</li>
+        <li>🥈 <b>2ème :</b> 25% du montant total</li>
+        <li>🥉 <b>3ème :</b> 12,5% du montant total</li>
+        <li>⚽ <b>Meilleur buteur :</b> 12,5% du montant total</li>
+      </ul>
+      <span class="muted" style="font-size:.7rem"><i>Note : en cas d'égalité sur le buteur, le mieux classé au général l'emporte.</i></span>
+    </div>
+
+    <div class="card">🔥 <b>Badges de match</b><br><span class="muted">"Match risqué" signale un match avec votes partagés, cotes serrées, beaucoup de jokers ou gros écart entre les votes et les cotes. "Pari outsider" est provisoire avant le résultat : le bonus final peut disparaître si trop de joueurs suivent le même risque.</span></div>
   </div>
 
-  <!-- Vue Pronos (carte plein écran + swipe) -->
+  <!-- VUE PRONOS -->
   <div id="vPronos" class="view">
     <div class="pronosSticky"><div class="filters" id="pronosFilters"></div></div>
     <div class="matchSelectWrap"><select id="pronoMatchSelect" onchange="selectPronoMatch(this.value)"></select></div>
-    <div id="pronoSwipeBox"></div>
+    <div id="pronoSwipeBox"><div class="viewLoading">Chargement…</div></div>
   </div>
 
-  <!-- Vue Liste matchs -->
+  <!-- VUE MATCHES -->
   <div id="vMatches" class="view">
     <div class="filters" id="matchesFilters"></div>
-    <div id="matchList"></div>
+    <div id="matchList"><div class="viewLoading">Chargement…</div></div>
   </div>
 
-  <!-- Vue Poules -->
+  <!-- VUE POULES -->
   <div id="vGroups" class="view">
     <div class="sec">Classement des poules</div>
-    <div id="groupsBox"></div>
+    <div id="groupsBox"><div class="viewLoading">Chargement…</div></div>
   </div>
 
-  <!-- Vue Résumé -->
+  <!-- VUE RÉSUMÉ -->
   <div id="vSummary" class="view">
-    <div class="sec">Résumé des derniers matchs</div>
-    <div id="summaryBox"></div>
+    <div class="sec">Résumé des 3 jours</div>
+    <div id="summary3Days"><div class="viewLoading">Chargement…</div></div>
   </div>
 
-  <!-- Vue Classement / Records / Buteurs -->
+  <!-- VUE CLASSEMENT (Records / Classement / Buteurs) -->
   <div id="vRank" class="view">
     <div class="rankTabs">
-      <button class="active" data-rank="records"  onclick="showRankSection('records',this)">Records</button>
-      <button data-rank="classement"              onclick="showRankSection('classement',this)">Classement</button>
-      <button data-rank="buteurs"                 onclick="showRankSection('buteurs',this)">Buteurs</button>
+      <button class="active" data-rank="records"   onclick="showRankSection('records',this)">Records</button>
+      <button data-rank="classement"               onclick="showRankSection('classement',this)">Classement</button>
+      <button data-rank="buteurs"                  onclick="showRankSection('buteurs',this)">Buteurs</button>
     </div>
-    <div id="rankRecords"><div class="sec">Records du tournoi</div><div class="fun" id="funBox"></div></div>
+    <div id="rankRecords"><div class="sec">Records du tournoi</div><div class="fun" id="funBox"><div class="viewLoading">Chargement…</div></div></div>
     <div id="rankClassement" class="hide"><div class="sec">Classement pronostiqueurs</div><div id="rankList"></div></div>
-    <div id="rankButeurs"    class="hide"><div class="sec">Suivi meilleur buteur</div><div id="rankScorerBlock"></div></div>
+    <div id="rankButeurs" class="hide"><div class="sec">Suivi meilleur buteur</div><div id="rankScorerBlock"></div></div>
   </div>
 
-  <!-- Vue Vote meilleur buteur -->
+  <!-- VUE VOTE MEILLEUR BUTEUR -->
   <div id="vScorers" class="view">
     <div class="sec">Mon pari meilleur buteur</div>
-    <div class="card" id="myScorerVote"></div>
+    <div class="card" id="myScorerVote"><div class="viewLoading">Chargement…</div></div>
     <input id="playerSearch" placeholder="Rechercher un joueur ou une équipe…" oninput="drawPlayers()"><br><br>
     <div id="playerPick"></div>
     <button class="btn" id="btnVoteScorer" onclick="confirmScorerVote()">Valider mon choix de meilleur buteur</button>
     <div id="scorerMsg" class="small" style="margin-top:8px"></div>
   </div>
 
-  <!-- Vue Profil + sous-section admin -->
-  <div id="vProfile" class="view">
-    <div class="card" style="text-align:center">
-      <div style="font-size:2.4rem">👤</div>
-      <h2 id="profileName" style="margin:6px 0"></h2>
-      <div id="jokerLine" class="muted"></div>
-    </div>
-    <div class="grid2" id="statsBox"></div>
-    <div class="sec">Mes pronostics</div>
-    <div class="profileFilters" id="profileFilters"></div>
-    <div id="profileHistory"></div>
-    <div class="sec">Mes badges</div>
-    <div id="profileBadges" class="badgeLine"></div>
-    <div id="adminProfileBlock" class="hide">
-      <div class="sec">Administration</div>
-      <div class="adminSubnav" id="adminSubnav"></div>
-      <div id="adminProfileContent"></div>
-    </div>
-    <br><button class="btn btnDanger" onclick="logout()">Déconnexion</button>
-  </div>
+  <!-- VUE PROFIL (avec sous-onglets admin intégrés) -->
+  <div id="vProfile" class="view"><div class="viewLoading">Chargement…</div></div>
 
-  <!-- Navigation -->
+  <!-- NAVIGATION -->
   <div class="bnav" id="nav">
     <button data-view="Home"    class="active" onclick="show('Home',this)"   ><span class="ico">🏠</span><span>Accueil</span></button>
     <button data-view="Summary"                onclick="show('Summary',this)"><span class="ico">🧾</span><span>Résumé</span></button>
@@ -305,72 +317,62 @@ table.table td:first-child,table.table th:first-child{text-align:left}
 <!-- MODALES -->
 <div class="modal" id="matchModal"><div class="sheet"><div class="drag"></div><div id="matchModalContent"></div></div></div>
 
-<div class="modal" id="adminModal"><div class="sheet"><div class="drag"></div>
-  <h3 style="margin:0 0 10px">⚙️ Panneau admin</h3>
-  <div class="adminSubnav" id="adminModalNav">
-    <button data-tab="result" class="active" onclick="adminModalTab('result',this)">Résultat + buteurs</button>
-    <button data-tab="cotes"                 onclick="adminModalTab('cotes',this)">Cotes</button>
-    <button data-tab="bonus"                 onclick="adminModalTab('bonus',this)">Joker bonus</button>
-    <button data-tab="add"                   onclick="adminModalTab('add',this)">Ajouter un match</button>
-    <button data-tab="tools"                 onclick="adminModalTab('tools',this)">Outils</button>
-  </div>
-  <div id="adminModalBody"></div>
-  <br><button class="btn btn2" onclick="closeAdmin()">Fermer</button>
-</div></div>
-
 <div class="toast hide" id="toast"></div>
-<div class="loadingOverlay hide" id="loadingOverlay"><div class="loadingBox"><div class="spinner"></div><b id="loadingText">Chargement…</b><br><span class="muted">La base Google Sheets répond, deux secondes.</span></div></div>
 
 <script>
-/* =================================================================
- * 1. CONFIGURATION
- * ================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbx7nmcwZeClluThzyOaCYCgnnh7ucUCFzP83ZkqcTSafC8bNai0Zp6hVHNh4XXNp7-QUQ/exec";
-const VIEW_TTL_MS = 60000;
-const MAX_JOKERS  = 3;
-const FUN_ICONS = {leader:'👑',target:'🎯',rate:'🔮',joker:'⭐',devil:'😈',lanterne:'🕯️',blackcat:'🐈‍⬛',wait:'⏳',drawExpert:'🤝',boom:'💥',ice:'🥶',rebel:'🧨'};
-const FLAG_BY_COUNTRY = {France:'🇫🇷',Mexico:'🇲🇽','South Africa':'🇿🇦','South Korea':'🇰🇷','Czech Republic':'🇨🇿',Canada:'🇨🇦','Bosnia & Herzegovina':'🇧🇦',Qatar:'🇶🇦',Switzerland:'🇨🇭',Brazil:'🇧🇷',Morocco:'🇲🇦',Haiti:'🇭🇹',Scotland:'🏴',USA:'🇺🇸',Paraguay:'🇵🇾',Australia:'🇦🇺',Turkey:'🇹🇷',Germany:'🇩🇪','Curaçao':'🇨🇼','Ivory Coast':'🇨🇮',Ecuador:'🇪🇨',Netherlands:'🇳🇱',Japan:'🇯🇵',Sweden:'🇸🇪',Tunisia:'🇹🇳',Belgium:'🇧🇪',Egypt:'🇪🇬',Iran:'🇮🇷','New Zealand':'🇳🇿',Spain:'🇪🇸','Cape Verde':'🇨🇻','Saudi Arabia':'🇸🇦',Uruguay:'🇺🇾',Senegal:'🇸🇳',Iraq:'🇮🇶',Norway:'🇳🇴',Argentina:'🇦🇷',Algeria:'🇩🇿',Austria:'🇦🇹',Jordan:'🇯🇴',Portugal:'🇵🇹','DR Congo':'🇨🇩',Uzbekistan:'🇺🇿',Colombia:'🇨🇴',England:'🏴',Croatia:'🇭🇷',Ghana:'🇬🇭',Panama:'🇵🇦'};
+/* =============================================================================
+ * CONFIGURATION
+ * ============================================================================= */
+const API_URL = "https://script.google.com/macros/s/AKfycbx5x9zweJiD3ICmD4RdoM5unwVcra7zRnnRJrJ1mHlmsftEhAs90or1u7VhOTA53JkWng/exec";
+const VIEW_TTL_MS    = 5 * 60 * 1000;  // 5 min : cache local par vue
+const PERSIST_KEY    = 'cdmCache_v1';
+const MAX_JOKERS     = 3;
+const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
 
-/* =================================================================
- * 2. ÉTAT GLOBAL + CACHE LOCAL
- * ================================================================= */
-let authMode = 'login', user = null;
-const cache = { light:null, pronosView:null, rankView:null, groupsView:null, summaryView:null, profileView:null, scorersView:null, adminView:null, history:{} };
-const cacheTime = {};
+/* =============================================================================
+ * ÉTAT GLOBAL
+ * ============================================================================= */
+let authMode='login', user=null;
 
-let matches=[], pronos={}, classement=[], fun=[], buteur=null;
-let joueurs=[], butsMatch={}, pronosticStats={}, bonusJokers=[];
-let equipes=[], teamById={}, teamBySource={};
-let currentFilter='all', currentProfileFilter='all', currentRankSection='records';
-let currentPronoIndex=0, directPronoMatchId=null, selectedPlayer=null;
-let activeAdminProfileSection='infos', adminCoverageFilter='all', activeAdminModalTab='result';
-let rankCharts = {};
+// Caches par vue (clé → { data, ts })
+const cache = JSON.parse(localStorage.getItem(PERSIST_KEY) || '{}');
+function persistCache(){ try { localStorage.setItem(PERSIST_KEY, JSON.stringify(cache)); } catch(e){} }
+function getCache(key){ const c = cache[key]; if (!c) return null; if (Date.now() - c.ts > VIEW_TTL_MS) return null; return c.data; }
+function setCache(key, data){ cache[key] = { data, ts: Date.now() }; persistCache(); }
+function invalidate(){ Object.keys(cache).forEach(k=> delete cache[k]); persistCache(); }
 
-/* =================================================================
- * 3. HELPERS GÉNÉRIQUES
- * ================================================================= */
+// Données dérivées du cache (placées en globales pour les fonctions de rendu)
+let matches=[], pronos={}, pronosticStats={}, butsMatch={};
+let classement=[], fun=[], buteur=null;
+let bonusJokers=[], equipes=[];
+let joueurs=[], myScorerVote=null;
+let groupsData={}, summaryData={}, profileData={}, adminData={};
+
+let currentFilter='all', currentProfileFilter='all';
+let activeProfileSection='infos', adminCoverageFilter='all';
+let activeRankSection='records';
+let currentPronoIndex=0, directPronoMatchId=null;
+let selectedPlayer=null;
+const rankCharts = {};
+
+/* =============================================================================
+ * HELPERS GÉNÉRIQUES
+ * ============================================================================= */
 function $(id){ return document.getElementById(id); }
 function api(action, params){
   params = params || {};
   let url = API_URL + '?action=' + encodeURIComponent(action);
-  Object.keys(params).forEach(k => { url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(params[k]); });
-  return fetch(url).then(r => r.json()).then(j => {
-    if (!j.ok) throw new Error(j.error || 'Erreur API');
-    return j.data;
-  });
+  Object.keys(params).forEach(k=>{ url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(params[k]); });
+  return fetch(url).then(r=>r.json()).then(j=>{ if(!j.ok) throw new Error(j.error || 'Erreur API'); return j.data; });
 }
 function toast(t){ const e=$('toast'); e.textContent=t; e.classList.remove('hide'); clearTimeout(toast._tid); toast._tid=setTimeout(()=>e.classList.add('hide'),2200); }
-function setLoading(on,msg){ const box=$('loadingOverlay'),txt=$('loadingText'); if(txt&&msg) txt.textContent=msg; if(box) box.classList.toggle('hide',!on); }
 function cleanText(v){ return String(v==null?'':v).replace(/[\uFFFD]/g,''); }
 function pct(n,t){ return t?Math.round(n*100/t):0; }
-function pct2(n){ return Math.max(0,Math.min(100,Math.round(Number(n)||0))); }
-function isFresh(key){ return cacheTime[key] && (Date.now()-cacheTime[key]) < VIEW_TTL_MS; }
-function invalidate(key){ cacheTime[key]=0; if(key in cache) cache[key]=null; }
-function invalidateAll(){ Object.keys(cacheTime).forEach(k=>cacheTime[k]=0); Object.keys(cache).forEach(k=>{ if(k==='history') cache.history={}; else cache[k]=null; }); }
+function pct2(n){ n=Number(n)||0; return Math.max(0,Math.min(100,Math.round(n))); }
 
-/* =================================================================
- * 4. AUTHENTIFICATION
- * ================================================================= */
+/* =============================================================================
+ * AUTHENTIFICATION
+ * ============================================================================= */
 function setAuthMode(m){
   authMode=m;
   $('tabLogin').classList.toggle('active', m==='login');
@@ -380,183 +382,233 @@ function setAuthMode(m){
 }
 function doAuth(){
   const pseudo=$('authPseudo').value.trim(), pin=$('authPin').value.trim();
-  setLoading(true,'Connexion…');
+  $('authBtn').innerHTML = (authMode==='login'?'Connexion':'Création') + '<span class="miniLoad"></span>';
   api(authMode,{pseudo,pin})
-    .then(d=>{ if(d.error){$('authErr').textContent=d.error; return;} user=d; localStorage.setItem('cdmUser',JSON.stringify(user)); startApp(); })
-    .catch(e=>{ $('authErr').textContent=e.message; })
-    .finally(()=>setLoading(false));
+    .then(d=>{ if(d.error){ $('authErr').textContent=d.error; return; } user=d; localStorage.setItem('cdmUser',JSON.stringify(user)); invalidate(); startApp(); })
+    .catch(e=> $('authErr').textContent=e.message)
+    .finally(()=>{ $('authBtn').textContent = authMode==='login' ? 'Se connecter' : 'Créer mon compte'; });
 }
-function logout(){ localStorage.removeItem('cdmUser'); location.reload(); }
+function logout(){ localStorage.removeItem('cdmUser'); localStorage.removeItem(PERSIST_KEY); location.reload(); }
 
-/* =================================================================
- * 5. DÉMARRAGE — initLight rapide puis lazy-load par vue
- * ================================================================= */
+/* =============================================================================
+ * DÉMARRAGE ET STRATÉGIE DE CHARGEMENT
+ *
+ * - initLight au démarrage : payload minimal pour afficher la Home (compteurs,
+ *   bonus, état utilisateur). Très rapide.
+ * - Précharge en arrière-plan : on lance immédiatement après initLight les
+ *   appels pour Pronos, Rank, Groups, Summary, Profile, Scorers en parallèle.
+ *   Au moment où le user clique sur un onglet, c'est déjà prêt → pas de lag.
+ * - Cache local persistant (localStorage) avec TTL 5 min. Les vues s'affichent
+ *   instantanément même au rechargement de la page.
+ * ============================================================================= */
 function startApp(){
   $('login').classList.add('hide');
   $('app').classList.remove('hide');
   $('uBadge').textContent = user.pseudo;
   $('aBadge').classList.toggle('hide', !user.isAdmin);
-  $('profileName').textContent = user.pseudo;
-  $('heroTitle').textContent = 'Salut ' + user.pseudo;
-  loadInitLight().then(()=> show('Home'));
-  // Refresh périodique des compteurs (matchs du jour, countdown…)
-  setInterval(()=>{ if(matches.length) drawMatches(); }, 60000);
+
+  // 1) Affichage immédiat depuis le cache local si disponible
+  const cachedLight = getCache('light');
+  if (cachedLight){ applyLight(cachedLight); }
+
+  // 2) Refresh asynchrone de initLight (rafraîchit la Home si déjà visible)
+  api('initLight', {userId:user.userId}).then(d=>{
+    setCache('light', d);
+    applyLight(d);
+  }).catch(e=> toast('Erreur init : ' + e.message));
+
+  // 3) Précharge silencieuse de toutes les autres vues
+  preloadAll();
+
+  // 4) Affiche la Home
+  show('Home');
+
+  // 5) Rafraîchissement périodique léger (countdown, etc.)
+  setInterval(()=>{ if (document.getElementById('vMatches').classList.contains('active')) drawMatches(); }, 60000);
 }
-function loadInitLight(force){
-  if (!force && cache.light && isFresh('light')) return Promise.resolve(cache.light);
-  setLoading(true,'Chargement…');
-  return api('initLight', {userId:user.userId})
-    .then(d=>{ cache.light=d; cacheTime.light=Date.now(); bonusJokers=d.bonusJokers||[]; drawHome(); return d; })
-    .catch(e=> toast('Erreur API : ' + e.message))
-    .finally(()=> setLoading(false));
+function preloadAll(){
+  // Lance en parallèle, mais on attend pas — drawXxx() se déclenchera quand
+  // l'utilisateur navigue ; ces appels rempliront simplement le cache.
+  loadView('pronosView', 'getPronosView', { userId:user.userId });
+  loadView('rankView',   'getRankView',   { userId:user.userId });
+  loadView('groupsView', 'getGroupsView', {});
+  loadView('summaryView','getSummaryView',{});
+  loadView('profileView','getProfileView',{ userId:user.userId });
+  loadView('scorersView','getScorersView',{ userId:user.userId });
+  if (user.isAdmin) loadView('adminView','getAdminView',{ userId:user.userId });
 }
 
-/* =================================================================
- * 6. NAVIGATION + LAZY LOADERS
- * ================================================================= */
+/* =============================================================================
+ * CHARGEMENT DES VUES (avec cache local et fetch en arrière-plan)
+ * ============================================================================= */
+function loadView(key, action, params){
+  // Renvoie une Promise. Sert immédiatement le cache s'il est frais, et lance
+  // un fetch en arrière-plan pour rafraîchir.
+  const cached = getCache(key);
+  const fetcher = api(action, params).then(d=>{
+    setCache(key, d);
+    applyViewData(key, d);
+    return d;
+  }).catch(e=> console.warn('Erreur ' + action + ' :', e.message));
+
+  if (cached){
+    applyViewData(key, cached);
+    return Promise.resolve(cached);
+  }
+  return fetcher;
+}
+function applyLight(d){
+  bonusJokers = d.bonusJokers || [];
+  drawHome();
+}
+function applyViewData(key, d){
+  if (key === 'pronosView'){
+    matches = d.matches || [];
+    pronos = d.myPronos || {};
+    pronosticStats = d.pronosticStats || {};
+    butsMatch = d.butsMatch || {};
+    bonusJokers = d.bonusJokers || bonusJokers;
+    equipes = d.equipes || equipes;
+  } else if (key === 'rankView'){
+    classement = d.classement || [];
+    fun = d.fun || [];
+    buteur = d.buteur || null;
+  } else if (key === 'groupsView') groupsData = d || {};
+  else if (key === 'summaryView') summaryData = d || {};
+  else if (key === 'profileView') profileData = d || {};
+  else if (key === 'scorersView'){
+    joueurs = d.joueurs || [];
+    myScorerVote = d.myVote || null;
+  } else if (key === 'adminView')   adminData   = d || {};
+}
+
+/* =============================================================================
+ * NAVIGATION
+ * ============================================================================= */
 function show(viewName, btn){
-  const target = $('v' + viewName); if(!target) return;
+  const target = $('v' + viewName); if (!target) return;
   document.querySelectorAll('.view').forEach(x=> x.classList.remove('active'));
   target.classList.add('active');
   document.querySelectorAll('.bnav button').forEach(x=> x.classList.remove('active'));
   const navBtn = btn || document.querySelector('.bnav button[data-view="' + viewName + '"]');
   if (navBtn) navBtn.classList.add('active');
   window.scrollTo(0,0);
+
+  // Pour chaque vue : assure que la donnée est chargée, puis dessine.
   const loaders = {
-    Home: ()=>Promise.resolve(),
-    Pronos: loadPronosView,
-    Matches: loadPronosView,
-    Groups: loadGroupsView,
-    Summary: loadSummaryView,
-    Rank: loadRankView,
-    Scorers: loadScorersView,
-    Profile: loadProfileView
+    Home:    ()=> Promise.resolve(),
+    Pronos:  ()=> loadView('pronosView','getPronosView',{userId:user.userId}),
+    Matches: ()=> loadView('pronosView','getPronosView',{userId:user.userId}),
+    Groups:  ()=> loadView('groupsView','getGroupsView',{}),
+    Summary: ()=> loadView('summaryView','getSummaryView',{}),
+    Rank:    ()=> loadView('rankView','getRankView',{userId:user.userId}),
+    Scorers: ()=> Promise.all([
+                    loadView('scorersView','getScorersView',{userId:user.userId}),
+                    loadView('pronosView','getPronosView',{userId:user.userId})
+                 ]),
+    Profile: ()=> Promise.all([
+                    loadView('profileView','getProfileView',{userId:user.userId}),
+                    loadView('pronosView','getPronosView',{userId:user.userId}),
+                    loadView('rankView','getRankView',{userId:user.userId}),
+                    user.isAdmin ? loadView('adminView','getAdminView',{userId:user.userId}) : Promise.resolve()
+                 ])
   };
   (loaders[viewName] || (()=>Promise.resolve()))().then(()=> drawView(viewName));
 }
-function drawView(viewName){
-  switch(viewName){
-    case 'Home': drawHome(); break;
-    case 'Pronos': drawFilters(); drawPronos(); break;
+function drawView(v){
+  switch(v){
+    case 'Home':    drawHome(); break;
+    case 'Pronos':  drawFilters(); drawPronos(); break;
     case 'Matches': drawFilters(); drawMatches(); break;
-    case 'Groups': drawGroups(); break;
+    case 'Groups':  drawGroups(); break;
     case 'Summary': drawSummary(); break;
-    case 'Rank': drawRank(); break;
+    case 'Rank':    drawRank(); break;
     case 'Scorers': drawScorers(); break;
     case 'Profile': drawProfile(); break;
   }
 }
 
-/* =================================================================
- * 7. CHARGEURS DE VUES (avec cache TTL)
- * ================================================================= */
-function loadPronosView(){
-  if (cache.pronosView && isFresh('pronosView')){ applyPronosViewData(); return Promise.resolve(); }
-  setLoading(true,'Chargement des matchs…');
-  return api('getPronosView',{userId:user.userId})
-    .then(d=>{ cache.pronosView=d; cacheTime.pronosView=Date.now(); applyPronosViewData(); })
-    .catch(e=> toast('Erreur matchs : ' + e.message))
-    .finally(()=> setLoading(false));
+/* =============================================================================
+ * HELPERS DE FORMAT
+ * ============================================================================= */
+function teamObjById(id){
+  id = String(id || '');
+  return (equipes || []).find(e=> String(e.id) === id) || {};
 }
-function applyPronosViewData(){
-  const d = cache.pronosView || {};
-  matches = d.matches || [];
-  pronos = d.myPronos || {};
-  pronosticStats = d.pronosticStats || {};
-  butsMatch = d.butsMatch || {};
-  bonusJokers = d.bonusJokers || [];
-  equipes = d.equipes || [];
-  buildTeamMaps();
-}
-function loadRankView(){
-  if (cache.rankView && isFresh('rankView')){ applyRankViewData(); return Promise.resolve(); }
-  setLoading(true,'Chargement du classement…');
-  return api('getRankView',{userId:user.userId})
-    .then(d=>{ cache.rankView=d; cacheTime.rankView=Date.now(); applyRankViewData(); })
-    .catch(e=> toast('Erreur classement : ' + e.message))
-    .finally(()=> setLoading(false));
-}
-function applyRankViewData(){
-  const d = cache.rankView || {};
-  classement = d.classement || [];
-  fun = d.fun || [];
-  buteur = d.buteur || null;
-}
-function loadGroupsView(){
-  if (cache.groupsView && isFresh('groupsView')) return Promise.resolve();
-  setLoading(true,'Chargement des poules…');
-  return api('getGroupsView')
-    .then(d=>{ cache.groupsView=d; cacheTime.groupsView=Date.now(); })
-    .catch(e=> toast('Erreur poules : ' + e.message))
-    .finally(()=> setLoading(false));
-}
-function loadSummaryView(){
-  if (cache.summaryView && isFresh('summaryView')) return Promise.resolve();
-  setLoading(true,'Chargement du résumé…');
-  return api('getSummaryView')
-    .then(d=>{ cache.summaryView=d; cacheTime.summaryView=Date.now(); })
-    .catch(e=> toast('Erreur résumé : ' + e.message))
-    .finally(()=> setLoading(false));
-}
-function loadProfileView(){
-  return Promise.all([
-    loadPronosView(),
-    (cache.profileView && isFresh('profileView')) ? Promise.resolve()
-      : api('getProfileView',{userId:user.userId}).then(d=>{ cache.profileView=d; cacheTime.profileView=Date.now(); }),
-    (cache.rankView && isFresh('rankView')) ? Promise.resolve() : loadRankView(),
-    (user.isAdmin && (!cache.adminView || !isFresh('adminView')))
-      ? api('getAdminView',{userId:user.userId}).then(d=>{ cache.adminView=d; cacheTime.adminView=Date.now(); }).catch(()=>{})
-      : Promise.resolve()
-  ]).then(()=>{});
-}
-function loadScorersView(){
-  if (cache.scorersView && isFresh('scorersView')){ applyScorersViewData(); return Promise.resolve(); }
-  setLoading(true,'Chargement des joueurs…');
-  return api('getScorersView',{userId:user.userId})
-    .then(d=>{ cache.scorersView=d; cacheTime.scorersView=Date.now(); applyScorersViewData(); })
-    .catch(e=> toast('Erreur buteurs : ' + e.message))
-    .finally(()=> setLoading(false));
-}
-function applyScorersViewData(){ const d = cache.scorersView || {}; joueurs = d.joueurs || []; }
-
-/* =================================================================
- * 8. HELPERS DE FORMAT ET D'AFFICHAGE
- * ================================================================= */
-function buildTeamMaps(){
-  teamById = {}; teamBySource = {};
-  (equipes || []).forEach(e=>{
-    teamById[String(e.id)] = e;
-    teamBySource[String(e.nomSource || '')] = e;
-    teamBySource[String(e.nomAffiche || '')] = e;
-  });
-}
-function teamObjById(id){ return teamById[String(id)] || {}; }
-function teamObjByName(n){ return teamBySource[String(n)] || {}; }
-function teamName(n){ return teamObjByName(n).nomAffiche || n || ''; }
-function teamFlag(n){
-  const e = teamObjByName(n);
-  return e.emoji || FLAG_BY_COUNTRY[n] || (e.codePays ? codeToFlag(e.codePays) : '') || '🏳️';
-}
-function codeToFlag(code){
-  code = String(code || '').trim().toUpperCase();
-  if (code.length !== 2) return '';
-  return code.replace(/./g, c=> String.fromCodePoint(127397 + c.charCodeAt(0)));
-}
+function mId(m){ return m.matchId || m.id; }
 function mName(m, side){
-  if (side === 'A') return m.nomAfficheA || teamObjById(m.equipeAId).nomAffiche || m.equipeAId || '';
-  return m.nomAfficheB || teamObjById(m.equipeBId).nomAffiche || m.equipeBId || '';
+  if (side === 'A') return m.nomAfficheA || teamObjById(m.equipeAId).nomAffiche || '';
+  return m.nomAfficheB || teamObjById(m.equipeBId).nomAffiche || '';
 }
 function mFlag(m, side){
-  if (side === 'A') return m.emojiA || teamObjById(m.equipeAId).emoji || codeToFlag(m.codePaysA) || '🏳️';
-  return m.emojiB || teamObjById(m.equipeBId).emoji || codeToFlag(m.codePaysB) || '🏳️';
+  if (side === 'A') return m.emojiA || teamObjById(m.equipeAId).emoji || FLAG_BY_CODE(m.codePaysA) || '🏳️';
+  return m.emojiB || teamObjById(m.equipeBId).emoji || FLAG_BY_CODE(m.codePaysB) || '🏳️';
 }
-function matchId(m){ return m.matchId || m.id; }
 function isBonusMatch(id){ return (bonusJokers || []).some(b=> String(b.matchId) === String(id)); }
-function isPoolFilter(k){ return /^[A-L]$/.test(String(k || '')); }
-function isGroupMatch(m){ return String(m.phase || '').toLowerCase().includes('groupe') || isPoolFilter(m.groupe); }
+function isPoolFilter(k){ return /^[A-L]$/.test(String(k||'')); }
+function isGroupMatch(m){ return String(m.phase||'').toLowerCase().indexOf('groupe') >= 0 || isPoolFilter(m.groupe); }
+function impliedProbs(m){
+  const a=Number(m.cote1)||0, x=Number(m.coteX)||0, b=Number(m.cote2)||0;
+  if (!a || !x || !b) return {A:0,X:0,B:0};
+  const ia=1/a, ix=1/x, ib=1/b, t=ia+ix+ib;
+  return { A:Math.round(ia/t*100), X:Math.round(ix/t*100), B:Math.round(ib/t*100) };
+}
+function parseMatchDate(m){
+  const d=String(m.dateFR||'').split('/'), h=String(m.heureFR||'00:00').split(':');
+  if (d.length!==3) return null;
+  return new Date(+d[2], +d[1]-1, +d[0], +h[0]||0, +h[1]||0, 0);
+}
+function timeLeftText(m){
+  if (String(m.status) !== 'OPEN') return '';
+  const dt = parseMatchDate(m); if (!dt) return '';
+  const diff = dt.getTime() - Date.now();
+  if (diff <= 0) return 'Verrouillage imminent';
+  const min = Math.floor(diff/60000);
+  const d = Math.floor(min/1440), h = Math.floor((min%1440)/60), mm = min%60;
+  if (d>0) return 'Verrouillage dans ' + d + 'j ' + h + 'h';
+  if (h>0) return 'Verrouillage dans ' + h + 'h' + String(mm).padStart(2,'0');
+  return 'Dernière chance : ' + mm + ' min restantes';
+}
+function matchTitle(m){
+  if (String(m.status) === 'FINISHED') return 'Match terminé';
+  if (String(m.status) === 'LOCKED')   return 'Verrouillé · en attente de résultat';
+  if (pronos[String(mId(m))])           return 'Pronostiqué';
+  return 'Match à venir';
+}
+function goalMin(v){ const n=parseInt(String(v||'').replace(/[^0-9]/g,''),10); return isNaN(n)?999:n; }
+function goalType(t){ t=String(t||'').toUpperCase(); if(t==='P'||t==='PENALTY')return ' (P)'; if(t==='CSC'||t==='OWN_GOAL')return ' (CSC)'; return ''; }
+function goalsForSide(m, side){
+  const arr = (butsMatch[String(mId(m))] || []).filter(g=>{
+    const gid = String(g.equipeId||'');
+    if (side==='A') return gid === String(m.equipeAId);
+    return gid === String(m.equipeBId);
+  }).sort((a,b)=> goalMin(a.minute) - goalMin(b.minute));
+  if (!arr.length) return '';
+  return '<div class="teamGoals">' + arr.map(g=>
+    '<div class="teamGoal">' + (g.minute?g.minute+'\u2019 \u00b7 ':'') + cleanText(g.nomAffiche||g.nom||'') + goalType(g.type) + '</div>'
+  ).join('') + '</div>';
+}
+function tvFor(m){ return m.diffuseursLabel ? '📺 ' + cleanText(m.diffuseursLabel) : ''; }
+function oddsInline(m){
+  if (!m.cote1 || !m.coteX || !m.cote2) return '';
+  return '<span class="oddsInline">🎲 ' + m.cote1 + ' · ' + m.coteX + ' · ' + m.cote2 + '</span>';
+}
+function issueIcon(issue, m){
+  if (issue === 'A') return mFlag(m,'A');
+  if (issue === 'B') return mFlag(m,'B');
+  return 'Nul';
+}
+function issueName(issue, m){
+  if (issue === 'A') return mFlag(m,'A') + ' ' + mName(m,'A');
+  if (issue === 'B') return mFlag(m,'B') + ' ' + mName(m,'B');
+  return 'Nul';
+}
 
+/* =============================================================================
+ * STYLES DE GROUPES (couleur par poule)
+ * ============================================================================= */
 function groupTheme(g){
-  const themes = {
+  const t = {
     A:['rgba(46,139,87,.18)','rgba(46,139,87,.55)','#9ff0c1'],
     B:['rgba(46,117,182,.18)','rgba(46,117,182,.55)','#9bd0ff'],
     C:['rgba(255,215,0,.16)','rgba(255,215,0,.50)','#ffe680'],
@@ -570,1024 +622,888 @@ function groupTheme(g){
     K:['rgba(233,30,99,.15)','rgba(233,30,99,.48)','#ff9bc2'],
     L:['rgba(96,125,139,.18)','rgba(96,125,139,.55)','#c3d2d8']
   };
-  return themes[String(g || '').toUpperCase()] || ['transparent','var(--bdr)','var(--gold)'];
+  return t[String(g||'').toUpperCase()] || ['transparent','var(--bdr)','var(--gold)'];
 }
-function groupStyle(g){ const c = groupTheme(g); return 'style="--group-bg:' + c[0] + ';--group-border:' + c[1] + ';--group-text:' + c[2] + '"'; }
-function parseMatchDate(m){
-  const d = String(m.dateFR || '').split('/'), h = String(m.heureFR || '00:00').split(':');
-  if (d.length !== 3) return null;
-  return new Date(Number(d[2]), Number(d[1]) - 1, Number(d[0]), Number(h[0] || 0), Number(h[1] || 0), 0);
-}
-function timeLeftText(m){
-  if (String(m.status) !== 'OPEN') return '';
-  const dt = parseMatchDate(m); if (!dt) return '';
-  const diff = dt.getTime() - Date.now();
-  if (diff <= 0) return 'Verrouillage imminent';
-  const min = Math.floor(diff / 60000);
-  const d = Math.floor(min / 1440), h = Math.floor((min % 1440) / 60), mm = min % 60;
-  if (d > 0) return 'Verrouillage dans ' + d + 'j ' + h + 'h';
-  if (h > 0) return 'Verrouillage dans ' + h + 'h' + String(mm).padStart(2,'0');
-  return 'Dernière chance : ' + mm + ' min restantes';
-}
-function goalMinuteValue(v){ const n = parseInt(String(v || '').replace(/[^0-9]/g,''),10); return isNaN(n) ? 999 : n; }
-function goalTypeLabel(t){
-  t = String(t || '').toUpperCase();
-  if (t === 'P' || t === 'PENALTY') return ' (P)';
-  if (t === 'CSC' || t === 'OWN_GOAL') return ' (CSC)';
-  return '';
-}
-function goalSide(m, g){
-  const gid = String(g.equipeId || ''), ga = String(m.equipeAId || ''), gb = String(m.equipeBId || '');
-  if (gid && gid === ga) return 'A';
-  if (gid && gid === gb) return 'B';
-  return '';
-}
-function goalsForSide(m, side){
-  const arr = (butsMatch[String(matchId(m))] || []).filter(g=> goalSide(m, g) === side)
-              .sort((a, b)=> goalMinuteValue(a.minute) - goalMinuteValue(b.minute));
-  if (!arr.length) return '';
-  return '<div class="teamGoals">' + arr.map(g=>
-    '<div class="teamGoal">' + (g.minute ? g.minute + '\u2019 \u00b7 ' : '') + cleanText(g.nomAffiche || g.nom || '') + goalTypeLabel(g.type) + '</div>'
-  ).join('') + '</div>';
-}
-function tvFor(m){ return m.diffuseursLabel ? '<div class="tv">📺 ' + cleanText(m.diffuseursLabel) + '</div>' : ''; }
-function oddsFor(m){
-  if (!m.cote1 && !m.coteX && !m.cote2) return '';
-  return '<div class="oddsLine">💰 Cotes : ' + mName(m,'A') + ' <b>' + (m.cote1 || '—') + '</b> · Nul <b>' + (m.coteX || '—') + '</b> · ' + mName(m,'B') + ' <b>' + (m.cote2 || '—') + '</b></div>';
-}
-function impliedProbs(m){
-  const a = Number(m.cote1) || 0, x = Number(m.coteX) || 0, b = Number(m.cote2) || 0;
-  if (!a || !x || !b) return {A:0,X:0,B:0};
-  const ia = 1/a, ix = 1/x, ib = 1/b;
-  const tot = ia + ix + ib;
-  return { A: Math.round(ia/tot*100), X: Math.round(ix/tot*100), B: Math.round(ib/tot*100) };
-}
-function issueName(issue, m){
-  if (issue === 'A') return mFlag(m,'A') + ' ' + mName(m,'A');
-  if (issue === 'B') return mFlag(m,'B') + ' ' + mName(m,'B');
-  return 'Nul';
-}
+function groupStyle(g){ const c=groupTheme(g); return 'style="--group-bg:'+c[0]+';--group-border:'+c[1]+';--group-text:'+c[2]+'"'; }
 
-/* =================================================================
- * 9. RENDU — VUE ACCUEIL
- * ================================================================= */
+/* =============================================================================
+ * VUE HOME — bonus banner dynamique + Scorer status
+ * ============================================================================= */
 function drawHome(){
-  const light = cache.light || {};
-  const home = light.home || {};
-  const st = light.userState || {};
-  const restant = Number(home.openMatchesCount) || 0;
-  const today = Number(home.matchesTodayCount) || 0;
-  const leader = home.leaderPseudo || '—';
-  const leaderPts = Number(home.leaderPoints) || 0;
-  const topScorer = home.topScorer || '—';
-  const topGoals = Number(home.topScorerGoals) || 0;
-  const todoCount = Number(st.todoCount) || 0;
-  const jokersUsed = Number(st.jokersUsed) || 0;
-  const hasScorerVote = st.hasScorerVote === true;
-  const bonus = (bonusJokers || []).map(b=>
-    '<div class="card bonusBanner">⭐ <b>Joker bonus</b> sur <b>' + cleanText(b.label) + '</b><br><span class="muted">' + b.dateFR + ' à ' + b.heureFR + ' — les points compteront double.</span></div>'
-  ).join('');
-  const scorerHero = hasScorerVote
-    ? '<div class="card"><b>⚽ Buteur choisi</b><br><span class="muted">Ton vote meilleur buteur est validé.</span></div>'
-    : '<div class="card"><b>⚽ Ton pari meilleur buteur n\u2019est pas encore fait</b><br><span class="muted">Choisis ton joueur avant le coup d\u2019envoi du Mondial.</span><button class="btn" style="margin-top:8px" onclick="show(\'Scorers\')">Choisir mon buteur</button></div>';
-  $('homeSummary').innerHTML =
-    bonus +
-    scorerHero +
-    '<div class="grid2">' +
-      '<div class="card"><b>' + todoCount + '</b><br><span class="muted">match' + (todoCount>1?'s':'') + ' à pronostiquer</span></div>' +
-      '<div class="card"><b>' + cleanText(leader) + '</b><br><span class="muted">leader actuel · ' + leaderPts + ' pts</span></div>' +
-    '</div>' +
-    '<div class="card"><b>📅 Matchs du jour : ' + today + '</b><br><b>⚽ Meilleur buteur actuel : ' + cleanText(topScorer) + (topGoals?(' (' + topGoals + ')'):'') + '</b><br><br>' +
-      '<button class="btn" onclick="goTodo()">Aller au pronostic</button>' +
-    '</div>' +
-    '<div class="card"><b>⭐ Jokers utilisés : ' + jokersUsed + ' / ' + MAX_JOKERS + '</b><br><span class="muted">Il te reste ' + Math.max(0, MAX_JOKERS - jokersUsed) + ' joker(s) personnel(s).</span></div>';
+  const html = (bonusJokers||[]).map(b=>{
+    const id = String(b.matchId || '');
+    return '<div class="card bonusBanner" onclick="goPronosMatch(\''+id+'\')">⭐ <b>Joker bonus</b> sur <b>'+cleanText(b.label)+'</b><br><span class="muted">Clique ici pour aller directement au pronostic concerné.</span></div>';
+  }).join('');
+  $('homeSummary').innerHTML = html;
 }
 function goTodo(){ currentFilter='all'; directPronoMatchId=null; show('Pronos'); }
 function goPronosMatch(id){ currentFilter='all'; directPronoMatchId=String(id); show('Pronos'); }
 
-/* =================================================================
- * 10. RENDU — FILTRES (partagés Pronos + Matches)
- * ================================================================= */
+/* =============================================================================
+ * FILTRES (Pronos + Matches) — simples : Tous / Aujourd'hui / A-L / Finales
+ * ============================================================================= */
 function filterItems(){
-  return ['all:Toutes','todo:Non pronostiqués','today:Aujourd\'hui','open:Ouverts','finished:Terminés','PF:Finales','A:A','B:B','C:C','D:D','E:E','F:F','G:G','H:H','I:I','J:J','K:K','L:L'];
+  return ['all:Tous','today:Aujourd\'hui','A:A','B:B','C:C','D:D','E:E','F:F','G:G','H:H','I:I','J:J','K:K','L:L','PF:Finales'];
 }
-function drawFilters(){ drawFilterBar('pronosFilters','drawPronos'); drawFilterBar('matchesFilters','drawMatches'); }
-function drawFilterBar(id, callback){
+function drawFilters(){
+  drawFilterBar('pronosFilters');
+  drawFilterBar('matchesFilters');
+}
+function drawFilterBar(id){
   const box = $(id); if (!box) return;
   box.innerHTML = filterItems().map(x=>{
-    const parts = x.split(':'), k = parts[0], l = parts[1];
-    const pool = isPoolFilter(k);
-    return '<button class="' + (currentFilter===k?'active':'') + (pool?' groupFilter':'') + '" ' + (pool?groupStyle(k):'') + ' onclick="setFilter(\'' + k + '\')">' + l + '</button>';
+    const [k,l] = x.split(':'); const pool = isPoolFilter(k);
+    return '<button class="' + (currentFilter===k?'active':'') + (pool?' groupFilter':'') + '" ' +
+           (pool?groupStyle(k):'') + ' onclick="setFilter(\''+k+'\')">' + l + '</button>';
   }).join('');
 }
 function setFilter(k){ currentFilter=k; drawFilters(); drawPronos(); drawMatches(); }
 function passFilter(m){
-  const today = new Date().toLocaleDateString('fr-FR');
   if (currentFilter === 'all') return true;
-  if (currentFilter === 'todo') return String(m.status) === 'OPEN' && !pronos[String(matchId(m))];
-  if (currentFilter === 'today') return m.dateFR === today;
-  if (currentFilter === 'open') return String(m.status) === 'OPEN';
-  if (currentFilter === 'finished') return String(m.status) === 'FINISHED';
+  if (currentFilter === 'today'){ const t=new Date().toLocaleDateString('fr-FR'); return m.dateFR===t; }
   if (currentFilter === 'PF') return !isPoolFilter(m.groupe);
   return m.groupe === currentFilter;
 }
 
-/* =================================================================
- * 11. RENDU — VUE PRONOS (carte plein écran + swipe)
- * ================================================================= */
-function getPlayablePronos(){
-  return matches.filter(m=> String(m.status) === 'OPEN' && !pronos[String(matchId(m))])
-                .filter(passFilter)
-                .sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||'')) || Number(matchId(a))-Number(matchId(b)));
-}
-function selectPronoMatch(id){
-  const list = getPlayablePronos();
-  const idx = list.findIndex(m=> String(matchId(m)) === String(id));
-  if (idx >= 0){ currentPronoIndex = idx; directPronoMatchId = null; drawPronos(); }
-}
-function drawPronos(){
-  const box = $('pronoSwipeBox'); const sel = $('pronoMatchSelect');
-  if (!box || !sel) return;
-  const list = getPlayablePronos();
-  if (directPronoMatchId){
-    const idx = list.findIndex(m=> String(matchId(m)) === String(directPronoMatchId));
-    if (idx >= 0) currentPronoIndex = idx;
-    directPronoMatchId = null;
-  }
-  if (currentPronoIndex >= list.length) currentPronoIndex = 0;
-  if (!list.length){
-    sel.innerHTML = '<option>Tous tes pronostics sont à jour.</option>';
-    box.innerHTML = '<div class="card muted">Tous tes pronostics sont à jour. 🎉</div>';
-    return;
-  }
-  const m = list[currentPronoIndex];
-  sel.innerHTML = list.map((x,i)=>
-    '<option value="' + matchId(x) + '"' + (String(matchId(x))===String(matchId(m))?' selected':'') + '>' +
-      (i+1) + '. ' + mName(x,'A') + ' - ' + mName(x,'B') + ' · ' + x.dateFR +
-    '</option>'
-  ).join('');
-  box.innerHTML = bigPronoCard(m, currentPronoIndex+1, list.length);
-  addSwipeHandlers(box, list.length);
-}
-function addSwipeHandlers(el, total){
-  let sx = 0;
-  el.ontouchstart = e=>{ sx = e.changedTouches[0].screenX; };
-  el.ontouchend = e=>{
-    const dx = e.changedTouches[0].screenX - sx;
-    if (Math.abs(dx) > 55){
-      currentPronoIndex += (dx < 0 ? 1 : -1);
-      if (currentPronoIndex < 0) currentPronoIndex = 0;
-      if (currentPronoIndex >= total) currentPronoIndex = total - 1;
-      drawPronos();
-    }
-  };
-}
-function moveProno(delta){
-  const list = getPlayablePronos();
-  currentPronoIndex = Math.max(0, Math.min(list.length - 1, currentPronoIndex + delta));
-  drawPronos();
-}
+/* =============================================================================
+ * STATISTIQUES MIROIR (Votes du groupe / Cotes)
+ * ============================================================================= */
 function statMirrorHtml(m){
-  const s = pronosticStats[String(matchId(m))] || {total:0,aWin:0,draw:0,bWin:0};
+  const s = pronosticStats[String(mId(m))] || {total:0,aWin:0,draw:0,bWin:0};
   const total = s.total || 0;
-  const p = { A: pct(s.aWin, total), X: pct(s.draw, total), B: pct(s.bWin, total) };
+  const p = { A: pct(s.aWin,total), X: pct(s.draw,total), B: pct(s.bWin,total) };
   const o = impliedProbs(m);
   return '<div class="mirrorGrid">' +
     '<div class="statBlock"><div class="statTitle">Votes du groupe ' + (total?'('+total+')':'') + '</div>' +
-      barRow(issueName('A',m), p.A, false) +
+      barRow(issueIcon('A',m), p.A, false) +
       barRow('Nul', p.X, false) +
-      barRow(issueName('B',m), p.B, false) +
+      barRow(issueIcon('B',m), p.B, false) +
     '</div>' +
-    '<div class="statBlock"><div class="statTitle">Tendance des cotes</div>' +
-      barRow(issueName('A',m), o.A, true) +
+    '<div class="statBlock"><div class="statTitleLine"><span class="statTitle">Tendance des cotes</span>' + oddsInline(m) + '</div>' +
+      barRow(issueIcon('A',m), o.A, true) +
       barRow('Nul', o.X, true) +
-      barRow(issueName('B',m), o.B, true) +
+      barRow(issueIcon('B',m), o.B, true) +
     '</div>' +
   '</div>';
 }
 function barRow(label, val, right){
   val = pct2(val);
-  return '<div class="hrow ' + (right?'right':'') + '">' +
-    (right
-      ? '<b>' + val + '%</b><div class="hbar"><span style="width:' + val + '%"></span></div><span>' + label + '</span>'
-      : '<span>' + label + '</span><div class="hbar"><span style="width:' + val + '%"></span></div><b>' + val + '%</b>'
-    ) +
-  '</div>';
+  if (right) return '<div class="hrow right"><b>'+val+'%</b><div class="hbar"><span style="width:'+val+'%"></span></div><span>'+label+'</span></div>';
+  return '<div class="hrow"><span>'+label+'</span><div class="hbar"><span style="width:'+val+'%"></span></div><b>'+val+'%</b></div>';
 }
 function riskHtml(m){
-  const s = pronosticStats[String(matchId(m))] || {};
+  const s = pronosticStats[String(mId(m))] || {};
   let out = '';
-  const minorityIssues = detectMinorityOutsiders(m, s);
-  if (minorityIssues.length){
-    out += '<div><span class="riskPill">🔥 Match risqué</span><span class="muted small"> Outsider rare : ' + minorityIssues.map(i=> issueName(i,m)).join(', ') + '</span></div>';
-  }
-  if (s.jokers){
-    out += '<div><span class="riskPill">' + (s.jokers>=5?'🔥 Match sous tension':'⭐') + ' ' + s.jokers + ' joker(s) joué(s)</span></div>';
-  }
-  if ((s.riskNames || []).length){
-    out += '<div><span class="riskPill devilPill">😈 ' + s.riskNames.map(cleanText).join(', ') + ' tente(nt) un pari outsider</span><div class="muted small">Statut provisoire : le bonus final dépendra des résultats.</div></div>';
-  }
-  return out ? '<div class="statBlock">' + out + '</div>' : '';
+  if (s.jokers) out += '<span class="riskPill">' + (s.jokers>=5?'🔥':'⭐') + ' ' + s.jokers + ' joker(s) joué(s)</span>';
+  if ((s.riskNames||[]).length) out += '<span class="riskPill devilPill">😈 ' + s.riskNames.map(cleanText).join(', ') + ' tente(nt) un pari outsider</span>';
+  return out ? '<div class="statBlock riskCenter">' + out + '</div>' : '';
 }
-function detectMinorityOutsiders(m, s){
-  // Côté front : on affiche un pictogramme de match risqué si un des camps est outsider
-  // (cote >= 2.80 ET ratio cote/favori >= 1.8) et minoritaire (< 25% des votes).
-  const cotes = { A: Number(m.cote1)||0, X: Number(m.coteX)||0, B: Number(m.cote2)||0 };
-  if (!cotes.A || !cotes.X || !cotes.B) return [];
-  const fav = Math.min(cotes.A, cotes.X, cotes.B);
-  const total = s.total || 0;
-  if (total < 3) return [];
-  const counts = { A: s.aWin || 0, X: s.draw || 0, B: s.bWin || 0 };
-  const out = [];
-  ['A','X','B'].forEach(k=>{
-    if (cotes[k] >= 2.80 && (cotes[k] / fav) >= 1.8){
-      const pickedPct = total ? counts[k] * 100 / total : 0;
-      if (pickedPct < 25) out.push(k);
+
+/* =============================================================================
+ * VUE PRONOS — carte plein écran + swipe
+ * ============================================================================= */
+function getPlayablePronos(){
+  return matches
+    .filter(m=> String(m.status)==='OPEN' && !pronos[String(mId(m))])
+    .filter(passFilter)
+    .sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||'')) || Number(mId(a))-Number(mId(b)));
+}
+function selectPronoMatch(id){
+  const list = getPlayablePronos();
+  const idx = list.findIndex(m=> String(mId(m))===String(id));
+  if (idx>=0){ currentPronoIndex=idx; directPronoMatchId=null; drawPronos(); }
+}
+function drawPronos(){
+  const box = $('pronoSwipeBox'), sel = $('pronoMatchSelect');
+  if (!box || !sel) return;
+  const list = getPlayablePronos();
+  if (directPronoMatchId){
+    const idx = list.findIndex(m=> String(mId(m))===String(directPronoMatchId));
+    if (idx>=0) currentPronoIndex = idx;
+    directPronoMatchId = null;
+  }
+  if (currentPronoIndex >= list.length) currentPronoIndex = 0;
+  if (!list.length){
+    sel.innerHTML = '<option>Tous tes pronostics sont à jour</option>';
+    box.innerHTML = '<div class="card muted">Tous tes pronostics sont à jour. 🎉</div>';
+    return;
+  }
+  const m = list[currentPronoIndex];
+  sel.innerHTML = list.map((x,i)=>{
+    const phase = isGroupMatch(x) ? ('Poule ' + (x.groupe||'')) : (x.phase || 'Phase finale');
+    return '<option value="'+mId(x)+'"'+(String(mId(x))===String(mId(m))?' selected':'')+'>' +
+           phase + ' : ' + mName(x,'A') + ' - ' + mName(x,'B') + ' - ' + x.dateFR + '</option>';
+  }).join('');
+  box.innerHTML = bigPronoCard(m, currentPronoIndex+1, list.length);
+  addSwipe(box, list.length);
+}
+function addSwipe(el, total){
+  let sx=0;
+  el.ontouchstart = e=>{ sx = e.changedTouches[0].screenX; };
+  el.ontouchend = e=>{
+    const dx = e.changedTouches[0].screenX - sx;
+    if (Math.abs(dx) > 55){
+      currentPronoIndex += (dx<0?1:-1);
+      if (currentPronoIndex < 0) currentPronoIndex = 0;
+      if (currentPronoIndex >= total) currentPronoIndex = total-1;
+      drawPronos();
     }
-  });
-  return out;
+  };
 }
-function matchHeaderHtml(m, big){
-  const st = String(m.status) === 'OPEN' ? 'open' : String(m.status) === 'FINISHED' ? 'finishedP' : 'lockedP';
-  const score = String(m.status) === 'FINISHED' ? (m.scoreA + ' - ' + m.scoreB) : 'VS';
-  return '<div>' +
-    '<div class="' + (big?'bigTeams':'mtop') + '">' +
-      '<div class="team"><div class="flag">' + mFlag(m,'A') + '</div><div class="name">' + mName(m,'A') + '</div>' + (String(m.status)==='FINISHED'?goalsForSide(m,'A'):'') + '</div>' +
-      '<div class="' + (big?'vsBig':'score') + '">' + score + '</div>' +
-      '<div class="team"><div class="flag">' + mFlag(m,'B') + '</div><div class="name">' + mName(m,'B') + '</div>' + (String(m.status)==='FINISHED'?goalsForSide(m,'B'):'') + '</div>' +
-    '</div>' +
-    '<div class="meta"><span>' + (m.dateFR||'') + ' · ' + (m.heureFR||'') + ' · ' + (m.groupe||'') + (m.phase?(' · '+m.phase):'') + (m.stadeLabel?('<br>'+m.stadeLabel):'') + '</span><span class="pill ' + st + '">' + m.status + '</span></div>' +
-  '</div>';
+function moveProno(d){
+  const list = getPlayablePronos();
+  currentPronoIndex = Math.max(0, Math.min(list.length-1, currentPronoIndex + d));
+  drawPronos();
 }
 function bigPronoCard(m, idx, total){
-  return '<div class="card bigPronoCard">' +
-    matchHeaderHtml(m, true) +
-    '<div>' +
-      statMirrorHtml(m) +
-      riskHtml(m) +
-      tvFor(m) +
-      oddsFor(m) +
-      (isBonusMatch(matchId(m)) ? '<div class="notice">⭐ Joker bonus activé : inutile d\u2019utiliser ton joker personnel.</div>' : '') +
-      '<div class="grid2">' +
-        '<input id="quickScoreA" type="number" min="0" placeholder="' + mName(m,'A') + '">' +
-        '<input id="quickScoreB" type="number" min="0" placeholder="' + mName(m,'B') + '">' +
-      '</div><br>' +
-      (isBonusMatch(matchId(m))
-        ? ''
-        : '<label class="card" style="display:block"><input id="quickJoker" type="checkbox" style="width:auto"> ⭐ Utiliser un joker</label>'
-      ) +
-      '<div id="quickPronoErr" class="ko small"></div><br>' +
-      '<button class="btn" onclick="submitPronoFromSwipe(\'' + matchId(m) + '\')">Valider mon pronostic</button>' +
-    '</div>' +
-    '<div>' +
-      '<div class="swipeNav">' +
-        '<button class="btn btn2 compactBtn" onclick="moveProno(-1)">← Précédent</button>' +
-        '<button class="btn btn2 compactBtn" onclick="moveProno(1)">Suivant →</button>' +
+  const grouped = isPoolFilter(m.groupe);
+  const phase = isGroupMatch(m) ? 'Groupe ' + (m.groupe||'') : (m.phase || 'Phase finale');
+  return '<div class="card bigPronoCard' + (grouped?' grouped':'') + '" ' + (grouped?groupStyle(m.groupe):'') + '>' +
+    '<div class="matchCardTitle">' + matchTitle(m) + '</div>' +
+    '<div class="matchHeaderClean">' +
+      '<div class="bigTeams">' +
+        '<div class="team"><div class="flag">'+mFlag(m,'A')+'</div><div class="name">'+mName(m,'A')+'</div></div>' +
+        '<div class="vsBig">VS</div>' +
+        '<div class="team"><div class="flag">'+mFlag(m,'B')+'</div><div class="name">'+mName(m,'B')+'</div></div>' +
       '</div>' +
-      '<div class="progressProno">Prono n°' + idx + ' / ' + total + ' matchs</div>' +
+      '<div class="meta metaClean"><span>📅 '+m.dateFR+' · 🕒 '+m.heureFR+' · 🏷️ '+phase+'<br>🏟️ '+(m.stadeLabel||'Stade à confirmer')+' '+(tvFor(m)?'<br>'+tvFor(m):'')+'</span></div>' +
     '</div>' +
+    (isBonusMatch(mId(m)) ? '<div class="countdown bonusPill centeredLine">⭐ Joker bonus : points doublés sur ce match</div>' : '') +
+    '<div class="scoreEntryRow">' +
+      '<div class="scoreEntryBox"><input id="quickScoreA" type="number" min="0" placeholder="'+mName(m,'A')+'"></div>' +
+      (isBonusMatch(mId(m))
+        ? '<div class="jokerMiddle"><span>⭐</span><small>Bonus</small></div>'
+        : '<label class="jokerMiddle"><input id="quickJoker" type="checkbox"><span>🃏</span><small>Joker</small></label>') +
+      '<div class="scoreEntryBox"><input id="quickScoreB" type="number" min="0" placeholder="'+mName(m,'B')+'"></div>' +
+    '</div>' +
+    '<div id="quickPronoErr" class="ko small centeredLine"></div>' +
+    '<button class="btn" onclick="submitPronoFromSwipe(\''+mId(m)+'\')">Valider mon pronostic</button>' +
+    statMirrorHtml(m) + riskHtml(m) +
+    '<div class="pronoBottomHint"><span>Swiper pour changer de match</span><span>' + idx + '/' + total + ' · Filtre : ' + (currentFilter==='all'?'Tous':currentFilter) + '</span></div>' +
   '</div>';
 }
 function submitPronoFromSwipe(id){
-  const a = $('quickScoreA'), b = $('quickScoreB'), j = $('quickJoker'), err = $('quickPronoErr');
+  const a=$('quickScoreA'), b=$('quickScoreB'), j=$('quickJoker'), err=$('quickPronoErr');
   if (!a || !b) return;
-  api('submitPronostic', {
-    userId: user.userId, matchId: id,
-    scoreA: a.value, scoreB: b.value,
-    joker: (j ? j.checked : false)
-  }).then(d=>{
-    if (d.error){ err.textContent = d.error; return; }
-    toast('Pronostic enregistré ✅');
-    // Utilise le payload renvoyé pour ne PAS refaire un appel réseau
-    if (d.pronosView){ cache.pronosView = d.pronosView; cacheTime.pronosView = Date.now(); applyPronosViewData(); }
-    if (d.light)     { cache.light      = d.light;      cacheTime.light      = Date.now(); bonusJokers = d.light.bonusJokers || []; }
-    // Les autres vues dépendent de cette action — on invalide.
-    invalidate('rankView'); invalidate('summaryView'); invalidate('groupsView'); invalidate('profileView');
-    drawFilters(); drawPronos(); drawHome();
-  }).catch(e=> err.textContent = e.message);
+  if (a.value==='' || b.value===''){ err.textContent='Saisis les deux scores.'; return; }
+  api('submitPronostic', {userId:user.userId, matchId:id, scoreA:a.value, scoreB:b.value, joker:(j?j.checked:false)})
+    .then(d=>{
+      if (d.error){ err.textContent = d.error; return; }
+      toast('Pronostic enregistré ✅');
+      if (d.pronosView){ setCache('pronosView', d.pronosView); applyViewData('pronosView', d.pronosView); }
+      if (d.light)     { setCache('light',      d.light);      applyLight(d.light); }
+      delete cache.rankView; delete cache.summaryView; delete cache.profileView; persistCache();
+      // Recharge ces vues en arrière-plan
+      loadView('rankView','getRankView',{userId:user.userId});
+      loadView('summaryView','getSummaryView',{});
+      loadView('profileView','getProfileView',{userId:user.userId});
+      drawFilters(); drawPronos();
+    })
+    .catch(e=> err.textContent = e.message);
 }
 
-/* =================================================================
- * 12. RENDU — VUE MATCHS (liste complète)
- * ================================================================= */
+/* =============================================================================
+ * VUE MATCHES — liste complète avec stats + pronostics publics si terminé
+ * ============================================================================= */
 function drawMatches(){
   const list = matches.filter(passFilter).sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||'')));
   const box = $('matchList'); if (!box) return;
   if (!list.length){ box.innerHTML = '<div class="card muted">Aucun match dans ce filtre.</div>'; return; }
   box.innerHTML = list.map(m=>{
-    const id = matchId(m);
+    const id = mId(m);
     const p = pronos[String(id)];
     const grouped = isPoolFilter(m.groupe);
-    const canPlay = String(m.status) === 'OPEN' && !p;
-    const finishedClass = String(m.status) === 'FINISHED' ? ' finished' : '';
-    const lockedClass   = String(m.status) === 'LOCKED'   ? ' locked'   : '';
-    const predClass     = p ? ' predicted has' : '';
-    return '<div class="match' + predClass + finishedClass + lockedClass + (grouped?' grouped':'') + '" ' + (grouped?groupStyle(m.groupe):'') + '>' +
-      matchHeaderHtml(m, false) +
-      (isBonusMatch(id) ? '<div class="countdown bonusBanner">⭐ Joker bonus : points doublés sur ce match</div>' : '') +
-      (timeLeftText(m) ? '<div class="countdown">⏳ ' + timeLeftText(m) + '</div>' : '') +
-      tvFor(m) + oddsFor(m) +
+    const canPlay = String(m.status)==='OPEN' && !p;
+    const phase = isGroupMatch(m) ? 'Groupe ' + (m.groupe||'') : (m.phase || 'Phase finale');
+    return '<div class="match' +
+        (grouped?' grouped':'') +
+        (String(m.status)==='FINISHED'?' finished':'') +
+        (p?' predicted has':'') + '" ' + (grouped?groupStyle(m.groupe):'') + '>' +
+      '<div class="matchCardTitle">' + matchTitle(m) + '</div>' +
+      '<div class="matchHeaderClean">' +
+        '<div class="mtop">' +
+          '<div class="team"><div class="flag">'+mFlag(m,'A')+'</div><div class="name">'+mName(m,'A')+'</div>'+(String(m.status)==='FINISHED'?goalsForSide(m,'A'):'')+'</div>' +
+          '<div class="score">' + (String(m.status)==='FINISHED' ? (m.scoreA+' - '+m.scoreB) : 'VS') + '</div>' +
+          '<div class="team"><div class="flag">'+mFlag(m,'B')+'</div><div class="name">'+mName(m,'B')+'</div>'+(String(m.status)==='FINISHED'?goalsForSide(m,'B'):'')+'</div>' +
+        '</div>' +
+        '<div class="meta metaClean"><span>📅 '+m.dateFR+' · 🕒 '+m.heureFR+' · 🏷️ '+phase+'<br>🏟️ '+(m.stadeLabel||'Stade à confirmer')+' '+(tvFor(m)?'<br>'+tvFor(m):'')+'</span></div>' +
+      '</div>' +
+      (isBonusMatch(id) ? '<div class="countdown bonusPill centeredLine">⭐ Joker bonus : points doublés sur ce match</div>' : '') +
+      (timeLeftText(m) ? '<div class="countdown centeredLine">⏳ '+timeLeftText(m)+'</div>' : '') +
       statMirrorHtml(m) + riskHtml(m) +
-      (p ? '<div class="prono"><span>✅ Ton prono : ' + p.scoreA + '-' + p.scoreB +
-            (p.joker ? ' ⭐' : '') +
-            (p.counterCurrent ? ' 😈' : '') +
-            (Number(p.riskBonus) ? (' 🎁 +' + p.riskBonus) : '') +
-            '</span><b>' + (p.points !== '' && p.points != null ? p.points + ' pts' : 'En attente') + '</b></div>' : '') +
-      (canPlay ? '<button class="btn" style="margin-top:8px" onclick="goPronosMatch(\'' + id + '\')">Pronostiquer ce match</button>' : '') +
+      (p ? '<div class="prono"><span>✅ Ton prono : '+p.scoreA+'-'+p.scoreB +
+            (p.joker?' ⭐':'') + (p.counterCurrent?' 😈':'') + (Number(p.riskBonus)?(' 🎁 +'+p.riskBonus):'') +
+            '</span><b>' + (p.points!==''&&p.points!=null ? p.points+' pts' : 'En attente') + '</b></div>' : '') +
+      (canPlay ? '<button class="btn" onclick="goPronosMatch(\''+id+'\')">Pronostiquer ce match</button>' : '') +
       publicPronosHtml(m) +
-      detailButtonHtml(m) +
+      (isGroupMatch(m) ? '<button class="btn btn2" style="margin-top:8px" onclick="openMatchDetail(\''+id+'\')">Voir classement local + historique</button>' : '') +
     '</div>';
   }).join('');
 }
-function detailButtonHtml(m){
-  // Si match avec contexte (poule ou historique), proposer le détail
-  if (!isGroupMatch(m)) return '';
-  return '<button class="btn btn2 compactBtn" style="margin-top:8px" onclick="openMatchDetail(\'' + matchId(m) + '\')">Voir le détail (classement + historique)</button>';
-}
 function publicPronosHtml(m){
   if (String(m.status) === 'OPEN') return '';
-  const s = pronosticStats[String(matchId(m))] || {};
-  const groups = s.publicPronos || { A:[], X:[], B:[] };
-  const resIssue = String(m.status) === 'FINISHED'
-    ? (Number(m.scoreA) > Number(m.scoreB) ? 'A' : (Number(m.scoreA) < Number(m.scoreB) ? 'B' : 'X'))
+  const s = pronosticStats[String(mId(m))] || {};
+  const g = s.publicPronos || {A:[],X:[],B:[]};
+  if (!(g.A||[]).length && !(g.X||[]).length && !(g.B||[]).length) return '';
+  const resIssue = String(m.status)==='FINISHED'
+    ? (Number(m.scoreA)>Number(m.scoreB)?'A':(Number(m.scoreA)<Number(m.scoreB)?'B':'X'))
     : '';
-  if (!(groups.A||[]).length && !(groups.X||[]).length && !(groups.B||[]).length) return '';
-  return '<div class="sec">Pronostics des joueurs</div>' +
-    '<div class="pronoGroups">' +
-      ['A','X','B'].map(issue=>{
-        const arr = groups[issue] || [];
-        return '<div class="pronoGroup"><b>' + issueName(issue, m) + '</b>' +
-          (arr.length
-            ? arr.map(p=>{
-                const exact = String(m.status) === 'FINISHED' && String(p.scoreA) === String(m.scoreA) && String(p.scoreB) === String(m.scoreB);
-                const good  = String(m.status) === 'FINISHED' && issue === resIssue;
-                const tag = String(m.status) === 'FINISHED'
-                  ? (exact ? '🎯 Score exact' : good ? '✅ Bon résultat' : '❌ Échec')
-                  : '';
-                const risk  = p.counterCurrent ? ' — 😈 Contre-courant' : '';
-                const bonus = p.riskBonus ? ' — 🎁 Bonus +' + p.riskBonus : '';
-                return '<div class="small">' + cleanText(p.pseudo) + ' : <b>' + p.scoreA + '-' + p.scoreB + '</b>' + (p.joker?' ⭐ Joker':'') + (tag?(' — '+tag):'') + risk + bonus + '</div>';
-              }).join('')
-            : '<div class="muted small">Aucun</div>'
-          ) +
-        '</div>';
-      }).join('') +
-    '</div>';
+  return '<div class="sec">Pronostics des joueurs</div><div class="pronoGroups">' +
+    ['A','X','B'].map(issue=>{
+      const arr = g[issue] || [];
+      return '<div class="pronoGroup"><b>' + issueName(issue,m) + '</b>' +
+        (arr.length
+          ? arr.map(p=>{
+              const exact = String(m.status)==='FINISHED' && String(p.scoreA)===String(m.scoreA) && String(p.scoreB)===String(m.scoreB);
+              const good  = String(m.status)==='FINISHED' && issue===resIssue;
+              const tag = String(m.status)==='FINISHED' ? (exact?'🎯 Score exact':good?'✅ Bon résultat':'❌ Échec') : '';
+              const risk = p.counterCurrent ? ' — 😈 Contre-courant' : '';
+              const bonus = p.riskBonus ? ' — 🎁 Bonus +' + p.riskBonus : '';
+              return '<div class="small">' + cleanText(p.pseudo) + ' : <b>' + p.scoreA + '-' + p.scoreB + '</b>' + (p.joker?' ⭐':'') + (tag?(' — '+tag):'') + risk + bonus + '</div>';
+            }).join('')
+          : '<div class="muted small">Aucun</div>'
+        ) +
+      '</div>';
+    }).join('') +
+  '</div>';
 }
 
-/* =================================================================
- * 13. MODALE DÉTAIL MATCH (classement local du groupe + historique)
- * ================================================================= */
+/* =============================================================================
+ * MODALE DÉTAIL MATCH (poule : classement local + historique)
+ * ============================================================================= */
 function localGroupStandings(g){
   const teams = {};
-  matches.filter(m=> m.groupe === g && isGroupMatch(m)).forEach(m=>{
-    [['A', m.equipeAId, mName(m,'A'), mFlag(m,'A')],
-     ['B', m.equipeBId, mName(m,'B'), mFlag(m,'B')]].forEach(x=>{
-      if (!teams[x[1]]) teams[x[1]] = { id: x[1], nom: x[2], flag: x[3], mp:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 };
+  matches.filter(m=> m.groupe===g && isGroupMatch(m)).forEach(m=>{
+    [['A',m.equipeAId,mName(m,'A'),mFlag(m,'A')],['B',m.equipeBId,mName(m,'B'),mFlag(m,'B')]].forEach(x=>{
+      if (!teams[x[1]]) teams[x[1]] = { id:x[1], nom:x[2], flag:x[3], mp:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 };
     });
   });
-  matches.filter(m=> m.groupe === g && String(m.status) === 'FINISHED').forEach(m=>{
-    const a = teams[m.equipeAId], b = teams[m.equipeBId];
-    const sa = Number(m.scoreA) || 0, sb = Number(m.scoreB) || 0;
-    if (!a || !b) return;
-    a.mp++; b.mp++; a.gf += sa; a.ga += sb; b.gf += sb; b.ga += sa;
-    if (sa > sb){ a.w++; a.pts += 3; b.l++; }
-    else if (sb > sa){ b.w++; b.pts += 3; a.l++; }
+  matches.filter(m=> m.groupe===g && String(m.status)==='FINISHED').forEach(m=>{
+    const a=teams[m.equipeAId], b=teams[m.equipeBId];
+    if (!a||!b) return;
+    const sa=Number(m.scoreA)||0, sb=Number(m.scoreB)||0;
+    a.mp++; b.mp++; a.gf+=sa; a.ga+=sb; b.gf+=sb; b.ga+=sa;
+    if (sa>sb){ a.w++; a.pts+=3; b.l++; }
+    else if (sb>sa){ b.w++; b.pts+=3; a.l++; }
     else { a.d++; b.d++; a.pts++; b.pts++; }
   });
-  return Object.keys(teams).map(k=>{ const t = teams[k]; t.gd = t.gf - t.ga; return t; })
-    .sort((a,b)=> b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+  return Object.values(teams).map(t=>{ t.gd=t.gf-t.ga; return t; }).sort((a,b)=> b.pts-a.pts || b.gd-a.gd || b.gf-a.gf);
 }
-function historyForTeam(equipeId, beforeId){
-  return matches.filter(m=> Number(matchId(m)) < Number(beforeId) && (String(m.equipeAId) === String(equipeId) || String(m.equipeBId) === String(equipeId)) && String(m.status) === 'FINISHED')
+function historyForTeam(eqId, beforeId){
+  return matches.filter(m=> Number(mId(m))<Number(beforeId) && (String(m.equipeAId)===String(eqId)||String(m.equipeBId)===String(eqId)) && String(m.status)==='FINISHED')
                 .slice(-3)
-                .map(m=> mName(m,'A') + ' ' + m.scoreA + '-' + m.scoreB + ' ' + mName(m,'B'))
-                .join('<br>');
+                .map(m=> mName(m,'A')+' '+m.scoreA+'-'+m.scoreB+' '+mName(m,'B')).join('<br>');
 }
 function openMatchDetail(id){
-  const m = matches.find(x=> String(matchId(x)) === String(id));
-  if (!m) return;
+  const m = matches.find(x=> String(mId(x))===String(id)); if (!m) return;
   let stHtml = '';
   if (isGroupMatch(m)){
     const st = localGroupStandings(m.groupe);
-    stHtml = '<div class="sec">Classement groupe ' + m.groupe + '</div>' +
+    stHtml = '<div class="sec">Classement groupe '+m.groupe+'</div>' +
       '<table class="table"><tr><th>Équipe</th><th>Pts</th><th>J</th><th>G</th><th>N</th><th>P</th><th>BP</th><th>BC</th><th>Diff</th></tr>' +
-      st.map(t=> '<tr><td>' + t.flag + ' ' + cleanText(t.nom) + '</td><td><b>' + t.pts + '</b></td><td>' + t.mp + '</td><td>' + t.w + '</td><td>' + t.d + '</td><td>' + t.l + '</td><td>' + t.gf + '</td><td>' + t.ga + '</td><td>' + t.gd + '</td></tr>').join('') +
+      st.map(t=> '<tr><td>'+t.flag+' '+cleanText(t.nom)+'</td><td><b>'+t.pts+'</b></td><td>'+t.mp+'</td><td>'+t.w+'</td><td>'+t.d+'</td><td>'+t.l+'</td><td>'+t.gf+'</td><td>'+t.ga+'</td><td>'+t.gd+'</td></tr>').join('') +
       '</table>';
   }
-  const hA = historyForTeam(m.equipeAId, matchId(m));
-  const hB = historyForTeam(m.equipeBId, matchId(m));
-  const histBlock = (hA || hB)
-    ? '<div class="sec">Historique dans la compétition</div><div class="card"><b>' + mName(m,'A') + '</b><br><span class="muted">' + (hA || 'Aucun match joué') + '</span><br><br><b>' + mName(m,'B') + '</b><br><span class="muted">' + (hB || 'Aucun match joué') + '</span></div>'
+  const hA = historyForTeam(m.equipeAId, mId(m)), hB = historyForTeam(m.equipeBId, mId(m));
+  const hist = (hA||hB)
+    ? '<div class="sec">Historique dans la compétition</div><div class="card"><b>'+mName(m,'A')+'</b><br><span class="muted">'+(hA||'Aucun match joué')+'</span><br><br><b>'+mName(m,'B')+'</b><br><span class="muted">'+(hB||'Aucun match joué')+'</span></div>'
     : '';
   $('matchModalContent').innerHTML =
-    '<h3>' + mFlag(m,'A') + ' ' + mName(m,'A') + ' - ' + mName(m,'B') + ' ' + mFlag(m,'B') + '</h3>' +
-    '<div class="muted">' + (m.dateFR||'') + ' · ' + (m.heureFR||'') + ' · ' + (m.stadeLabel||'') + '</div>' +
-    statMirrorHtml(m) + riskHtml(m) + tvFor(m) + oddsFor(m) +
-    stHtml + histBlock +
+    '<h3>'+mFlag(m,'A')+' '+mName(m,'A')+' - '+mName(m,'B')+' '+mFlag(m,'B')+'</h3>' +
+    '<div class="muted">'+(m.dateFR||'')+' · '+(m.heureFR||'')+' · '+(m.stadeLabel||'')+'</div>' +
+    statMirrorHtml(m) + stHtml + hist +
     '<br><button class="btn btn2" onclick="closeMatchDetail()">Fermer</button>';
   $('matchModal').classList.add('open');
 }
 function closeMatchDetail(){ $('matchModal').classList.remove('open'); }
 
-/* =================================================================
- * 14. RENDU — VUE POULES
- * ================================================================= */
+/* =============================================================================
+ * VUE POULES
+ * ============================================================================= */
 function drawGroups(){
-  const data = cache.groupsView || {};
+  const data = groupsData || {};
   const keys = Object.keys(data).sort();
-  if (!keys.length){ $('groupsBox').innerHTML = '<div class="card muted">Classement indisponible : aucun match terminé pour l\u2019instant.</div>'; return; }
+  if (!keys.length){ $('groupsBox').innerHTML = '<div class="card muted">Classement indisponible : aucun match terminé pour l\'instant.</div>'; return; }
   $('groupsBox').innerHTML = keys.map(g=>{
-    const rows = (data[g] || []);
-    return '<div class="card groupCard" ' + groupStyle(g) + '>' +
-      '<b class="groupTitle">Groupe ' + g + '</b>' +
+    const rows = data[g] || [];
+    return '<div class="card groupCard" '+groupStyle(g)+'>' +
+      '<b class="groupTitle">Groupe '+g+'</b>' +
       '<table class="table">' +
       '<tr><th>Équipe</th><th>Pts</th><th>J</th><th>G</th><th>N</th><th>P</th><th>BP</th><th>BC</th><th>Diff</th></tr>' +
-      rows.map(t=> '<tr><td>' + (t.emoji||'🏳️') + ' ' + cleanText(t.nom) + '</td><td><b>' + t.pts + '</b></td><td>' + t.j + '</td><td>' + (t.w||0) + '</td><td>' + (t.d||0) + '</td><td>' + (t.l||0) + '</td><td>' + t.gf + '</td><td>' + t.ga + '</td><td>' + t.diff + '</td></tr>').join('') +
-      '</table>' +
-    '</div>';
+      rows.map(t=> '<tr><td>'+(t.emoji||'🏳️')+' '+cleanText(t.nom)+'</td><td><b>'+t.pts+'</b></td><td>'+t.j+'</td><td>'+(t.w||0)+'</td><td>'+(t.d||0)+'</td><td>'+(t.l||0)+'</td><td>'+t.gf+'</td><td>'+t.ga+'</td><td>'+t.diff+'</td></tr>').join('') +
+      '</table></div>';
   }).join('');
 }
 
-/* =================================================================
- * 15. RENDU — VUE RÉSUMÉ
- * ================================================================= */
+/* =============================================================================
+ * VUE RÉSUMÉ DES 3 JOURS
+ * ============================================================================= */
 function drawSummary(){
-  const rs = cache.summaryView || {};
-  const box = $('summaryBox'); if (!box) return;
-  if (!rs.matchesCount){ box.innerHTML = '<div class="card muted">Aucun résultat récent à résumer pour l\u2019instant.</div>'; return; }
-  box.innerHTML =
-    '<div class="card"><b>📊 Résumé des derniers résultats saisis</b><br>' +
+  const rs = summaryData || {};
+  const el = $('summary3Days'); if (!el) return;
+  if (!rs.matchesCount){ el.innerHTML = '<div class="card muted">Aucun résultat récent à résumer pour l\'instant.</div>'; return; }
+  el.innerHTML =
+    '<div class="card summaryHero"><b>Résumé des derniers résultats saisis</b><br>' +
       '<span class="muted">' + rs.matchesCount + ' match(s) · ' + (rs.pronosCount||0) + ' prono(s) calculé(s) · ' + (rs.exacts||0) + ' score(s) exact(s) · ' + (rs.jokersWon||0) + ' joker(s) gagnant(s)</span>' +
     '</div>' +
     '<div class="grid2">' +
-      '<div class="card"><b>' + (rs.best ? cleanText(rs.best.pseudo) : '—') + '</b><br><span class="muted">Meilleur sur la période · ' + (rs.best ? rs.best.points : 0) + ' pt(s)</span></div>' +
-      '<div class="card"><b>' + (rs.worst ? cleanText(rs.worst.pseudo) : '—') + '</b><br><span class="muted">Plus compliqué · ' + (rs.worst ? rs.worst.points : 0) + ' pt(s)</span></div>' +
+      '<div class="card"><b>' + (rs.best?cleanText(rs.best.pseudo):'—') + '</b><br><span class="muted">Meilleur sur la période · ' + (rs.best?rs.best.points:0) + ' pt(s)</span></div>' +
+      '<div class="card"><b>' + (rs.worst?cleanText(rs.worst.pseudo):'—') + '</b><br><span class="muted">Plus compliqué · ' + (rs.worst?rs.worst.points:0) + ' pt(s)</span></div>' +
     '</div>' +
     '<div class="sec">Matchs résumés</div>' +
-    (rs.matches || []).map(m=>
-      '<div class="card"><b>' + (m.emojiA||'') + ' ' + cleanText(m.equipeA) + ' ' + m.scoreA + '-' + m.scoreB + ' ' + cleanText(m.equipeB) + ' ' + (m.emojiB||'') + '</b><br>' +
-      '<span class="muted">' + m.dateFR + ' · scores exacts : ' + ((m.exactUsers||[]).length ? (m.exactUsers||[]).map(cleanText).join(', ') : 'aucun') + '</span></div>'
+    (rs.matches||[]).map(m=>
+      '<div class="card"><b>'+(m.emojiA||'')+' '+cleanText(m.equipeA)+' '+m.scoreA+'-'+m.scoreB+' '+cleanText(m.equipeB)+' '+(m.emojiB||'')+'</b><br>' +
+      '<span class="muted">'+m.dateFR+' · scores exacts : '+((m.exactUsers||[]).length?m.exactUsers.map(cleanText).join(', '):'aucun')+'</span></div>'
     ).join('') +
     '<div class="sec">Classement sur la période</div>' +
-    (rs.users || []).slice(0,8).map((u,i)=>
-      '<div class="card rank"><div class="pos">' + (i+1) + '</div><div class="nm">' + cleanText(u.pseudo) + '<div class="muted">' + u.exact + ' exact(s) · ' + u.good + ' bon(s) · ' + u.wrong + ' à 0 pt</div></div><div class="pts">' + u.points + '</div></div>'
+    (rs.users||[]).slice(0,8).map((u,i)=>
+      '<div class="card rank"><div class="pos">'+(i+1)+'</div><div class="nm">'+cleanText(u.pseudo)+'<div class="muted">'+u.exact+' exact(s) · '+u.good+' bon(s) · '+u.wrong+' à 0 pt</div></div><div class="pts">'+u.points+'</div></div>'
     ).join('');
 }
 
-/* =================================================================
- * 16. RENDU — VUE CLASSEMENT (Records / Classement / Buteurs)
- * ================================================================= */
-function trendHtml(s){
-  const t = s.trend || 'flat';
-  if (t === 'up')   return '<span class="rankTrend trendUp" title="A progressé">▲</span>';
-  if (t === 'down') return '<span class="rankTrend trendDown" title="A reculé">▼</span>';
-  return '<span class="rankTrend trendFlat" title="Stable">•</span>';
-}
+/* =============================================================================
+ * VUE CLASSEMENT (3 sous-onglets : Records / Classement / Buteurs)
+ * ============================================================================= */
 function showRankSection(name, btn){
-  currentRankSection = name || 'records';
+  activeRankSection = name || 'records';
   ['records','classement','buteurs'].forEach(s=>{
     const el = $('rank' + s.charAt(0).toUpperCase() + s.slice(1));
-    if (el) el.classList.toggle('hide', s !== currentRankSection);
+    if (el) el.classList.toggle('hide', s !== activeRankSection);
   });
   document.querySelectorAll('.rankTabs button').forEach(b=> b.classList.remove('active'));
   if (btn) btn.classList.add('active');
-  else {
-    const b = document.querySelector('.rankTabs button[data-rank="' + currentRankSection + '"]');
-    if (b) b.classList.add('active');
-  }
+  else { const b = document.querySelector('.rankTabs button[data-rank="'+activeRankSection+'"]'); if (b) b.classList.add('active'); }
+}
+function trendHtml(s){
+  const t = s.trend || 'flat';
+  if (t==='up')   return '<span class="rankTrend trendUp" title="A progressé au classement">▲</span>';
+  if (t==='down') return '<span class="rankTrend trendDown" title="A reculé au classement">▼</span>';
+  return '<span class="rankTrend trendFlat" title="Stable ou historique insuffisant">•</span>';
 }
 function drawRank(){
-  // Records
-  $('funBox').innerHTML = (fun || []).map(x=>
-    '<div class="card"><div class="em">' + (x.emoji || FUN_ICONS[x.key] || '•') + '</div>' +
-    '<b>' + cleanText(x.value) + '</b>' +
-    '<div class="muted">' + cleanText(x.pseudo || '') + '<br>' + cleanText(x.label) + (x.detail ? '<br><span class="small">' + cleanText(x.detail) + '</span>' : '') + '</div></div>'
+  // Records (fun)
+  $('funBox').innerHTML = (fun||[]).map(x=>
+    '<div class="card"><div class="em">'+(x.emoji||'•')+'</div><b>'+cleanText(x.value)+'</b>' +
+    '<div class="muted">'+cleanText(x.label)+(x.detail?'<br>'+cleanText(x.detail):'')+'</div></div>'
   ).join('') || '<div class="card muted">Pas encore de records — il faut au moins un match terminé.</div>';
 
   // Classement
-  $('rankList').innerHTML = (classement || []).map(s=>{
-    const safePseudo = String(cleanText(s.pseudo)).replace(/'/g,'&#39;');
-    const risk = Number(s.counterCurrentSuccess) ? '<br>😈 ' + s.counterCurrentSuccess + ' contre-courant réussi(s) · 🎁 +' + (s.riskBonus||0) : '';
+  $('rankList').innerHTML = (classement||[]).map(s=>{
+    const safe = String(cleanText(s.pseudo)).replace(/'/g,'&#39;');
+    const points = s.points != null ? s.points : (s.total||0);
+    const rate   = s.successRate != null ? s.successRate : (s.rate||0);
+    const jUsed  = s.jokersUsed != null ? s.jokersUsed : (s.jokers||0);
+    const but    = s.buteurChoisi != null ? s.buteurChoisi : (s.buteur||'—');
+    const risk   = Number(s.counterCurrentSuccess)
+      ? '<br>😈 ' + s.counterCurrentSuccess + ' contre-courant réussi(s) · 🎁 +' + (s.riskBonus||0) : '';
     return '<div class="card">' +
-      '<div class="rank rankClickable" onclick="toggleRankHistory(\'' + s.userId + '\',\'' + safePseudo + '\')">' +
-        '<div class="pos">' + (s.rank<=3 ? ['🥇','🥈','🥉'][s.rank-1] : s.rank) + '</div>' +
+      '<div class="rank rankClickable" onclick="toggleRankHistory(\''+s.userId+'\',\''+safe+'\')">' +
+        '<div class="pos">'+(s.rank<=3?['🥇','🥈','🥉'][s.rank-1]:s.rank)+'</div>' +
         trendHtml(s) +
-        '<div class="nm">' + cleanText(s.pseudo) +
-          '<div class="muted">' + s.exact + ' exacts · ' + s.good + ' bons · ' + s.successRate + '% réussite<br>' +
-          '⭐ ' + (s.jokersUsed||0) + '/' + MAX_JOKERS + ' jokers · ⚽ ' + cleanText(s.buteurChoisi || '—') + risk +
-          '</div>' +
+        '<div class="nm">'+cleanText(s.pseudo) +
+          '<div class="muted">'+s.exact+' exacts · '+s.good+' bons · '+rate+'% réussite<br>⭐ '+jUsed+'/'+MAX_JOKERS+' jokers utilisés · ⚽ '+cleanText(but)+risk+'</div>' +
         '</div>' +
-        '<div class="pts">' + s.points + '</div>' +
+        '<div class="pts">'+points+'</div>' +
       '</div>' +
-      '<div id="rankChart_' + s.userId + '" class="rankChart hide"><canvas id="rankCanvas_' + s.userId + '"></canvas></div>' +
+      '<div id="rankChart_'+s.userId+'" class="rankChart hide"><canvas id="rankCanvas_'+s.userId+'"></canvas></div>' +
     '</div>';
   }).join('') || '<div class="card muted">Aucun joueur inscrit.</div>';
 
   // Buteurs
   drawRankScorers();
-  showRankSection(currentRankSection);
+  showRankSection(activeRankSection);
 }
 function drawRankScorers(){
   const scorers = (buteur && buteur.scorers) || [];
-  const ranking = (buteur && buteur.ranking) || [];
+  const ranking = (buteur && buteur.ranking) || (buteur && buteur.votes) || [];
   $('rankScorerBlock').innerHTML =
     (scorers.length
       ? scorers.slice(0,8).map((s,i)=>
-        '<div class="card player"><b>' + (i+1) + '</b><div class="info"><b>' + cleanText(s.nomComplet || s.initialNom || s.nom) + '</b><div class="muted">' + (s.emoji||'') + ' ' + cleanText(s.equipe||'') + '</div></div><div class="pts">' + s.buts + '</div></div>'
+        '<div class="card player"><b>'+(i+1)+'</b><div class="info"><b>'+cleanText(s.nomComplet||s.initialNom||s.nom)+'</b><div class="muted">'+(s.emoji||'')+' '+cleanText(s.equipe||'')+'</div></div><div class="pts">'+s.buts+'</div></div>'
       ).join('')
-      : '<div class="card muted">Aucun but enregistré pour l\u2019instant.</div>'
+      : '<div class="card muted">Aucun but enregistré pour l\'instant.</div>'
     ) +
     '<div class="sec">Votes meilleur buteur</div>' +
     (ranking.length
       ? ranking.map(v=>
-        '<div class="card"><b>' + cleanText(v.joueur) + '</b> · ' + (v.buts||0) + ' but(s)<br><span class="muted">' + v.votes + ' vote(s) : ' + cleanText((v.users||[]).join(', ')) + '<br>Départage par classement général si même joueur.</span></div>'
+        '<div class="card"><b>'+cleanText(v.joueur)+'</b> · '+(v.buts||0)+' but(s)<br><span class="muted">'+(v.votes||0)+' vote(s) : '+cleanText((v.users||[]).join(', '))+'<br>Départage par classement général si même joueur.</span></div>'
       ).join('')
-      : '<div class="card muted">Aucun vote pour l\u2019instant.</div>'
+      : '<div class="card muted">Aucun vote pour l\'instant.</div>'
     );
 }
 function toggleRankHistory(userId, pseudo){
-  const box = $('rankChart_' + userId); if (!box) return;
+  const box = $('rankChart_'+userId); if (!box) return;
   const willOpen = box.classList.contains('hide');
   document.querySelectorAll('.rankChart').forEach(e=> e.classList.add('hide'));
   if (!willOpen) return;
   box.classList.remove('hide');
-  // Cache local par userId
-  if (cache.history[userId]){ drawRankHistory(userId, pseudo, cache.history[userId]); return; }
-  api('getUserRankHistory', {userId:userId})
-    .then(rows=>{ cache.history[userId] = rows || []; drawRankHistory(userId, pseudo, cache.history[userId]); })
-    .catch(e=> toast('Erreur historique : ' + e.message));
+  api('getUserRankHistory', {userId})
+    .then(rows=> drawRankHistory(userId, pseudo, rows||[]))
+    .catch(e=> toast('Erreur historique : '+e.message));
 }
 function drawRankHistory(userId, pseudo, rows){
-  const canvas = $('rankCanvas_' + userId); if (!canvas) return;
+  const canvas = $('rankCanvas_'+userId); if (!canvas) return;
   if (rankCharts[userId]) rankCharts[userId].destroy();
   if (!rows.length){ canvas.parentElement.innerHTML = '<div class="muted small">Aucun historique disponible pour ce joueur.</div>'; return; }
   const gold = getComputedStyle(document.documentElement).getPropertyValue('--gold').trim() || '#FFD700';
   rankCharts[userId] = new Chart(canvas, {
-    type: 'line',
-    data: {
-      labels: rows.map(r=> r.date),
-      datasets: [{
-        label: 'Points - ' + cleanText(pseudo),
-        data: rows.map(r=> r.points),
-        borderColor: gold, backgroundColor: 'transparent', fill: false, tension: .2, pointRadius: 4
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { labels: { color: '#e6edf3' } },
-        tooltip: { callbacks: { afterLabel: ctx=> 'Rang : ' + rows[ctx.dataIndex].rank } }
-      },
-      scales: {
-        x: { title: { display: true, text: 'Jour', color: '#8b949e' }, ticks: { color: '#8b949e' }, grid: { color: 'rgba(255,255,255,.07)' } },
-        y: { beginAtZero: true, title: { display: true, text: 'Points', color: '#8b949e' }, ticks: { color: '#8b949e', precision: 0 }, grid: { color: 'rgba(255,255,255,.07)' } }
+    type:'line',
+    data:{ labels: rows.map(r=>r.date), datasets:[{ label:'Points - '+cleanText(pseudo), data: rows.map(r=>r.points), borderColor:gold, backgroundColor:'transparent', fill:false, tension:.2, pointRadius:4 }] },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ labels:{ color:'#e6edf3' } }, tooltip:{ callbacks:{ afterLabel:ctx=> 'Rang : '+rows[ctx.dataIndex].rank } } },
+      scales:{
+        x:{ title:{ display:true, text:'Jour', color:'#8b949e' }, ticks:{ color:'#8b949e' }, grid:{ color:'rgba(255,255,255,.07)' } },
+        y:{ beginAtZero:true, title:{ display:true, text:'Points', color:'#8b949e' }, ticks:{ color:'#8b949e', precision:0 }, grid:{ color:'rgba(255,255,255,.07)' } }
       }
     }
   });
 }
 
-/* =================================================================
- * 17. RENDU — VUE BUTEURS (vote)
- * ================================================================= */
+/* =============================================================================
+ * VUE VOTE MEILLEUR BUTEUR
+ * ============================================================================= */
 function drawScorers(){
-  const data = cache.scorersView || {};
+  const data = (cache.scorersView && cache.scorersView.data) || getCache('scorersView') || {};
   const closed = !!data.closed;
   const my = data.myVote || null;
   $('myScorerVote').innerHTML = closed
-    ? '⛔ Vote meilleur buteur fermé depuis le <b>' + (data.deadline||'') + '</b>.<br>' + (my ? 'Ton choix : <b>' + cleanText(my.joueur) + '</b>' : 'Aucun choix enregistré.')
+    ? '⛔ Vote meilleur buteur fermé depuis le <b>' + (data.deadline||'') + '</b>.<br>' + (my?'Ton choix : <b>'+cleanText(my.joueur)+'</b>':'Aucun choix enregistré.')
     : (my
-        ? 'Ton choix validé : <b>' + cleanText(my.joueur) + '</b><br><span class="muted">Ce choix est définitif. Pour le modifier, demande à l\u2019admin.</span>'
-        : 'Aucun choix validé pour l\u2019instant.<br><span class="muted">Sélectionne un joueur puis valide.</span>'
-      );
+        ? 'Ton choix validé : <b>'+cleanText(my.joueur)+'</b><br><span class="muted">Ce choix est définitif. Pour le modifier, demande à l\'admin.</span>'
+        : 'Aucun choix validé pour l\'instant.<br><span class="muted">Sélectionne un joueur puis valide.</span>');
   $('btnVoteScorer').disabled = closed || !!my;
-  $('btnVoteScorer').textContent = closed ? 'Vote fermé' : my ? 'Choix déjà validé' : 'Valider mon choix de meilleur buteur';
+  $('btnVoteScorer').textContent = closed?'Vote fermé':my?'Choix déjà validé':'Valider mon choix de meilleur buteur';
   drawPlayers();
 }
 function drawPlayers(){
-  const q = ($('playerSearch').value || '').toLowerCase();
-  const data = cache.scorersView || {};
+  const q = ($('playerSearch').value||'').toLowerCase();
+  const data = getCache('scorersView') || {};
   const my = data.myVote || null;
-  if (data.closed){ $('playerPick').innerHTML = '<div class="card muted">Le vote est fermé. Le suivi est disponible dans l\u2019onglet Classement.</div>'; return; }
+  if (data.closed){ $('playerPick').innerHTML = '<div class="card muted">Le vote est fermé. Le suivi est disponible dans l\'onglet Classement.</div>'; return; }
   if (my){ $('playerPick').innerHTML = '<div class="card muted">Ton choix est déjà validé.</div>'; return; }
   if (!joueurs.length){ $('playerPick').innerHTML = '<div class="card muted">Liste joueurs vide. À remplir en juin avec la liste officielle.</div>'; return; }
-  const list = joueurs.filter(j=> ((j.nomComplet||j.nom||'') + ' ' + (j.equipe||'')).toLowerCase().indexOf(q) >= 0).slice(0,40);
+  const list = joueurs.filter(j=> ((j.nomComplet||j.nom||'')+' '+(j.equipe||'')).toLowerCase().indexOf(q) >= 0).slice(0,40);
   $('playerPick').innerHTML = list.map(j=>
-    '<div class="card player ' + (selectedPlayer && String(selectedPlayer.id) === String(j.id) ? 'selectedPlayer' : '') + '" onclick=\'selectedPlayer=' + JSON.stringify(j).replace(/'/g,'&#39;') + ';drawPlayers()\'>' +
-      '<div class="flag">' + (codeToFlag(j.codePays) || '⚽') + '</div>' +
+    '<div class="card player ' + (selectedPlayer && String(selectedPlayer.id)===String(j.id)?'selectedPlayer':'') + '" onclick=\'selectedPlayer=' + JSON.stringify(j).replace(/'/g,'&#39;') + ';drawPlayers()\'>' +
+      '<div class="flag">' + (FLAG_BY_CODE(j.codePays) || '⚽') + '</div>' +
       '<div class="info"><b>' + cleanText(j.nomComplet||j.nom) + '</b><div class="muted">' + cleanText(j.equipe||'') + ' · ' + (j.buts||0) + ' but(s)</div></div>' +
     '</div>'
   ).join('');
 }
 function confirmScorerVote(){
-  const data = cache.scorersView || {};
+  const data = getCache('scorersView') || {};
   if (data.closed){ $('scorerMsg').innerHTML = '<span class="ko">Vote meilleur buteur fermé.</span>'; return; }
   if (data.myVote){ $('scorerMsg').innerHTML = '<span class="ko">Choix déjà validé.</span>'; return; }
   if (!selectedPlayer){ $('scorerMsg').innerHTML = '<span class="ko">Sélectionne un joueur puis valide.</span>'; return; }
-  api('voteButeur', {userId:user.userId, joueurId:selectedPlayer.id})
-    .then(d=>{
-      if (d.error){ $('scorerMsg').innerHTML = '<span class="ko">' + d.error + '</span>'; return; }
-      toast('Choix meilleur buteur validé ⚽');
-      if (d.scorersView){ cache.scorersView = d.scorersView; cacheTime.scorersView = Date.now(); applyScorersViewData(); }
-      if (d.light)      { cache.light      = d.light;      cacheTime.light      = Date.now(); bonusJokers = d.light.bonusJokers || []; }
-      invalidate('rankView'); invalidate('profileView');
-      drawScorers(); drawHome();
-    })
-    .catch(e=> $('scorerMsg').innerHTML = '<span class="ko">' + e.message + '</span>');
+  api('voteButeur', {userId:user.userId, joueurId:selectedPlayer.id}).then(d=>{
+    if (d.error){ $('scorerMsg').innerHTML = '<span class="ko">'+d.error+'</span>'; return; }
+    toast('Choix meilleur buteur validé ⚽');
+    if (d.scorersView){ setCache('scorersView', d.scorersView); applyViewData('scorersView', d.scorersView); }
+    if (d.light){ setCache('light', d.light); applyLight(d.light); }
+    delete cache.rankView; persistCache(); loadView('rankView','getRankView',{userId:user.userId});
+    drawScorers();
+  }).catch(e=> $('scorerMsg').innerHTML = '<span class="ko">'+e.message+'</span>');
 }
 
-/* =================================================================
- * 18. RENDU — VUE PROFIL
- * ================================================================= */
-function drawProfileFilters(){
-  const arr = ['all:Toutes','finished:Terminés','open:Ouverts','PF:Finales','A:A','B:B','C:C','D:D','E:E','F:F','G:G','H:H','I:I','J:J','K:K','L:L'];
-  $('profileFilters').innerHTML = arr.map(x=>{
-    const parts = x.split(':'), k = parts[0], l = parts[1];
-    const pool = isPoolFilter(k);
-    return '<button class="' + (currentProfileFilter===k?'active':'') + (pool?' groupFilter':'') + '" ' + (pool?groupStyle(k):'') + ' onclick="currentProfileFilter=\'' + k + '\';drawProfileFilters();drawProfile()">' + l + '</button>';
-  }).join('');
+/* =============================================================================
+ * VUE PROFIL — header + profileUnifiedTabs (admin intégré aux onglets)
+ *
+ * 8 sections au total (les 6 dernières uniquement si admin) :
+ *  - infos       : Mes infos (4 cards : Points / Pronostics / Exacts / Bonus)
+ *  - pronos      : Mes pronos (filtres + liste)
+ *  - suivi       : Admin suivi (stats rapides)
+ *  - resultats   : Résultats + buteurs
+ *  - cotes       : Correction / ajout cote
+ *  - addmatch    : Ajout match
+ *  - bonus       : Admin joker bonus
+ *  - coverage    : Admin couverture pronos
+ * ============================================================================= */
+function drawProfile(){
+  const pdata = profileData || {};
+  // Cherche les stats du user dans le classement
+  const meRank = (classement||[]).find(x=> String(x.userId)===String(user.userId)) || pdata.rank || {};
+  const points  = meRank.points != null ? meRank.points : (meRank.total||0);
+  const preds   = meRank.predictions || meRank.played || 0;
+  const exact   = meRank.exact || 0;
+  const riskB   = meRank.riskBonus || 0;
+  const jUsed   = meRank.jokersUsed != null ? meRank.jokersUsed : (meRank.jokers != null ? meRank.jokers : (user.jokersUsed||0));
+  const remJok  = MAX_JOKERS - jUsed;
+
+  // Badges dynamiques
+  const badges = [];
+  if (exact > 0) badges.push('🎯 Score exact');
+  if ((meRank.jokerPts||0) > 0) badges.push('⭐ Joker rentable');
+  if (preds >= 10) badges.push('📌 Assidu');
+  const rate = meRank.successRate != null ? meRank.successRate : (meRank.rate||0);
+  if (rate >= 50 && preds >= 3) badges.push('✨ Bon flair');
+  if (riskB > 0) badges.push('😈 Rebelle rentable');
+  if ((meRank.wrong||0) >= 3) badges.push('🐈‍⬛ Chat noir temporaire');
+
+  // Onglets : les onglets admin uniquement si user est admin
+  let tabs = [['infos','Mes infos'], ['pronos','Mes pronos']];
+  if (user.isAdmin) tabs = tabs.concat([
+    ['suivi',     'Admin suivi'],
+    ['resultats', 'Résultats'],
+    ['cotes',     'Correction / ajout cote'],
+    ['addmatch',  'Ajout match'],
+    ['bonus',     'Admin joker bonus'],
+    ['coverage',  'Admin couverture pronos']
+  ]);
+
+  // Contenu de la section active
+  let content = '';
+  if (activeProfileSection === 'infos')          content = profileInfosHtml(points, preds, exact, riskB);
+  else if (activeProfileSection === 'pronos')    content = profileMyPronosHtml();
+  else if (activeProfileSection === 'suivi')     content = adminSuiviHtml();
+  else if (activeProfileSection === 'resultats') content = adminResultsHtml();
+  else if (activeProfileSection === 'cotes')     content = adminOddsHtml();
+  else if (activeProfileSection === 'addmatch')  content = adminAddMatchHtml();
+  else if (activeProfileSection === 'bonus')     content = adminBonusHtml();
+  else if (activeProfileSection === 'coverage')  content = adminCoverageHtml();
+
+  $('vProfile').innerHTML =
+    '<div class="card profileHero">' +
+      '<div style="font-size:2.4rem">👤</div>' +
+      '<h2>' + cleanText(user.pseudo) + '</h2>' +
+      '<div class="muted">' + remJok + ' joker(s) restant(s)</div>' +
+      '<div class="badgeLine profileBadgeLine">' +
+        (badges.length ? badges.map(b=> '<span class="badgeMini">'+b+'</span>').join('') : '<span class="muted">Badges à venir avec les premiers résultats.</span>') +
+      '</div>' +
+    '</div>' +
+    '<div class="profileUnifiedTabs">' +
+      tabs.map(t=> '<button type="button" class="'+(activeProfileSection===t[0]?'active':'')+'" onclick="setProfileSection(\''+t[0]+'\')">'+t[1]+'</button>').join('') +
+    '</div>' +
+    '<div class="profilePanel">' + content + '</div>' +
+    '<br><div class="grid2">' +
+      (user.isAdmin
+        ? '<button class="btn btn2" onclick="adminRebuild()">♻️ Rebuild caches</button><button class="btn btn2" onclick="adminTrigger()">⏱️ Réinstaller trigger</button>'
+        : '<div></div><div></div>') +
+    '</div>' +
+    '<br><button class="btn btnDanger" onclick="logout()">Déconnexion</button>';
+
+  // Auto-remplit les selects admin si présents
+  setTimeout(()=>{ if (user.isAdmin) try { fillAdminSelects(); } catch(e){ console.warn(e); } }, 0);
+}
+function setProfileSection(s){ activeProfileSection = s; drawProfile(); }
+
+/* --- Section "Mes infos" : 4 cards de stats --- */
+function profileInfosHtml(points, preds, exact, riskB){
+  return '<div class="grid2">' +
+    '<div class="card"><div class="pts">'+points+'</div><div class="muted">Points</div></div>' +
+    '<div class="card"><div class="pts">'+preds+'</div><div class="muted">Pronostics</div></div>' +
+    '<div class="card"><div class="pts">'+exact+'</div><div class="muted">Scores exacts</div></div>' +
+    '<div class="card"><div class="pts">+'+riskB+'</div><div class="muted">Bonus risque</div></div>' +
+  '</div>';
+}
+
+/* --- Section "Mes pronos" : filtres + liste --- */
+function profileMyPronosHtml(){
+  const items = ['all:Toutes','finished:Terminés','open:Ouverts'].concat(
+    ['A','B','C','D','E','F','G','H','I','J','K','L'].map(g=> g+':'+g)
+  ).concat(['PF:Finales']);
+  const bar = '<div class="profileFilters">' + items.map(x=>{
+    const [k,l] = x.split(':'); const pool = isPoolFilter(k);
+    return '<button class="'+(currentProfileFilter===k?'active':'')+(pool?' groupFilter':'')+'" '+(pool?groupStyle(k):'')+
+           ' onclick="currentProfileFilter=\''+k+'\';drawProfile()">'+l+'</button>';
+  }).join('') + '</div>';
+  const rows = matches.filter(m=> pronos[String(mId(m))]).filter(passProfileFilter).sort(profileSort);
+  const list = rows.length
+    ? rows.map(m=>{
+        const p = pronos[String(mId(m))];
+        const grouped = isPoolFilter(m.groupe);
+        return '<div class="card profilePronostic'+(grouped?' grouped':'')+'" '+(grouped?groupStyle(m.groupe):'')+'>' +
+          '<b>'+mFlag(m,'A')+' '+mName(m,'A')+' - '+mName(m,'B')+' '+mFlag(m,'B')+'</b><br>' +
+          '<span class="muted">'+(isPoolFilter(m.groupe)?'Groupe '+m.groupe:'Phase finale')+' · '+m.dateFR+' · ton prono : '+p.scoreA+'-'+p.scoreB +
+          (p.joker?' ⭐':'')+(p.counterCurrent?' 😈':'')+(p.riskBonus?(' · 🎁 +'+p.riskBonus):'')+
+          (p.points!==''&&p.points!=null?(' · '+p.points+' pt(s)'):'')+'</span></div>';
+      }).join('')
+    : '<div class="card muted">Aucun pronostic dans ce filtre.</div>';
+  return bar + list;
 }
 function passProfileFilter(m){
   if (currentProfileFilter === 'all') return true;
-  if (currentProfileFilter === 'finished') return String(m.status) === 'FINISHED';
-  if (currentProfileFilter === 'open') return String(m.status) === 'OPEN';
+  if (currentProfileFilter === 'finished') return String(m.status)==='FINISHED';
+  if (currentProfileFilter === 'open') return String(m.status)==='OPEN';
   if (currentProfileFilter === 'PF') return !isPoolFilter(m.groupe);
   return m.groupe === currentProfileFilter;
 }
-function drawProfile(){
-  const pv = cache.profileView || {};
-  const me = (classement || []).find(x=> String(x.userId) === String(user.userId)) || pv.rank || {};
-  const st = pv.state || (cache.light && cache.light.userState) || {};
-  const badges = pv.badges || [];
-  $('jokerLine').textContent = Math.max(0, MAX_JOKERS - (Number(me.jokersUsed) || Number(st.jokersUsed) || 0)) + ' joker(s) restant(s)';
-  $('statsBox').innerHTML =
-    '<div class="card"><div class="pts">' + (me.points || 0) + '</div><div class="muted">Points</div></div>' +
-    '<div class="card"><div class="pts">' + (me.predictions || 0) + '</div><div class="muted">Pronostics</div></div>' +
-    '<div class="card"><div class="pts">' + (me.exact || 0) + '</div><div class="muted">Scores exacts</div></div>' +
-    '<div class="card"><div class="pts">+' + (me.riskBonus || 0) + '</div><div class="muted">Bonus risque</div></div>';
-  drawProfileFilters();
-  const rows = matches.filter(m=> pronos[String(matchId(m))])
-                       .filter(passProfileFilter)
-                       .sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||'')));
-  $('profileHistory').innerHTML = rows.length
-    ? rows.map(m=>{
-        const p = pronos[String(matchId(m))];
-        const grouped = isPoolFilter(m.groupe);
-        return '<div class="card profilePronostic' + (grouped?' grouped':'') + '" ' + (grouped?groupStyle(m.groupe):'') + '>' +
-          '<b>' + mFlag(m,'A') + ' ' + mName(m,'A') + ' - ' + mName(m,'B') + ' ' + mFlag(m,'B') + '</b><br>' +
-          '<span class="muted">Groupe ' + (m.groupe||'—') + ' · ' + m.dateFR + ' · ton prono : ' + p.scoreA + '-' + p.scoreB +
-            (p.joker?' ⭐':'') + (p.counterCurrent?' 😈':'') + (Number(p.riskBonus) ? (' · 🎁 +' + p.riskBonus) : '') +
-            (p.points !== '' && p.points != null ? (' · ' + p.points + ' pt(s)') : '') +
-          '</span>' +
-        '</div>';
-      }).join('')
-    : '<div class="card muted">Aucun pronostic dans ce filtre.</div>';
-  $('profileBadges').innerHTML = badges.length
-    ? badges.map(b=> '<span class="badgeMini">' + cleanText(b) + '</span>').join('')
-    : '<span class="muted">Les badges arrivent avec les premiers résultats.</span>';
-  drawAdminProfilePanel();
+function profileSort(a,b){
+  const ga = isPoolFilter(a.groupe) ? a.groupe : 'Z';
+  const gb = isPoolFilter(b.groupe) ? b.groupe : 'Z';
+  return ga.localeCompare(gb) || Number(mId(a)) - Number(mId(b));
 }
 
-/* =================================================================
- * 19. SECTION ADMIN INTÉGRÉE AU PROFIL
- * ================================================================= */
-function drawAdminProfilePanel(){
-  const block = $('adminProfileBlock');
-  if (!user || !user.isAdmin){ block.classList.add('hide'); return; }
-  block.classList.remove('hide');
-  const tabs = [
-    ['infos','Mes infos'],
-    ['actions','Outils admin'],
-    ['suivi','Suivi'],
-    ['bonus','Joker bonus'],
-    ['coverage','Couverture pronos']
-  ];
-  $('adminSubnav').innerHTML = tabs.map(t=>
-    '<button class="' + (activeAdminProfileSection===t[0]?'active':'') + '" onclick="activeAdminProfileSection=\'' + t[0] + '\';drawAdminProfilePanel()">' + t[1] + '</button>'
-  ).join('');
-  const c = $('adminProfileContent');
-  if      (activeAdminProfileSection === 'infos')    c.innerHTML = '<div class="card muted">Section utilisateur classique. Tes badges, tes pronos et tes stats sont au-dessus.</div>';
-  else if (activeAdminProfileSection === 'actions')  c.innerHTML = '<div class="card"><b>⚙️ Outils admin</b><br><br><button class="btn" onclick="openAdmin()">Ouvrir le panneau résultats / cotes / ajout match / outils</button></div>';
-  else if (activeAdminProfileSection === 'suivi')    c.innerHTML = adminSummaryHtml();
-  else if (activeAdminProfileSection === 'bonus')    c.innerHTML = adminBonusHtml();
-  else if (activeAdminProfileSection === 'coverage') c.innerHTML = adminCoverageHtml();
-}
-function adminSummaryHtml(){
-  const rows = ((cache.adminView && cache.adminView.coverage && cache.adminView.coverage.rows) || []);
-  const low = rows.filter(r=> r.status === 'OPEN' && r.count < Math.max(3, Math.ceil(r.totalUsers * 0.35)));
-  return '<div class="grid2">' +
-    '<div class="card"><b>' + rows.length + '</b><br><span class="muted">matchs suivis</span></div>' +
-    '<div class="card"><b>' + low.length + '</b><br><span class="muted">matchs avec peu de pronos</span></div>' +
-  '</div>' +
-  (low.slice(0,10).map(r=>
-    '<div class="card"><b>' + cleanText(r.label) + '</b><br>' +
-    '<span class="muted">' + r.dateFR + ' · ' + r.status + ' · ' + r.ratio + ' · ⭐ ' + r.jokers + (r.bonusJoker?' · Joker bonus':'') + '</span></div>'
-  ).join('') || '<div class="card muted">Rien d\u2019inquiétant pour le moment.</div>');
-}
-function adminBonusHtml(){
-  const rows = ((cache.adminView && cache.adminView.coverage && cache.adminView.coverage.rows) || []).filter(r=> r.status === 'OPEN').sort((a,b)=> a.count - b.count);
-  return rows.map(r=>
-    '<div class="card adminBonusCard">' +
-      '<div><b>' + cleanText(r.label) + '</b><br><span class="muted">' + r.dateFR + ' · ' + r.ratio + ' · ⭐ ' + r.jokers + (r.bonusJoker?' · Bonus actif':'') + '</span></div>' +
-      '<button class="btn adminSmallBtn" onclick="quickBonus(\'' + r.matchId + '\',' + (!r.bonusJoker) + ')">' + (r.bonusJoker?'Désactiver':'Activer') + '</button>' +
-    '</div>'
-  ).join('') || '<div class="card muted">Aucun match ouvert.</div>';
-}
-function adminCoverageHtml(){
-  const rows = ((cache.adminView && cache.adminView.coverage && cache.adminView.coverage.rows) || []);
-  const filters = ['all:Tous','none:Aucun prono','low:Peu de pronos','incomplete:Incomplets','complete:Complets','bonus:Joker bonus actif'];
-  const filtered = rows.filter(r=>
-    adminCoverageFilter === 'all'
-    || (adminCoverageFilter === 'none' && r.count === 0)
-    || (adminCoverageFilter === 'low' && r.count > 0 && r.count < r.totalUsers / 2)
-    || (adminCoverageFilter === 'incomplete' && r.count < r.totalUsers)
-    || (adminCoverageFilter === 'complete' && r.count >= r.totalUsers)
-    || (adminCoverageFilter === 'bonus' && r.bonusJoker)
-  );
-  return '<div class="adminCoverageFilters">' +
-    filters.map(x=>{ const parts = x.split(':'); return '<button class="' + (adminCoverageFilter===parts[0]?'active':'') + '" onclick="adminCoverageFilter=\'' + parts[0] + '\';drawAdminProfilePanel()">' + parts[1] + '</button>'; }).join('') +
-  '</div>' +
-  (filtered.map(r=>
-    '<div class="card"><b>' + cleanText(r.label) + '</b><br>' +
-    '<span class="muted">' + r.dateFR + ' · ' + r.status + ' · ' + r.ratio + ' · ⭐ ' + r.jokers + (r.bonusJoker?' · Joker bonus':'') + '</span><br><br>' +
-    '<b>Ont joué :</b><br><span class="small">' + ((r.played||[]).length ? cleanText(r.played.join(', ')) : 'Personne') + '</span><br><br>' +
-    '<b>Manquent :</b><br><span class="small">' + ((r.missing||[]).length ? cleanText(r.missing.join(', ')) : 'Personne') + '</span>' +
-    ((r.details||[]).length
-      ? '<br><br><b>Détails :</b><br>' + r.details.map(d=> '<span class="small">' + cleanText(d.pseudo) + ' : ' + d.score + (d.joker?' ⭐':'') + '</span>').join('<br>')
-      : '') +
-    '</div>'
-  ).join('') || '<div class="card muted">Aucun match dans ce filtre.</div>');
-}
-function quickBonus(id, enabled){
-  api('adminSetBonusJoker', {userId:user.userId, matchId:id, enabled:enabled})
-    .then(d=>{
-      toast(d.message || 'Joker bonus mis à jour');
-      if (d.adminView){ cache.adminView = d.adminView; cacheTime.adminView = Date.now(); }
-      invalidateAll();
-      cache.adminView && (cacheTime.adminView = Date.now()); // garde la valeur fraîche
-      loadInitLight(true);
-      loadPronosView();
-      drawAdminProfilePanel();
-    })
-    .catch(e=> toast(e.message));
+/* --- Section "Admin suivi" : stats rapides --- */
+function adminSuiviHtml(){
+  const ad = adminData || {};
+  const rows = (ad.coverage && ad.coverage.rows) || [];
+  const open = rows.filter(r=> r.status==='OPEN').length;
+  const noProno = rows.filter(r=> r.status==='OPEN' && r.count===0).length;
+  const lowProno = rows.filter(r=> r.status==='OPEN' && r.count>0 && r.count < (r.totalUsers/2)).length;
+  const withBonus = rows.filter(r=> r.bonusJoker).length;
+  return '<div class="card"><b>Vue d\'ensemble admin</b><br><br>' +
+    '<div class="grid2">' +
+      '<div class="card"><div class="pts">'+open+'</div><div class="muted">Matchs ouverts</div></div>' +
+      '<div class="card"><div class="pts">'+noProno+'</div><div class="muted">Sans aucun prono</div></div>' +
+      '<div class="card"><div class="pts">'+lowProno+'</div><div class="muted">Couverture &lt; 50%</div></div>' +
+      '<div class="card"><div class="pts">'+withBonus+'</div><div class="muted">Joker bonus actif</div></div>' +
+    '</div></div>';
 }
 
-/* =================================================================
- * 20. MODALE ADMIN (résultats / cotes / bonus / ajout / outils)
- * ================================================================= */
-function openAdmin(){
-  if (!user.isAdmin) return;
-  activeAdminModalTab = 'result';
-  document.querySelectorAll('#adminModalNav button').forEach(b=> b.classList.toggle('active', b.dataset.tab === 'result'));
-  renderAdminModalBody();
-  $('adminModal').classList.add('open');
-}
-function closeAdmin(){ $('adminModal').classList.remove('open'); }
-function adminModalTab(tab, btn){
-  activeAdminModalTab = tab;
-  document.querySelectorAll('#adminModalNav button').forEach(b=> b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderAdminModalBody();
-}
-function renderAdminModalBody(){
-  const body = $('adminModalBody');
-  if      (activeAdminModalTab === 'result') body.innerHTML = adminResultPanel();
-  else if (activeAdminModalTab === 'cotes')  body.innerHTML = adminCotesPanel();
-  else if (activeAdminModalTab === 'bonus')  body.innerHTML = adminBonusPanel();
-  else if (activeAdminModalTab === 'add')    body.innerHTML = adminAddMatchPanel();
-  else if (activeAdminModalTab === 'tools')  body.innerHTML = adminToolsPanel();
-  if (activeAdminModalTab === 'result'){ resetScorerRows(); ensurePlayersDatalist(); updateAdminScoreLabels(); }
-  if (activeAdminModalTab === 'cotes')  updateOddsLabels();
-}
-function adminResultPanel(){
-  const list = (matches || []).filter(m=> String(m.status) !== 'FINISHED');
-  const opts = list.map(m=> '<option value="' + matchId(m) + '">' + matchId(m) + ' · ' + mName(m,'A') + ' - ' + mName(m,'B') + ' · ' + m.dateFR + '</option>').join('') || '<option value="">Aucun match</option>';
+/* --- Section "Résultats" : admin saisi des scores + buteurs --- */
+function adminResultsHtml(){
   return '<div class="card"><b>Résultat + buteurs</b><br><br>' +
-    '<select id="adminMatch" onchange="updateAdminScoreLabels();resetScorerRows()">' + opts + '</select><br><br>' +
+    '<select id="adminMatch" onchange="updateAdminScoreLabels();resetScorerRows()"></select><br><br>' +
     '<div class="grid2">' +
       '<div><div class="adminLabel" id="adminScoreALabel">Score équipe A</div><input id="adminScoreA" type="number" min="0"></div>' +
       '<div><div class="adminLabel" id="adminScoreBLabel">Score équipe B</div><input id="adminScoreB" type="number" min="0"></div>' +
     '</div>' +
     '<div class="sec">Buteurs du match</div>' +
-    '<div class="muted small">Une ligne = un but. Si un joueur marque deux fois, ajoute deux lignes. P = penalty, CSC = contre son camp.</div><br>' +
+    '<div class="muted small">Une ligne = un but. Type P pour pénalty, CSC pour contre son camp.</div><br>' +
     '<div id="scorerRows"></div>' +
     '<button class="btn btn2" onclick="addScorerRow()">+ Ajouter un but</button><br><br>' +
     '<button class="btn" onclick="adminSaveResult()">Valider résultat + calcul points</button>' +
     '<div id="adminMsg" class="small" style="margin-top:8px"></div>' +
   '</div>';
 }
-function adminCotesPanel(){
-  const opts = (matches || []).map(m=> '<option value="' + matchId(m) + '">' + matchId(m) + ' · ' + mName(m,'A') + ' - ' + mName(m,'B') + ' · ' + m.dateFR + '</option>').join('') || '<option value="">Aucun match</option>';
-  return '<div class="card"><b>Correction / ajout cotes</b><br><br>' +
-    '<select id="oddsMatch" onchange="updateOddsLabels()">' + opts + '</select><br><br>' +
+
+/* --- Section "Cotes" : correction / ajout des cotes --- */
+function adminOddsHtml(){
+  return '<div class="card"><b>Correction / ajout des cotes</b><br><br>' +
+    '<select id="oddsMatch" onchange="updateOddsLabels()"></select><br><br>' +
     '<div class="grid2">' +
-      '<div><div class="adminLabel" id="oddsALabel">Cote équipe A</div><input id="oddsA" type="number" step="0.01" min="1" placeholder="ex : 1.80"></div>' +
-      '<div><div class="adminLabel">Cote match nul</div><input id="oddsX" type="number" step="0.01" min="1" placeholder="ex : 3.20"></div>' +
+      '<div><div class="adminLabel" id="oddsALabel">Cote équipe A</div><input id="oddsA" type="number" step="0.01" min="1"></div>' +
+      '<div><div class="adminLabel">Cote match nul</div><input id="oddsX" type="number" step="0.01" min="1"></div>' +
     '</div><br>' +
-    '<div><div class="adminLabel" id="oddsBLabel">Cote équipe B</div><input id="oddsB" type="number" step="0.01" min="1" placeholder="ex : 2.10"></div><br>' +
-    '<button class="btn" onclick="adminSaveOdds()">Enregistrer les cotes</button>' +
+    '<div><div class="adminLabel" id="oddsBLabel">Cote équipe B</div><input id="oddsB" type="number" step="0.01" min="1"></div>' +
+    '<br><button class="btn" onclick="adminSaveOdds()">Enregistrer les cotes</button>' +
     '<div id="oddsMsg" class="small" style="margin-top:8px"></div>' +
   '</div>';
 }
-function adminBonusPanel(){
-  const list = (matches || []).filter(m=> String(m.status) === 'OPEN');
-  const opts = list.map(m=> '<option value="' + matchId(m) + '">' + (isBonusMatch(matchId(m))?'⭐ ':'') + matchId(m) + ' · ' + mName(m,'A') + ' - ' + mName(m,'B') + ' · ' + m.dateFR + '</option>').join('') || '<option value="">Aucun match ouvert</option>';
-  return '<div class="card"><b>Activer un joker bonus collectif</b><br>' +
-    '<span class="muted small">Tous les pronos sur ce match seront comptés double. Aucun joueur n\u2019aura besoin de poser de joker perso.</span><br><br>' +
-    '<select id="bonusMatch">' + opts + '</select><br><br>' +
+
+/* --- Section "Ajout match" --- */
+function adminAddMatchHtml(){
+  return '<div class="card"><b>Ajouter un match</b><br><br>' +
+    '<div class="adminLabel">Phase</div>' +
+    '<select id="addPhase"><option>Groupe</option><option>1/8</option><option>1/4</option><option>1/2</option><option>3e place</option><option>Finale</option></select><br><br>' +
+    '<div class="adminLabel">Groupe (A-L si phase Groupe, sinon vide)</div>' +
+    '<input id="addGroupe" placeholder="A"><br><br>' +
     '<div class="grid2">' +
-      '<button class="btn" onclick="adminSaveBonusJoker(true)">Activer</button>' +
-      '<button class="btn btn2" onclick="adminSaveBonusJoker(false)">Désactiver</button>' +
-    '</div>' +
-    '<div id="bonusMsg" class="small" style="margin-top:8px"></div>' +
-  '</div>';
-}
-function adminAddMatchPanel(){
-  const teamOpts = (equipes || []).map(e=> '<option value="' + e.id + '">' + (e.emoji||'') + ' ' + (e.nomAffiche||e.nomSource) + '</option>').join('');
-  const stadeOpts = (((cache.adminView || {}).stades) || []).map(s=> '<option value="' + s.id + '">' + (s.labelAffiche || s.ville) + '</option>').join('');
-  const diffOpts = (((cache.adminView || {}).diffuseurs) || []).map(d=> '<option value="' + d.id + '">' + d.nom + '</option>').join('');
-  return '<div class="card"><b>Ajouter un match (admin)</b><br><br>' +
-    '<div class="grid2">' +
-      '<div><div class="adminLabel">Phase</div><select id="addPhase"><option>Groupe</option><option>1/8</option><option>1/4</option><option>1/2</option><option>3e place</option><option>Finale</option></select></div>' +
-      '<div><div class="adminLabel">Groupe</div><input id="addGroupe" placeholder="A → L (vide pour finales)"></div>' +
+      '<div><div class="adminLabel">Équipe A</div><select id="addA"></select></div>' +
+      '<div><div class="adminLabel">Équipe B</div><select id="addB"></select></div>' +
     '</div><br>' +
     '<div class="grid2">' +
-      '<div><div class="adminLabel">Équipe A</div><select id="addEqA"><option value="">—</option>' + teamOpts + '</select></div>' +
-      '<div><div class="adminLabel">Équipe B</div><select id="addEqB"><option value="">—</option>' + teamOpts + '</select></div>' +
-    '</div><br>' +
-    '<div class="grid2">' +
-      '<div><div class="adminLabel">Date (JJ/MM/AAAA)</div><input id="addDate" placeholder="13/06/2026"></div>' +
+      '<div><div class="adminLabel">Date (JJ/MM/AAAA)</div><input id="addDate" placeholder="12/06/2026"></div>' +
       '<div><div class="adminLabel">Heure (HH:MM)</div><input id="addHeure" placeholder="21:00"></div>' +
     '</div><br>' +
-    '<div><div class="adminLabel">Stade</div><select id="addStade"><option value="">—</option>' + stadeOpts + '</select></div><br>' +
+    '<div class="adminLabel">Stade</div><input id="addStade"><br><br>' +
     '<div class="grid2">' +
-      '<div><div class="adminLabel">Diffuseur 1</div><select id="addDiff1"><option value="">—</option>' + diffOpts + '</select></div>' +
-      '<div><div class="adminLabel">Diffuseur 2</div><select id="addDiff2"><option value="">—</option>' + diffOpts + '</select></div>' +
+      '<div><div class="adminLabel">Diffuseur 1</div><input id="addDiff1"></div>' +
+      '<div><div class="adminLabel">Diffuseur 2</div><input id="addDiff2"></div>' +
     '</div><br>' +
     '<div class="grid2">' +
-      '<div><div class="adminLabel">Cote 1</div><input id="addC1" type="number" step="0.01" min="1"></div>' +
-      '<div><div class="adminLabel">Cote N</div><input id="addCX" type="number" step="0.01" min="1"></div>' +
-    '</div>' +
-    '<div><div class="adminLabel">Cote 2</div><input id="addC2" type="number" step="0.01" min="1"></div><br>' +
-    '<button class="btn" onclick="adminSaveAddMatch()">Créer le match</button>' +
+      '<div><div class="adminLabel">Cote A</div><input id="addCote1" type="number" step="0.01"></div>' +
+      '<div><div class="adminLabel">Cote nul</div><input id="addCoteX" type="number" step="0.01"></div>' +
+    '</div><br>' +
+    '<div><div class="adminLabel">Cote B</div><input id="addCote2" type="number" step="0.01"></div>' +
+    '<br><button class="btn" onclick="adminAddMatch()">Ajouter le match</button>' +
     '<div id="addMsg" class="small" style="margin-top:8px"></div>' +
   '</div>';
 }
-function adminToolsPanel(){
-  return '<div class="card"><b>Outils techniques</b><br><br>' +
-    '<button class="btn" onclick="adminRebuildCaches()">🔄 Reconstruire tous les caches</button><br><br>' +
-    '<button class="btn btn2" onclick="adminSetupTrigger()">⏱️ Installer le trigger automatique (toutes les 5 min)</button>' +
-    '<div id="toolsMsg" class="small" style="margin-top:8px"></div>' +
+
+/* --- Section "Admin joker bonus" --- */
+function adminBonusHtml(){
+  const open = matches.filter(m=> String(m.status)==='OPEN');
+  if (!open.length) return '<div class="card muted">Aucun match ouvert disponible.</div>';
+  return '<div class="card"><b>Joker bonus : points doublés sur ce match</b><br><span class="muted small">Active/désactive par match. Limite ' + MAX_JOKERS + ' actifs max.</span><br><br>' +
+    open.map(m=>{
+      const active = isBonusMatch(mId(m));
+      return '<div class="card" style="display:flex;justify-content:space-between;align-items:center">' +
+        '<div><b>' + mFlag(m,'A') + ' ' + mName(m,'A') + ' - ' + mName(m,'B') + ' ' + mFlag(m,'B') + '</b><br><span class="muted small">' + m.dateFR + ' · ' + m.heureFR + '</span></div>' +
+        '<button class="btn '+(active?'':'btn2')+'" style="width:auto;padding:8px 14px" onclick="adminToggleBonus(\''+mId(m)+'\','+(!active)+')">' + (active?'⭐ Actif':'Activer') + '</button>' +
+      '</div>';
+    }).join('') +
   '</div>';
 }
 
-/* === Helpers admin === */
-function currentAdminMatch(){ const id = ($('adminMatch')||{}).value; return (matches||[]).find(m=> String(matchId(m)) === String(id)) || (matches||[])[0] || {}; }
-function currentOddsMatch(){  const id = ($('oddsMatch')||{}).value;  return (matches||[]).find(m=> String(matchId(m)) === String(id)) || (matches||[])[0] || {}; }
+/* --- Section "Admin couverture pronos" --- */
+function adminCoverageHtml(){
+  const ad = adminData || {};
+  const rows = (ad.coverage && ad.coverage.rows) || [];
+  const filters = [['all','Tous'],['none','Aucun prono'],['low','Peu de pronos'],['incomplete','Incomplets'],['complete','Complets'],['bonus','Joker bonus actif']];
+  const filtered = rows.filter(r=>
+       adminCoverageFilter==='all'
+    || (adminCoverageFilter==='none' && r.count===0)
+    || (adminCoverageFilter==='low' && r.count>0 && r.count < (r.totalUsers/2))
+    || (adminCoverageFilter==='incomplete' && r.count < r.totalUsers)
+    || (adminCoverageFilter==='complete' && r.count >= r.totalUsers)
+    || (adminCoverageFilter==='bonus' && r.bonusJoker)
+  );
+  return '<div class="adminCoverageFilters">' +
+    filters.map(f=> '<button type="button" class="'+(adminCoverageFilter===f[0]?'active':'')+'" onclick="adminCoverageFilter=\''+f[0]+'\';drawProfile()">'+f[1]+'</button>').join('') +
+  '</div>' +
+  (filtered.length
+    ? filtered.map(r=>
+      '<div class="card"><b>'+cleanText(r.label)+'</b><br>' +
+        '<span class="muted">'+r.dateFR+' · '+r.status+' · '+r.ratio+' · ⭐ '+(r.jokers||0)+(r.bonusJoker?' · Joker bonus':'')+'</span><br><br>' +
+        '<b>Ont joué :</b><br><span class="small">'+(r.played.length?cleanText(r.played.join(', ')):'Personne')+'</span><br><br>' +
+        '<b>Manquent :</b><br><span class="small">'+(r.missing.length?cleanText(r.missing.join(', ')):'Personne')+'</span>' +
+      '</div>'
+    ).join('')
+    : '<div class="card muted">Aucun match dans ce filtre.</div>'
+  );
+}
+
+/* =============================================================================
+ * ACTIONS ADMIN (helpers + appels API)
+ * ============================================================================= */
+function fillAdminSelects(){
+  // Résultats : matchs non terminés
+  const resSel = $('adminMatch');
+  if (resSel){
+    const list = matches.filter(m=> String(m.status)!=='FINISHED');
+    resSel.innerHTML = list.length
+      ? list.map(m=> '<option value="'+mId(m)+'">'+mId(m)+' · '+mName(m,'A')+' - '+mName(m,'B')+' · '+m.dateFR+'</option>').join('')
+      : '<option value="">Aucun match disponible</option>';
+    updateAdminScoreLabels();
+    resetScorerRows();
+  }
+  // Cotes : matchs ouverts sans cote
+  const odSel = $('oddsMatch');
+  if (odSel){
+    const list = matches.filter(m=> String(m.status)==='OPEN' && (!m.cote1 || !m.coteX || !m.cote2));
+    odSel.innerHTML = list.length
+      ? list.map(m=> '<option value="'+mId(m)+'">'+mId(m)+' · '+mName(m,'A')+' - '+mName(m,'B')+' · '+m.dateFR+'</option>').join('')
+      : '<option value="">Aucun match disponible</option>';
+    updateOddsLabels();
+  }
+  // Ajout match : équipes
+  const addA = $('addA'), addB = $('addB');
+  if (addA && addB){
+    const opts = (equipes||[]).filter(e=> e.actif !== false).map(e=> '<option value="'+e.id+'">'+(e.emoji||'')+' '+(e.nomAffiche||e.nomSource)+'</option>').join('');
+    addA.innerHTML = opts; addB.innerHTML = opts;
+  }
+}
+function currentAdminMatch(){
+  const id = ($('adminMatch')||{}).value;
+  return matches.find(m=> String(mId(m))===String(id)) || matches[0] || {};
+}
+function currentOddsMatch(){
+  const id = ($('oddsMatch')||{}).value;
+  return matches.find(m=> String(mId(m))===String(id)) || matches[0] || {};
+}
 function updateAdminScoreLabels(){
   const m = currentAdminMatch(); if (!m || !$('adminScoreALabel')) return;
-  $('adminScoreALabel').textContent = 'Score ' + (mName(m,'A') || 'équipe A');
-  $('adminScoreBLabel').textContent = 'Score ' + (mName(m,'B') || 'équipe B');
-  $('adminScoreA').placeholder = 'Score ' + (mName(m,'A') || '');
-  $('adminScoreB').placeholder = 'Score ' + (mName(m,'B') || '');
+  $('adminScoreALabel').textContent = 'Score ' + mName(m,'A');
+  $('adminScoreBLabel').textContent = 'Score ' + mName(m,'B');
+  $('adminScoreA').placeholder = 'Score ' + mName(m,'A');
+  $('adminScoreB').placeholder = 'Score ' + mName(m,'B');
 }
 function updateOddsLabels(){
   const m = currentOddsMatch(); if (!m || !$('oddsALabel')) return;
-  $('oddsALabel').textContent = 'Cote ' + (mName(m,'A') || 'équipe A');
-  $('oddsBLabel').textContent = 'Cote ' + (mName(m,'B') || 'équipe B');
-  $('oddsA').value = m.cote1 || ''; $('oddsX').value = m.coteX || ''; $('oddsB').value = m.cote2 || '';
+  $('oddsALabel').textContent = 'Cote ' + mName(m,'A');
+  $('oddsBLabel').textContent = 'Cote ' + mName(m,'B');
 }
-function ensurePlayersDatalist(){
-  const old = document.getElementById('playersDL'); if (old) old.remove();
-  const m = currentAdminMatch();
-  const adminJoueurs = ((cache.adminView && cache.adminView.joueurs) || joueurs || []);
-  const list = adminJoueurs.filter(j=> String(j.equipeId) === String(m.equipeAId) || String(j.equipeId) === String(m.equipeBId));
-  const dl = document.createElement('datalist'); dl.id = 'playersDL';
-  dl.innerHTML = list.map(j=> '<option value="' + cleanText(j.nomComplet) + '" data-id="' + j.id + '">' + cleanText(j.equipe||'') + '</option>').join('');
-  document.body.appendChild(dl);
-}
-function resetScorerRows(){ const box = $('scorerRows'); if (!box) return; box.innerHTML = ''; addScorerRow(); }
+function resetScorerRows(){ const box=$('scorerRows'); if (box){ box.innerHTML=''; addScorerRow(); } }
 function addScorerRow(){
-  ensurePlayersDatalist();
-  const box = $('scorerRows'); if (!box) return;
-  const row = document.createElement('div'); row.className = 'scorerRow';
-  row.innerHTML =
-    '<input list="playersDL" placeholder="Joueur" oninput="autoFillScorerTeam(this)">' +
-    '<input placeholder="Équipe" readonly>' +
-    '<input placeholder="Min." type="number" min="0" max="120">' +
-    '<select><option value="normal">Normal</option><option value="P">Penalty</option><option value="CSC">CSC</option></select>' +
+  const box=$('scorerRows'); if(!box) return;
+  const m = currentAdminMatch();
+  const i = box.children.length;
+  const opts = '<option value="">— Équipe —</option><option value="A">'+mName(m,'A')+'</option><option value="B">'+mName(m,'B')+'</option>';
+  const div = document.createElement('div');
+  div.className = 'scorerRow';
+  div.innerHTML =
+    '<input placeholder="Nom" id="g_nom_'+i+'">' +
+    '<select id="g_side_'+i+'">'+opts+'</select>' +
+    '<input placeholder="min" id="g_min_'+i+'" type="number" min="0">' +
+    '<select id="g_type_'+i+'"><option value="">Normal</option><option value="P">Pénalty</option><option value="CSC">CSC</option></select>' +
     '<button onclick="this.parentNode.remove()">×</button>';
-  box.appendChild(row);
-}
-function autoFillScorerTeam(inp){
-  const row = inp.parentNode;
-  const adminJoueurs = ((cache.adminView && cache.adminView.joueurs) || joueurs || []);
-  const j = adminJoueurs.find(x=>
-    (x.nomComplet||'').toLowerCase() === inp.value.toLowerCase()
-    || (x.initialNom||'').toLowerCase() === inp.value.toLowerCase()
-  );
-  const inputs = row.querySelectorAll('input');
-  if (j){
-    row.dataset.joueurId = j.id;
-    row.dataset.nomComplet = j.nomComplet || '';
-    row.dataset.nomAffiche = j.initialNom || j.nomComplet || '';
-    row.dataset.equipeId = j.equipeId || '';
-    row.dataset.equipe   = j.equipe   || '';
-    inputs[1].value = (j.equipe || '');
-  } else {
-    row.dataset.joueurId = '';
-    inputs[1].value = '';
-  }
+  box.appendChild(div);
 }
 function collectScorers(){
-  return [].slice.call(document.querySelectorAll('#scorerRows .scorerRow')).map(r=>{
-    const inputs = r.querySelectorAll('input'); const sel = r.querySelector('select');
-    const name = (inputs[0].value || '').trim();
-    if (!name && !r.dataset.joueurId) return null;
-    return {
-      joueurId:   r.dataset.joueurId || '',
-      nom:        r.dataset.nomComplet || name,
-      nomAffiche: r.dataset.nomAffiche || name,
-      equipeId:   r.dataset.equipeId || '',
-      equipe:     r.dataset.equipe || inputs[1].value || '',
-      minute:     inputs[2].value.trim(),
-      type:       sel ? sel.value : 'normal'
-    };
-  }).filter(Boolean);
+  const rows = $('scorerRows').children, out = [];
+  for (let i=0;i<rows.length;i++){
+    const n = ($('g_nom_'+i)||{}).value || '';
+    const s = ($('g_side_'+i)||{}).value || '';
+    const mn= ($('g_min_'+i)||{}).value || '';
+    const t = ($('g_type_'+i)||{}).value || '';
+    if (n && s) out.push({nom:n, side:s, minute:mn, type:t});
+  }
+  return out;
 }
 function adminSaveResult(){
-  api('adminSetResult', {
-    userId:user.userId, matchId:$('adminMatch').value,
-    scoreA:$('adminScoreA').value, scoreB:$('adminScoreB').value,
-    buteurs:JSON.stringify(collectScorers())
-  }).then(d=>{
-    if (d.error){ $('adminMsg').innerHTML = '<span class="ko">' + d.error + '</span>'; return; }
-    $('adminMsg').innerHTML = '<span class="ok">✅ Résultat validé · ' + (d.pronos||0) + ' prono(s) recalculé(s) · ' + (d.buteurs||0) + ' but(s).</span>';
-    if (d.adminView){ cache.adminView = d.adminView; cacheTime.adminView = Date.now(); }
-    invalidateAll(); cache.adminView && (cacheTime.adminView = Date.now());
-    loadInitLight(true); loadPronosView();
-  }).catch(e=> $('adminMsg').innerHTML = '<span class="ko">' + e.message + '</span>');
+  const m = currentAdminMatch();
+  api('adminSetResult', { userId:user.userId, matchId:mId(m), scoreA:$('adminScoreA').value, scoreB:$('adminScoreB').value, scorers: JSON.stringify(collectScorers()) })
+    .then(d=>{
+      if (d.error){ $('adminMsg').innerHTML = '<span class="ko">'+d.error+'</span>'; return; }
+      $('adminMsg').innerHTML = '<span class="ok">✅ Résultat enregistré.</span>';
+      invalidate(); preloadAll(); setTimeout(()=> drawProfile(), 300);
+    })
+    .catch(e=> $('adminMsg').innerHTML = '<span class="ko">'+e.message+'</span>');
 }
 function adminSaveOdds(){
-  api('adminAddCotes', {userId:user.userId, matchId:$('oddsMatch').value, cote1:$('oddsA').value, coteX:$('oddsX').value, cote2:$('oddsB').value})
+  const m = currentOddsMatch();
+  api('adminAddCotes', { userId:user.userId, matchId:mId(m), cote1:$('oddsA').value, coteX:$('oddsX').value, cote2:$('oddsB').value })
     .then(d=>{
-      if (d.error){ $('oddsMsg').innerHTML = '<span class="ko">' + d.error + '</span>'; return; }
+      if (d.error){ $('oddsMsg').innerHTML = '<span class="ko">'+d.error+'</span>'; return; }
       $('oddsMsg').innerHTML = '<span class="ok">✅ Cotes enregistrées.</span>';
-      if (d.adminView){ cache.adminView = d.adminView; cacheTime.adminView = Date.now(); }
-      invalidateAll(); cache.adminView && (cacheTime.adminView = Date.now());
-      loadPronosView();
-    }).catch(e=> $('oddsMsg').innerHTML = '<span class="ko">' + e.message + '</span>');
-}
-function adminSaveBonusJoker(enabled){
-  api('adminSetBonusJoker', {userId:user.userId, matchId:$('bonusMatch').value, enabled:enabled})
-    .then(d=>{
-      if (d.error){ $('bonusMsg').innerHTML = '<span class="ko">' + d.error + '</span>'; return; }
-      $('bonusMsg').innerHTML = '<span class="ok">' + (d.message || 'Joker bonus mis à jour') + '</span>';
-      if (d.adminView){ cache.adminView = d.adminView; cacheTime.adminView = Date.now(); }
-      invalidateAll(); cache.adminView && (cacheTime.adminView = Date.now());
-      loadInitLight(true); loadPronosView();
-    }).catch(e=> $('bonusMsg').innerHTML = '<span class="ko">' + e.message + '</span>');
-}
-function adminSaveAddMatch(){
-  const payload = {
-    userId:user.userId, phase:$('addPhase').value, groupe:$('addGroupe').value.trim(),
-    equipeAId:$('addEqA').value, equipeBId:$('addEqB').value,
-    dateFR:$('addDate').value.trim(), heureFR:$('addHeure').value.trim(),
-    stadeId:$('addStade').value, diffuseur1Id:$('addDiff1').value, diffuseur2Id:$('addDiff2').value,
-    cote1:$('addC1').value, coteX:$('addCX').value, cote2:$('addC2').value
-  };
-  api('adminAddMatch', payload).then(d=>{
-    if (d.error){ $('addMsg').innerHTML = '<span class="ko">' + d.error + '</span>'; return; }
-    $('addMsg').innerHTML = '<span class="ok">✅ Match créé (ID ' + d.matchId + ').</span>';
-    if (d.adminView){ cache.adminView = d.adminView; cacheTime.adminView = Date.now(); }
-    invalidateAll(); cache.adminView && (cacheTime.adminView = Date.now());
-    loadPronosView();
-  }).catch(e=> $('addMsg').innerHTML = '<span class="ko">' + e.message + '</span>');
-}
-function adminRebuildCaches(){
-  api('adminRebuildCaches', {userId:user.userId})
-    .then(d=>{
-      $('toolsMsg').innerHTML = '<span class="ok">✅ Caches reconstruits à ' + d.at + '</span>';
-      invalidateAll(); loadInitLight(true);
+      invalidate(); preloadAll();
     })
-    .catch(e=> $('toolsMsg').innerHTML = '<span class="ko">' + e.message + '</span>');
+    .catch(e=> $('oddsMsg').innerHTML = '<span class="ko">'+e.message+'</span>');
 }
-function adminSetupTrigger(){
+function adminAddMatch(){
+  api('adminAddMatch', {
+    userId:user.userId,
+    phase:$('addPhase').value,
+    groupe:$('addGroupe').value,
+    equipeAId:$('addA').value,
+    equipeBId:$('addB').value,
+    date:$('addDate').value,
+    heure:$('addHeure').value,
+    stade:$('addStade').value,
+    diffuseur1:$('addDiff1').value,
+    diffuseur2:$('addDiff2').value,
+    cote1:$('addCote1').value,
+    coteX:$('addCoteX').value,
+    cote2:$('addCote2').value
+  }).then(d=>{
+    if (d.error){ $('addMsg').innerHTML = '<span class="ko">'+d.error+'</span>'; return; }
+    $('addMsg').innerHTML = '<span class="ok">✅ Match ajouté.</span>';
+    invalidate(); preloadAll(); setTimeout(()=> drawProfile(), 300);
+  }).catch(e=> $('addMsg').innerHTML = '<span class="ko">'+e.message+'</span>');
+}
+function adminToggleBonus(matchId, active){
+  api('adminSetBonusJoker', { userId:user.userId, matchId, active: active?1:0 })
+    .then(d=>{
+      if (d.error){ toast(d.error); return; }
+      toast(active?'⭐ Joker bonus activé':'Joker bonus retiré');
+      invalidate(); preloadAll(); setTimeout(()=> drawProfile(), 300);
+    })
+    .catch(e=> toast(e.message));
+}
+function adminRebuild(){
+  toast('Reconstruction des caches…');
+  api('adminRebuildCaches', {userId:user.userId})
+    .then(d=>{ toast(d.message || '♻️ Caches reconstruits'); invalidate(); preloadAll(); })
+    .catch(e=> toast(e.message));
+}
+function adminTrigger(){
   api('adminSetupTrigger', {userId:user.userId})
-    .then(d=> $('toolsMsg').innerHTML = '<span class="ok">' + (d.message || 'Trigger installé') + '</span>')
-    .catch(e=> $('toolsMsg').innerHTML = '<span class="ko">' + e.message + '</span>');
+    .then(d=> toast(d.message || '⏱️ Trigger réinstallé'))
+    .catch(e=> toast(e.message));
 }
 
-/* =================================================================
- * 21. AUTOSTART
- * ================================================================= */
-window.addEventListener('load', function(){
-  const saved = localStorage.getItem('cdmUser');
-  if (saved){
-    try { user = JSON.parse(saved); startApp(); }
-    catch(e){ localStorage.removeItem('cdmUser'); }
+/* =============================================================================
+ * AUTOSTART
+ * ============================================================================= */
+window.addEventListener('load', ()=>{
+  const stored = localStorage.getItem('cdmUser');
+  if (stored){
+    try { user = JSON.parse(stored); startApp(); }
+    catch(e){ localStorage.removeItem('cdmUser'); setAuthMode('login'); }
+  } else {
+    setAuthMode('login');
   }
-  setAuthMode('login');
 });
 </script>
 </body>
