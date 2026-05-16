@@ -337,7 +337,7 @@ table.table td:last-child,table.table th:last-child{padding-right:5px}
  * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
  *   message vert/rouge inline + toast de confirmation
  * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbyHvsXCJCVdabLNY6xEJ7hD81m-MX_z5ZhyYBTYKaWKfF6xgZUh_Ehst5zXVRHAAdMBQw/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwvMXbgR-qfxWbLd7xr2-gVFFxlV1KTvicccNndGXBF_mAwf53SaDB-LdagFjUyM1iI/exec";
 const VIEW_TTL_MS    = 5 * 60 * 1000;
 const PERSIST_KEY    = 'cdmCache_v2';
 const MAX_JOKERS     = 3;
@@ -346,17 +346,49 @@ const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!
 // Format date français : "12/06/2026" → "Ven. 12 juin 2026"
 const MONTHS_FR = ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
 const DAYS_FR = ['Dim.','Lun.','Mar.','Mer.','Jeu.','Ven.','Sam.'];
+// Parse robuste : accepte "12/06/2026", "2026-06-12", "2026-06-12T00:00:00.000Z", ou Date
+function parseDateAny(v){
+  if (!v) return null;
+  if (v instanceof Date) return isNaN(v.getTime()) ? null : v;
+  const s = String(v).trim();
+  // Format français JJ/MM/AAAA
+  if (s.indexOf('/') >= 0) {
+    const p = s.split('/');
+    if (p.length === 3) {
+      const d = new Date(+p[2], +p[1]-1, +p[0]);
+      return isNaN(d.getTime()) ? null : d;
+    }
+  }
+  // Format ISO YYYY-MM-DD ou complet YYYY-MM-DDTHH:MM:SS...
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  return null;
+}
 function fmtDateFR(dFR){
-  const p = String(dFR||'').split('/');
-  if (p.length!==3) return dFR||'';
-  const d = new Date(+p[2], +p[1]-1, +p[0]);
-  if (isNaN(d.getTime())) return dFR;
-  return DAYS_FR[d.getDay()]+' '+(+p[0])+' '+MONTHS_FR[+p[1]-1]+' '+p[2];
+  const d = parseDateAny(dFR);
+  if (!d) return dFR || '';
+  return DAYS_FR[d.getDay()]+' '+d.getDate()+' '+MONTHS_FR[d.getMonth()]+' '+d.getFullYear();
 }
 function fmtDateShort(dFR){
-  const p = String(dFR||'').split('/');
-  if (p.length!==3) return dFR||'';
-  return (+p[0])+' '+MONTHS_FR[+p[1]-1];
+  const d = parseDateAny(dFR);
+  if (!d) return dFR || '';
+  return d.getDate()+' '+MONTHS_FR[d.getMonth()];
+}
+function fmtHeure(hFR){
+  if (!hFR) return '';
+  const s = String(hFR).trim();
+  // Format direct HH:MM ou HH:MM:SS
+  if (/^\d{1,2}:\d{2}/.test(s)) return s.substring(0, 5);
+  // Format ISO datetime ou Date → extraire heure locale
+  const d = parseDateAny(s) || (s.indexOf('T') >= 0 ? new Date(s) : null);
+  if (d && !isNaN(d.getTime())) {
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mm = String(d.getMinutes()).padStart(2,'0');
+    return hh+':'+mm;
+  }
+  return s;
 }
 // Statut affiché d'un match : "À venir" / "En cours" / "Terminé"
 function matchStatusBadge(m){
@@ -769,7 +801,7 @@ function bigPronoCard(m, idx, total){
         '<div class="vsBig">VS</div>' +
         '<div class="team"><div class="flag">'+mFlag(m,'B')+'</div><div class="name">'+mName(m,'B')+'</div></div>' +
       '</div>' +
-      '<div class="meta metaClean"><span>📅 '+fmtDateFR(m.dateFR)+' · 🕒 '+m.heureFR+' · 🏷️ '+phase+'<br>🏟️ '+(m.stadeLabel||'Stade à confirmer')+(tvFor(m)?'<br>'+tvFor(m):'')+'</span></div>' +
+      '<div class="meta metaClean"><span>📅 '+fmtDateFR(m.dateFR)+' · 🕒 '+fmtHeure(m.heureFR)+' · 🏷️ '+phase+'<br>🏟️ '+(m.stadeLabel||'Stade à confirmer')+(tvFor(m)?'<br>'+tvFor(m):'')+'</span></div>' +
     '</div>' +
     (isBonusMatch(mId(m))?'<div class="countdown bonusPill centeredLine">⭐ Joker bonus : points doublés sur ce match</div>':'') +
     '<div class="scoreEntryRow">' +
@@ -832,7 +864,7 @@ function drawMatches(){
           '<div class="score">'+(String(m.status)==='FINISHED'?(m.scoreA+' - '+m.scoreB):'VS')+'</div>' +
           '<div class="team"><div class="flag">'+mFlag(m,'B')+'</div><div class="name">'+mName(m,'B')+'</div>'+(String(m.status)==='FINISHED'?goalsForSide(m,'B'):'')+'</div>' +
         '</div>' +
-        '<div class="meta metaClean"><span>📅 '+fmtDateFR(m.dateFR)+' · 🕒 '+m.heureFR+' · 🏷️ '+phase+'<br>🏟️ '+(m.stadeLabel||'Stade à confirmer')+(tvFor(m)?'<br>'+tvFor(m):'')+'</span></div>' +
+        '<div class="meta metaClean"><span>📅 '+fmtDateFR(m.dateFR)+' · 🕒 '+fmtHeure(m.heureFR)+' · 🏷️ '+phase+'<br>🏟️ '+(m.stadeLabel||'Stade à confirmer')+(tvFor(m)?'<br>'+tvFor(m):'')+'</span></div>' +
       '</div>' +
       (isBonusMatch(id)?'<div class="countdown bonusPill centeredLine">⭐ Joker bonus : points doublés sur ce match</div>':'') +
       (timeLeftText(m)?'<div class="countdown centeredLine">⏳ '+timeLeftText(m)+'</div>':'') +
@@ -909,7 +941,7 @@ function openMatchDetail(id){
   const hist=(hA||hB)?'<div class="sec">Historique dans la compétition</div><div class="card"><b>'+mName(m,'A')+'</b><br><span class="muted">'+(hA||'Aucun match joué')+'</span><br><br><b>'+mName(m,'B')+'</b><br><span class="muted">'+(hB||'Aucun match joué')+'</span></div>':'';
   $('matchModalContent').innerHTML =
     '<h3>'+mFlag(m,'A')+' '+mName(m,'A')+' - '+mName(m,'B')+' '+mFlag(m,'B')+'</h3>' +
-    '<div class="muted">'+fmtDateFR(m.dateFR)+' · '+(m.heureFR||'')+' · '+(m.stadeLabel||'')+'</div>' +
+    '<div class="muted">'+fmtDateFR(m.dateFR)+' · '+fmtHeure(m.heureFR)+' · '+(m.stadeLabel||'')+'</div>' +
     statMirrorHtml(m) + stHtml + hist +
     '<br><button class="btn btn2" onclick="closeMatchDetail()">Fermer</button>';
   $('matchModal').classList.add('open');
@@ -1200,7 +1232,7 @@ function profileMyPronosHtml(){
             : (inProgress ? '<br><span class="muted">Calcul des points après la fin du match.</span>' : '');
         return '<div class="card profilePronostic'+(grouped?' grouped':'')+'" '+(grouped?groupStyle(m.groupe):'')+'>' +
           '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:5px"><b>'+mFlag(m,'A')+' '+mName(m,'A')+' - '+mName(m,'B')+' '+mFlag(m,'B')+'</b>'+statusBadge+'</div>' +
-          '<span class="muted">'+(isPoolFilter(m.groupe)?'Groupe '+m.groupe:'Phase finale')+' · '+fmtDateFR(m.dateFR)+(m.heureFR?(' · '+m.heureFR):'')+'</span><br>' +
+          '<span class="muted">'+(isPoolFilter(m.groupe)?'Groupe '+m.groupe:'Phase finale')+' · '+fmtDateFR(m.dateFR)+(m.heureFR?(' · '+fmtHeure(m.heureFR)):'')+'</span><br>' +
           '<span>Ton prono : <b>'+p.scoreA+'-'+p.scoreB+'</b>'+(p.joker?' ⭐':'')+(p.counterCurrent?' 😈':'')+(p.riskBonus?(' · 🎁 +'+p.riskBonus):'')+'</span>'+scoreLine +
         '</div>';
       }).join('')
@@ -1311,7 +1343,7 @@ function adminBonusHtml(){
     open.map(m=>{
       const active = isBonusMatch(mId(m));
       return '<div class="card" style="display:flex;justify-content:space-between;align-items:center">' +
-        '<div><b>'+mFlag(m,'A')+' '+mName(m,'A')+' - '+mName(m,'B')+' '+mFlag(m,'B')+'</b><br><span class="muted small">'+fmtDateFR(m.dateFR)+' · '+m.heureFR+'</span></div>' +
+        '<div><b>'+mFlag(m,'A')+' '+mName(m,'A')+' - '+mName(m,'B')+' '+mFlag(m,'B')+'</b><br><span class="muted small">'+fmtDateFR(m.dateFR)+' · '+fmtHeure(m.heureFR)+'</span></div>' +
         '<button class="btn '+(active?'':'btn2')+'" style="width:auto;padding:8px 14px" onclick="adminToggleBonus(\''+mId(m)+'\','+(!active)+',this)">'+(active?'⭐ Actif':'Activer')+'</button>' +
       '</div>';
     }).join('') +
