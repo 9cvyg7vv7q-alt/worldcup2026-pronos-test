@@ -581,16 +581,12 @@ function startApp(){
   // OVERLAY BLOQUANT pendant initLight (ultra-rapide, ~300ms).
   openBootOverlay('Connexion…');
 
-  // 1) initLight : payload minimum vital pour afficher l'accueil.
-  // 2) pronosView : preload en arrière-plan (onglet le + utilisé, on l'anticipe).
-  // 3) Toutes les autres vues : LAZY-LOAD pur via show(). Aucun fetch préemptif.
   const u = user.userId;
   api('initLight', {userId:u}).then(d=>{
     applyLight(d);
-    show('Home'); // Accueil affiché immédiatement après initLight
-    closeBootOverlay();
-    // Preload silencieux de pronosView (onglet le plus probable)
-    fetchView('pronosView', 'getPronosView', {userId:u});
+    show('Home');           // Accueil affiché IMMÉDIATEMENT
+    closeBootOverlay();     // Plus de blocage
+    prefetchPriorityViews(); // Chargement séquentiel en arrière-plan
   }).catch(e=>{
     toast('Erreur de chargement : '+e.message, true);
     show('Home');
@@ -598,6 +594,18 @@ function startApp(){
   });
 
   setInterval(()=>{ if ($('vMatches').classList.contains('active')) drawMatches(); }, 60000);
+}
+
+// Précharge les vues prioritaires en SÉQUENTIEL (pronosView → rankView → profileView).
+// Chaque vue n'est lancée qu'après la résolution de la précédente pour ne pas saturer
+// Apps Script. Les autres vues (Poules, Résumé, Buteurs, Admin) restent en lazy-load
+// pur — chargées seulement au clic sur l'onglet.
+function prefetchPriorityViews(){
+  const u = user.userId;
+  fetchView('pronosView', 'getPronosView', {userId:u})
+    .then(()=> fetchView('rankView',   'getRankView',   {userId:u}))
+    .then(()=> fetchView('profileView','getProfileView',{userId:u}))
+    .catch(e => console.warn('prefetch séquentiel interrompu:', e?.message));
 }
 // fetchView : fetch frais d'une vue, dédupe les appels concurrents.
 // Marque la vue chargée et redessine si on est sur la vue concernée.
@@ -714,7 +722,11 @@ function isBonusMatch(id){ return (bonusJokers||[]).some(b=> String(b.matchId)==
 function isPoolFilter(k){ return /^[A-L]$/.test(String(k||'')); }
 function isGroupMatch(m){ return String(m.phase||'').toLowerCase().indexOf('groupe')>=0 || isPoolFilter(m.groupe); }
 function impliedProbs(m){
-  const a=Number(m.cote1)||0, x=Number(m.coteX)||0, b=Number(m.cote2)||0;
+  // Sheets renvoie les cotes au format FR avec virgule ("1,44"). Number() retournerait NaN.
+  // On remplace la virgule par un point juste pour le calcul, sans toucher au format d'origine.
+  const a = Number(String(m.cote1||'').replace(',','.')) || 0;
+  const x = Number(String(m.coteX||'').replace(',','.')) || 0;
+  const b = Number(String(m.cote2||'').replace(',','.')) || 0;
   if (!a||!x||!b) return {A:0,X:0,B:0};
   const ia=1/a, ix=1/x, ib=1/b, t=ia+ix+ib;
   return {A:Math.round(ia/t*100), X:Math.round(ix/t*100), B:Math.round(ib/t*100)};
@@ -940,19 +952,23 @@ function submitPronoFromSwipe(id, btn){
     successLabel: 'Prono validé',
     promise: api('submitPronostic', {userId:user.userId, matchId:id, scoreA:a.value, scoreB:b.value, joker:(j?j.checked:false)}),
     onSuccess: d => {
-      // MUTATION LOCALE : on insère le prono dans l'état en mémoire sans refetch
+      // 1) MUTATION LOCALE : insère le prono dans l'état en mémoire (UI à jour en 0,1s)
       if (d.prono) {
         pronos[String(d.prono.matchId)] = d.prono;
-        // La bannière joker bonus de l'accueil est calculée depuis bonusJokers.
-        // On retire le match qu'on vient de pronostiquer (puisqu'on a maintenant un prono dessus).
+        // Retire la bannière joker bonus de l'accueil si c'était ce match
         bonusJokers = (bonusJokers || []).filter(b => String(b.matchId) !== String(d.prono.matchId));
       }
-      // INVALIDATION PARESSEUSE : les autres vues sont marquées obsolètes.
-      // Aucun fetch lancé maintenant ; au prochain clic sur l'onglet,
-      // show() détectera dataLoaded === false et fera le fetch propre.
+      // 2) Invalide les vues secondaires (au cas où le user clique avant la fin du refetch)
       dataLoaded.rankView = false;
-      dataLoaded.summaryView = false;
       dataLoaded.profileView = false;
+      dataLoaded.summaryView = false;
+      // 3) Refetch SILENCIEUX et SÉQUENTIEL en arrière-plan : rankView puis profileView.
+      //    Aucun overlay, aucun toast — fetchView se contente d'appliquer les données
+      //    et de redessiner si la vue concernée est active.
+      const u = user.userId;
+      fetchView('rankView', 'getRankView', {userId:u})
+        .then(()=> fetchView('profileView','getProfileView',{userId:u}))
+        .catch(()=>{ /* échec silencieux : la vue se rechargera au prochain show() */ });
     }
   });
 }
