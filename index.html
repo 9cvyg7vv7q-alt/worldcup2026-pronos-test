@@ -197,6 +197,13 @@ table.table td:last-child,table.table th:last-child{padding-right:5px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .viewLoading{padding:30px;text-align:center;color:var(--muted)}
 .globalLoading{position:fixed;top:0;left:0;right:0;background:var(--g2);color:#fff;font-weight:900;padding:6px;text-align:center;font-size:.74rem;z-index:100;box-shadow:0 2px 8px #0008}
+/* Bootstrap overlay : bloque TOUTE interaction tant que initFull n'est pas fini */
+.bootOverlay{position:fixed;inset:0;background:rgba(13,17,23,.94);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;pointer-events:auto;backdrop-filter:blur(4px)}
+.bootOverlay.hide{display:none}
+.bootSpinner{width:72px;height:72px;border:6px solid #ffffff15;border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite}
+.bootTitle{color:var(--gold);font-weight:900;font-size:1.3rem;margin:0}
+.bootLabel{color:var(--txt);font-weight:700;font-size:.95rem;text-align:center;padding:0 24px;max-width:90vw}
+.bootSub{color:var(--muted);font-size:.78rem;text-align:center;max-width:80vw}
 /* Overlay action : gros, centré, animé */
 .actionOverlay{position:fixed;inset:0;background:#000c;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;opacity:0;pointer-events:none;transition:opacity .15s}
 .actionOverlay.show{opacity:1;pointer-events:auto}
@@ -208,6 +215,14 @@ table.table td:last-child,table.table th:last-child{padding-right:5px}
 </style>
 </head>
 <body>
+
+<!-- Bootstrap overlay : bloque l'écran pendant le initFull -->
+<div id="bootOverlay" class="bootOverlay hide">
+  <div class="bootSpinner"></div>
+  <h2 class="bootTitle">🏆 CdM 2026 Pronos</h2>
+  <div id="bootLabel" class="bootLabel">Chargement de l'application…</div>
+  <div class="bootSub">Ne ferme pas la page, les données arrivent…</div>
+</div>
 
 <!-- ÉCRAN DE CONNEXION -->
 <div id="login">
@@ -349,7 +364,7 @@ table.table td:last-child,table.table th:last-child{padding-right:5px}
  * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
  *   message vert/rouge inline + toast de confirmation
  * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbyd4uU5lYiCSXR9n90EOheOCGaDxLUUS8f7onY2BM4ueP57j-cvVNAZRxrMMYxySy2f/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwhOQ7-WDq8X_5juM1eqsTko4eBtk_LUKfRDCoYWxV9gZiEWwBQ9MqO1kyou9VGA9kW/exec";
 
 const MAX_JOKERS     = 3;
 const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
@@ -472,6 +487,8 @@ function openActionOverlay(label){
   $('actionOverlay').classList.add('show');
 }
 function closeActionOverlay(){ $('actionOverlay').classList.remove('show'); }
+function openBootOverlay(label){ $('bootLabel').textContent = label || 'Chargement de l\'application…'; $('bootOverlay').classList.remove('hide'); }
+function closeBootOverlay(){ $('bootOverlay').classList.add('hide'); }
 function showActionSuccess(label){
   $('actionSpinner').className = 'actionOk';
   $('actionSpinner').textContent = '✓';
@@ -559,29 +576,32 @@ function startApp(){
   $('app').classList.remove('hide');
   $('uBadge').textContent = user.pseudo;
   $('aBadge').classList.toggle('hide', !user.isAdmin);
-  dropLocalCache(); // nettoie d'éventuels vieux caches
+  dropLocalCache();
 
-  // initLight au démarrage (rapide ~300ms grâce aux caches BD), puis preload de toutes
-  // les autres vues en parallèle. Après ce burst initial, toute navigation est instantanée.
-  // Les caches BD côté backend rendent chaque fetch léger (~300ms), et tout se fait en
-  // parallèle. Au total : 500ms à 1s pour avoir TOUTE l'app en mémoire.
-  setLoading(true, 'Connexion…');
-  const u = user.userId;
-  api('initLight', {userId:u}).then(d=>{
-    applyLight(d);
-    Promise.all([
-      fetchView('pronosView',  'getPronosView',  {userId:u}),
-      fetchView('rankView',    'getRankView',    {userId:u}),
-      fetchView('groupsView',  'getGroupsView',  {}),
-      fetchView('summaryView', 'getSummaryView', {}),
-      fetchView('profileView', 'getProfileView', {userId:u}),
-      fetchView('scorersView', 'getScorersView', {userId:u}),
-      user.isAdmin ? fetchView('adminView','getAdminView',{userId:u}) : Promise.resolve()
-    ]).catch(e => console.warn('preload partiel:', e?.message));
-  }).catch(e=> toast('Erreur init : '+e.message, true))
-    .finally(()=> setLoading(false));
+  // OVERLAY BLOQUANT : empêche toute interaction tant que initFull n'est pas terminé.
+  openBootOverlay('Chargement de l\'application…');
 
-  show('Home');
+  // UN SEUL APPEL API : initFull renvoie light + les 7 vues d'un coup.
+  // Côté backend, lecture directe des caches BD = ~500ms-1s, pas plus.
+  api('initFull', {userId:user.userId}).then(d=>{
+    // Application SYNCHRONE de toutes les vues : pas de race condition, tout est en mémoire
+    // avant le 1er redraw. Plus aucune désynchronisation possible.
+    if (d.light)       applyLight(d.light);
+    if (d.pronosView)  applyViewData('pronosView',  d.pronosView);
+    if (d.rankView)    applyViewData('rankView',    d.rankView);
+    if (d.groupsView)  applyViewData('groupsView',  d.groupsView);
+    if (d.summaryView) applyViewData('summaryView', d.summaryView);
+    if (d.profileView) applyViewData('profileView', d.profileView);
+    if (d.scorersView) applyViewData('scorersView', d.scorersView);
+    if (d.adminView)   applyViewData('adminView',   d.adminView);
+    show('Home');
+  }).catch(e=> {
+    toast('Erreur de chargement : '+e.message, true);
+    show('Home');
+  }).finally(()=> {
+    closeBootOverlay();
+  });
+
   setInterval(()=>{ if ($('vMatches').classList.contains('active')) drawMatches(); }, 60000);
 }
 // fetchView : fetch frais d'une vue, dédupe les appels concurrents.
