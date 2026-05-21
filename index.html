@@ -197,6 +197,14 @@ table.table td:last-child,table.table th:last-child{padding-right:5px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .viewLoading{padding:30px;text-align:center;color:var(--muted)}
 .globalLoading{position:fixed;top:0;left:0;right:0;background:var(--g2);color:#fff;font-weight:900;padding:6px;text-align:center;font-size:.74rem;z-index:100;box-shadow:0 2px 8px #0008}
+/* Overlay action : gros, centré, animé */
+.actionOverlay{position:fixed;inset:0;background:#000c;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;opacity:0;pointer-events:none;transition:opacity .15s}
+.actionOverlay.show{opacity:1;pointer-events:auto}
+.actionSpinner{width:54px;height:54px;border:5px solid #ffffff20;border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite}
+.actionLabel{color:#fff;font-weight:900;font-size:1.05rem;text-align:center;padding:0 24px;max-width:90vw}
+.actionOk{font-size:3rem;color:#66bb6a;animation:popOk .3s ease-out}
+.actionKo{font-size:3rem;color:var(--red)}
+@keyframes popOk{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
 </style>
 </head>
 <body>
@@ -322,6 +330,10 @@ table.table td:last-child,table.table th:last-child{padding-right:5px}
 </div>
 
 <div class="modal" id="matchModal"><div class="sheet"><div class="drag"></div><div id="matchModalContent"></div></div></div>
+<div id="actionOverlay" class="actionOverlay">
+  <div id="actionSpinner" class="actionSpinner"></div>
+  <div id="actionLabel" class="actionLabel">Validation en cours…</div>
+</div>
 <div class="toast hide" id="toast"></div>
 
 <script>
@@ -337,9 +349,8 @@ table.table td:last-child,table.table th:last-child{padding-right:5px}
  * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
  *   message vert/rouge inline + toast de confirmation
  * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbwvMXbgR-qfxWbLd7xr2-gVFFxlV1KTvicccNndGXBF_mAwf53SaDB-LdagFjUyM1iI/exec";
-const VIEW_TTL_MS    = 5 * 60 * 1000;
-const PERSIST_KEY    = 'cdmCache_v2';
+const API_URL = "https://script.google.com/macros/s/AKfycby5L5WdYZfY-AUfkbGW1ckpee9si8_oBOPdjBahSkyoo5LhrThMYRpN9ge7e3dxl9J3Lw/exec";
+
 const MAX_JOKERS     = 3;
 const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
 
@@ -404,7 +415,7 @@ const dataLoaded = { pronosView:false, rankView:false, groupsView:false, summary
 let authMode='login', user=null;
 let matches=[], pronos={}, pronosticStats={}, butsMatch={};
 let classement=[], fun=[], buteur=null, bonusJokers=[], equipes=[];
-let joueurs=[], myScorerVote=null;
+let joueurs=[], myScorerVote=null, scorersClosed=false, scorersDeadline='';
 let groupsData={}, summaryData={}, profileData={}, adminData={};
 let currentFilter='all', currentProfileFilter='all';
 // Filtre par statut dans l'onglet Matchs (indépendant du filtre par groupe)
@@ -415,11 +426,11 @@ let currentPronoIndex=0, directPronoMatchId=null;
 let selectedPlayer=null;
 const rankCharts = {};
 
-const cache = JSON.parse(localStorage.getItem(PERSIST_KEY) || '{}');
-function persistCache(){ try{ localStorage.setItem(PERSIST_KEY, JSON.stringify(cache)); }catch(e){} }
-function getCache(key){ const c=cache[key]; if(!c)return null; if(Date.now()-c.ts>VIEW_TTL_MS)return null; return c.data; }
-function setCache(key,data){ cache[key]={data,ts:Date.now()}; persistCache(); }
-function dropCache(){ for(const k in cache) delete cache[k]; persistCache(); }
+// PAS DE CACHE LOCALSTORAGE — chaque navigation fait un fetch frais.
+// Les caches BD côté backend (CACHE_*) garantissent une réponse en ~300ms.
+// État en mémoire de la vie de la page seulement.
+const viewLoading = {}; // key → Promise en cours, ou null
+function dropLocalCache(){ try{ localStorage.removeItem('cdmCache_v2'); }catch(e){} }
 
 function $(id){ return document.getElementById(id); }
 function api(action, params){
@@ -437,23 +448,81 @@ function cleanText(v){ return String(v==null?'':v).replace(/[\uFFFD]/g,''); }
 function pct(n,t){ return t?Math.round(n*100/t):0; }
 function pct2(n){ n=Number(n)||0; return Math.max(0,Math.min(100,Math.round(n))); }
 
-/* === V14.1 : helpers pour feedback action === */
+/* ============================================================
+ * GESTION DES ACTIONS UTILISATEUR
+ * ============================================================
+ * Helper unique : runAction(label, successLabel, promise, onSuccess)
+ *   - Affiche un overlay gros + spinner + label "Validation en cours…"
+ *   - Désactive le bouton pendant l'action
+ *   - À la résolution : remplace par "✓ {successLabel}" pendant ~700ms puis ferme
+ *   - À l'échec : remplace par "✕ {message}" pendant ~1500ms
+ *   - onSuccess(data) est appelé entre les deux pour rafraîchir les données
+ * ============================================================ */
 let _globalLoadingCount = 0;
 function setLoading(on, msg){
-  if (on) _globalLoadingCount++; else _globalLoadingCount=Math.max(0,_globalLoadingCount-1);
+  if (on) _globalLoadingCount++; else _globalLoadingCount = Math.max(0, _globalLoadingCount-1);
   const el = $('globalLoading');
   if (_globalLoadingCount > 0){ el.textContent = (msg || 'Chargement…') + ' '; el.classList.remove('hide'); }
   else el.classList.add('hide');
 }
-function formMsg(id, msg, ok){
-  const el = $(id); if (!el) return;
-  el.innerHTML = ok ? '<span class="ok">'+msg+'</span>' : '<span class="ko">'+msg+'</span>';
+function openActionOverlay(label){
+  $('actionLabel').textContent = label || 'Validation en cours…';
+  $('actionSpinner').className = 'actionSpinner';
+  $('actionSpinner').textContent = '';
+  $('actionOverlay').classList.add('show');
+}
+function closeActionOverlay(){ $('actionOverlay').classList.remove('show'); }
+function showActionSuccess(label){
+  $('actionSpinner').className = 'actionOk';
+  $('actionSpinner').textContent = '✓';
+  $('actionLabel').textContent = label || 'OK';
+}
+function showActionError(label){
+  $('actionSpinner').className = 'actionKo';
+  $('actionSpinner').textContent = '✕';
+  $('actionLabel').textContent = label || 'Erreur';
 }
 function buttonLoading(btn, on, label){
   if (!btn) return;
   if (on){ btn.dataset.oldText = btn.textContent; btn.disabled = true; btn.textContent = (label||'En cours…'); }
   else { btn.disabled = false; if (btn.dataset.oldText) btn.textContent = btn.dataset.oldText; }
 }
+function formMsg(id, msg, ok){
+  const el = $(id); if (!el) return;
+  el.innerHTML = ok ? '<span class="ok">'+msg+'</span>' : '<span class="ko">'+msg+'</span>';
+}
+// runAction : helper UNIQUE pour toutes les actions utilisateur/admin
+// - inProgressLabel : texte montré pendant l'attente API ("Enregistrement du pronostic…")
+// - successLabel    : texte montré 700ms à la réussite ("Prono validé")
+// - promise         : la promesse de l'appel API
+// - onSuccess       : callback (data) → rafraîchit les vues impactées et redessine
+// - btn             : (optionnel) bouton à désactiver pendant l'action
+// Retourne une promesse qui résout APRÈS la fermeture de l'overlay et le redraw.
+function runAction(opts){
+  const { inProgressLabel, successLabel, promise, onSuccess, btn } = opts;
+  buttonLoading(btn, true, 'En cours…');
+  openActionOverlay(inProgressLabel || 'Validation en cours…');
+  return Promise.resolve(promise).then(data => {
+    if (data && data.error){
+      showActionError(data.error);
+      return new Promise(r => setTimeout(()=>{ closeActionOverlay(); buttonLoading(btn, false); r(null); }, 1500));
+    }
+    if (onSuccess) {
+      try { onSuccess(data); } catch(e){ console.error(e); }
+    }
+    showActionSuccess(successLabel || 'OK');
+    return new Promise(r => setTimeout(()=>{
+      closeActionOverlay();
+      buttonLoading(btn, false);
+      redrawCurrent();
+      r(data);
+    }, 700));
+  }).catch(err => {
+    showActionError(err.message || 'Erreur');
+    return new Promise(r => setTimeout(()=>{ closeActionOverlay(); buttonLoading(btn, false); r(null); }, 1500));
+  });
+}
+// Compatibilité : withAction conservé mais redirige vers runAction (pour code existant)
 function withAction(btn, msg, promise){
   setLoading(true, msg);
   buttonLoading(btn, true, 'En cours…');
@@ -477,7 +546,7 @@ function doAuth(){
     api(authMode,{pseudo,pin})
   ).then(d=>{
     if (d && d.error){ $('authErr').innerHTML='<span class="ko">'+d.error+'</span>'; return; }
-    user=d; localStorage.setItem('cdmUser',JSON.stringify(user)); dropCache(); startApp();
+    user=d; localStorage.setItem('cdmUser',JSON.stringify(user)); dropLocalCache(); startApp();
   }).catch(e=> $('authErr').innerHTML='<span class="ko">'+e.message+'</span>');
 }
 function logout(){ localStorage.removeItem('cdmUser'); localStorage.removeItem(PERSIST_KEY); location.reload(); }
@@ -490,41 +559,52 @@ function startApp(){
   $('app').classList.remove('hide');
   $('uBadge').textContent = user.pseudo;
   $('aBadge').classList.toggle('hide', !user.isAdmin);
+  dropLocalCache(); // nettoie d'éventuels vieux caches
 
-  // Utilise le cache local immédiatement s'il existe (rendu instantané)
-  const cl = getCache('light');           if (cl) applyLight(cl);
-  const cp = getCache('pronosView');      if (cp) applyViewData('pronosView', cp);
-  const cr = getCache('rankView');        if (cr) applyViewData('rankView', cr);
-  const cg = getCache('groupsView');      if (cg) applyViewData('groupsView', cg);
-  const cs = getCache('summaryView');     if (cs) applyViewData('summaryView', cs);
-  const cf = getCache('profileView');     if (cf) applyViewData('profileView', cf);
-  const csc= getCache('scorersView');     if (csc) applyViewData('scorersView', csc);
-  if (user.isAdmin){ const ca=getCache('adminView'); if (ca) applyViewData('adminView', ca); }
-
-  // Rafraîchit en arrière-plan
-  setLoading(true, 'Chargement initial…');
-  api('initLight', {userId:user.userId}).then(d=>{
-    setCache('light', d); applyLight(d);
-    preloadAll();
+  // initLight au démarrage (rapide ~300ms grâce aux caches BD), puis preload de toutes
+  // les autres vues en parallèle. Après ce burst initial, toute navigation est instantanée.
+  // Les caches BD côté backend rendent chaque fetch léger (~300ms), et tout se fait en
+  // parallèle. Au total : 500ms à 1s pour avoir TOUTE l'app en mémoire.
+  setLoading(true, 'Connexion…');
+  const u = user.userId;
+  api('initLight', {userId:u}).then(d=>{
+    applyLight(d);
+    Promise.all([
+      fetchView('pronosView',  'getPronosView',  {userId:u}),
+      fetchView('rankView',    'getRankView',    {userId:u}),
+      fetchView('groupsView',  'getGroupsView',  {}),
+      fetchView('summaryView', 'getSummaryView', {}),
+      fetchView('profileView', 'getProfileView', {userId:u}),
+      fetchView('scorersView', 'getScorersView', {userId:u}),
+      user.isAdmin ? fetchView('adminView','getAdminView',{userId:u}) : Promise.resolve()
+    ]).catch(e => console.warn('preload partiel:', e?.message));
   }).catch(e=> toast('Erreur init : '+e.message, true))
     .finally(()=> setLoading(false));
 
   show('Home');
   setInterval(()=>{ if ($('vMatches').classList.contains('active')) drawMatches(); }, 60000);
 }
-function preloadAll(){
-  const u = user.userId;
-  loadView('pronosView','getPronosView',{userId:u});
-  loadView('rankView','getRankView',{userId:u});
-  loadView('groupsView','getGroupsView',{});
-  loadView('summaryView','getSummaryView',{});
-  loadView('profileView','getProfileView',{userId:u});
-  loadView('scorersView','getScorersView',{userId:u});
-  if (user.isAdmin) loadView('adminView','getAdminView',{userId:u});
+// fetchView : fetch frais d'une vue, dédupe les appels concurrents.
+// Marque la vue chargée et redessine si on est sur la vue concernée.
+function fetchView(key, action, params){
+  if (viewLoading[key]) return viewLoading[key];
+  const p = api(action, params).then(d=>{
+    applyViewData(key, d);
+    redrawCurrent(); // redessine la vue active si elle dépend de cette donnée
+    return d;
+  }).catch(e=> { console.warn('Erreur '+action+' :', e.message); throw e; })
+    .finally(()=> { viewLoading[key] = null; });
+  viewLoading[key] = p;
+  return p;
 }
-function loadView(key, action, params){
-  return api(action, params).then(d=>{ setCache(key,d); applyViewData(key,d); return d; })
-    .catch(e=> console.warn('Erreur '+action+' :', e.message));
+// loadView kept as alias for backward compat in older code paths
+function loadView(key, action, params){ return fetchView(key, action, params); }
+// Redessine la vue actuellement affichée
+function redrawCurrent(){
+  const active = document.querySelector('.view.active');
+  if (!active) return;
+  const id = active.id.replace(/^v/, '');
+  drawView(id);
 }
 
 /* === Application des données reçues dans les variables globales === */
@@ -550,6 +630,8 @@ function applyViewData(key, d){
   else if (key==='scorersView'){
     joueurs = d.joueurs || [];
     myScorerVote = d.myVote || null;
+    scorersClosed = !!d.closed;
+    scorersDeadline = d.deadline || '';
   } else if (key==='adminView'){
     adminData = d || {};
     if (d.stades)     stadesList     = d.stades;
@@ -569,6 +651,22 @@ function show(viewName, btn){
   const navBtn = btn || document.querySelector('.bnav button[data-view="'+viewName+'"]');
   if (navBtn) navBtn.classList.add('active');
   window.scrollTo(0,0);
+  // Sécurité lazy-load : si pour une raison X la vue n'a pas ses données, fetch-la
+  const u = user.userId;
+  const needs = {
+    'Pronos':   ['pronosView',   'getPronosView',  {userId:u}],
+    'Matches':  ['pronosView',   'getPronosView',  {userId:u}],
+    'Groups':   ['groupsView',   'getGroupsView',  {}],
+    'Summary':  ['summaryView',  'getSummaryView', {}],
+    'Rank':     ['rankView',     'getRankView',    {userId:u}],
+    'Scorers':  ['scorersView',  'getScorersView', {userId:u}],
+    'Profile':  ['profileView',  'getProfileView', {userId:u}]
+  };
+  const req = needs[viewName];
+  if (req && !dataLoaded[req[0]] && !viewLoading[req[0]]) fetchView(req[0], req[1], req[2]);
+  if (viewName === 'Profile' && user.isAdmin && !dataLoaded.adminView && !viewLoading.adminView){
+    fetchView('adminView', 'getAdminView', {userId:u});
+  }
   drawView(viewName);
 }
 function drawView(v){
@@ -819,24 +917,26 @@ function bigPronoCard(m, idx, total){
 }
 function submitPronoFromSwipe(id, btn){
   const a=$('quickScoreA'), b=$('quickScoreB'), j=$('quickJoker');
-  if (!a || !b){ formMsg('quickPronoErr','Inputs introuvables', false); return; }
+  if (!a || !b){ return; }
   if (a.value==='' || b.value===''){ formMsg('quickPronoErr','Saisis les deux scores.', false); return; }
-  formMsg('quickPronoErr','Enregistrement en cours…', true);
-  withAction(btn, 'Enregistrement du pronostic…',
-    api('submitPronostic', {userId:user.userId, matchId:id, scoreA:a.value, scoreB:b.value, joker:(j?j.checked:false)})
-  ).then(d=>{
-    if (d && d.error){ formMsg('quickPronoErr', d.error, false); return; }
-    toast('Pronostic enregistré ✅');
-    // Invalidation immédiate + rechargement instantané des vues touchées
-    if (d.pronosView){ setCache('pronosView', d.pronosView); applyViewData('pronosView', d.pronosView); }
-    if (d.light){ setCache('light', d.light); applyLight(d.light); }
-    delete cache.rankView; delete cache.summaryView; delete cache.profileView; persistCache();
-    Promise.all([
-      loadView('rankView','getRankView',{userId:user.userId}),
-      loadView('summaryView','getSummaryView',{}),
-      loadView('profileView','getProfileView',{userId:user.userId})
-    ]).then(()=>{ drawFilters(); drawPronos(); drawMatches(); drawHome(); });
-  }).catch(e=> formMsg('quickPronoErr', 'Erreur API : '+e.message, false));
+  runAction({
+    btn,
+    inProgressLabel: 'Enregistrement du pronostic…',
+    successLabel: 'Prono validé',
+    promise: api('submitPronostic', {userId:user.userId, matchId:id, scoreA:a.value, scoreB:b.value, joker:(j?j.checked:false)}),
+    onSuccess: d => {
+      // Applique IMMÉDIATEMENT les données fraîches renvoyées par l'API
+      // Ordre important : pronosView D'ABORD (peut contenir vieux bonusJokers),
+      // puis light qui écrase bonusJokers avec la valeur fraîche.
+      if (d.pronosView) applyViewData('pronosView', d.pronosView);
+      if (d.light)      applyLight(d.light); // applique APRÈS pour bonusJokers à jour
+      // Refetch en arrière-plan les vues secondaires impactées
+      dataLoaded.rankView = false; dataLoaded.summaryView = false; dataLoaded.profileView = false;
+      fetchView('rankView','getRankView',{userId:user.userId});
+      fetchView('summaryView','getSummaryView',{});
+      fetchView('profileView','getProfileView',{userId:user.userId});
+    }
+  });
 }
 
 /* =============================================================================
@@ -1094,23 +1194,25 @@ function drawRankHistory(userId, pseudo, rows){
  * VUE MEILLEUR BUTEUR
  * ============================================================================= */
 function drawScorers(){
-  const data = getCache('scorersView') || {};
-  const closed = !!data.closed, my = data.myVote || myScorerVote;
-  $('myScorerVote').innerHTML = closed
-    ? '⛔ Vote meilleur buteur fermé depuis le <b>'+(data.deadline||'')+'</b>.<br>'+(my?'Ton choix : <b>'+cleanText(my.joueur)+'</b>':'Aucun choix enregistré.')
+  if (!dataLoaded.scorersView){
+    $('myScorerVote').innerHTML = '<div class="muted">Chargement…</div>';
+    $('playerPick').innerHTML = '';
+    return;
+  }
+  const my = myScorerVote;
+  $('myScorerVote').innerHTML = scorersClosed
+    ? '⛔ Vote meilleur buteur fermé'+(scorersDeadline?' depuis le <b>'+scorersDeadline+'</b>':'')+'.<br>'+(my?'Ton choix : <b>'+cleanText(my.joueur)+'</b>':'Aucun choix enregistré.')
     : (my
         ? 'Ton choix validé : <b>'+cleanText(my.joueur)+'</b><br><span class="muted">Choix définitif. Demande à l\'admin pour modifier.</span>'
         : 'Aucun choix validé pour l\'instant.<br><span class="muted">Sélectionne un joueur puis valide.</span>');
-  $('btnVoteScorer').disabled = closed || !!my;
-  $('btnVoteScorer').textContent = closed?'Vote fermé':my?'Choix déjà validé':'Valider mon choix de meilleur buteur';
+  $('btnVoteScorer').disabled = scorersClosed || !!my;
+  $('btnVoteScorer').textContent = scorersClosed?'Vote fermé':my?'Choix déjà validé':'Valider mon choix de meilleur buteur';
   drawPlayers();
 }
 function drawPlayers(){
   const q=($('playerSearch').value||'').toLowerCase();
-  const data = getCache('scorersView') || {};
-  const my = data.myVote || myScorerVote;
-  if (data.closed){ $('playerPick').innerHTML='<div class="card muted">Le vote est fermé.</div>'; return; }
-  if (my){ $('playerPick').innerHTML='<div class="card muted">Ton choix est déjà validé.</div>'; return; }
+  if (scorersClosed){ $('playerPick').innerHTML='<div class="card muted">Le vote est fermé.</div>'; return; }
+  if (myScorerVote){ $('playerPick').innerHTML='<div class="card muted">Ton choix est déjà validé.</div>'; return; }
   if (!joueurs.length){ $('playerPick').innerHTML='<div class="card muted">Liste joueurs vide. À remplir en juin.</div>'; return; }
   const list = joueurs.filter(j=> ((j.nomComplet||j.nom||'')+' '+(j.equipe||'')).toLowerCase().indexOf(q)>=0).slice(0,40);
   $('playerPick').innerHTML = list.map(j=>
@@ -1122,22 +1224,20 @@ function drawPlayers(){
 }
 function confirmScorerVote(){
   const btn = $('btnVoteScorer');
-  const data = getCache('scorersView') || {};
-  if (data.closed){ formMsg('scorerMsg', 'Vote meilleur buteur fermé.', false); return; }
-  if (data.myVote || myScorerVote){ formMsg('scorerMsg', 'Choix déjà validé.', false); return; }
+  if (myScorerVote){ formMsg('scorerMsg', 'Choix déjà validé.', false); return; }
   if (!selectedPlayer){ formMsg('scorerMsg', 'Sélectionne un joueur puis valide.', false); return; }
-  formMsg('scorerMsg', 'Enregistrement en cours…', true);
-  withAction(btn, 'Enregistrement du buteur…',
-    api('voteButeur', {userId:user.userId, joueurId:selectedPlayer.id})
-  ).then(d=>{
-    if (d && d.error){ formMsg('scorerMsg', d.error, false); return; }
-    formMsg('scorerMsg', 'Choix enregistré ✅', true);
-    toast('Choix meilleur buteur validé ⚽');
-    if (d.scorersView){ setCache('scorersView', d.scorersView); applyViewData('scorersView', d.scorersView); }
-    if (d.light){ setCache('light', d.light); applyLight(d.light); }
-    delete cache.rankView; persistCache();
-    loadView('rankView','getRankView',{userId:user.userId}).then(()=> drawScorers());
-  }).catch(e=> formMsg('scorerMsg', 'Erreur API : '+e.message, false));
+  runAction({
+    btn,
+    inProgressLabel: 'Enregistrement du choix buteur…',
+    successLabel: 'Choix buteur validé ⚽',
+    promise: api('voteButeur', {userId:user.userId, joueurId:selectedPlayer.id}),
+    onSuccess: d => {
+      if (d.scorersView) applyViewData('scorersView', d.scorersView);
+      if (d.light) applyLight(d.light);
+      dataLoaded.rankView = false;
+      fetchView('rankView','getRankView',{userId:user.userId});
+    }
+  });
 }
 
 /* =============================================================================
@@ -1503,7 +1603,7 @@ function collectScorers(){
 /* Toutes les actions admin : pattern V14.1 — message inline + bouton loading +
  * INVALIDATION CACHE + REFRESH IMMÉDIAT pour que l'utilisateur voie le changement. */
 function refreshAffectedViews(keys, callbackAfter){
-  keys.forEach(k=> delete cache[k]); persistCache();
+  keys.forEach(k => { dataLoaded[k] = false; });
   const u = user.userId;
   const map = {
     pronosView: ()=> loadView('pronosView','getPronosView',{userId:u}),
@@ -1513,7 +1613,7 @@ function refreshAffectedViews(keys, callbackAfter){
     profileView:()=> loadView('profileView','getProfileView',{userId:u}),
     scorersView:()=> loadView('scorersView','getScorersView',{userId:u}),
     adminView:  ()=> loadView('adminView','getAdminView',{userId:u}),
-    light:      ()=> api('initLight',{userId:u}).then(d=>{ setCache('light',d); applyLight(d); })
+    light:      ()=> api('initLight',{userId:u}).then(d=> applyLight(d))
   };
   return Promise.all(keys.map(k=> (map[k]||(()=>Promise.resolve()))())).then(()=>{
     if (callbackAfter) callbackAfter();
@@ -1600,7 +1700,7 @@ function adminRebuild(btn){
     api('adminRebuildCaches', {userId:user.userId})
   ).then(d=>{
     toast(d.message || '♻️ Caches reconstruits');
-    dropCache(); preloadAll();
+    Object.keys(dataLoaded).forEach(k => dataLoaded[k] = false); refreshAffectedViews(['pronosView','rankView','groupsView','summaryView','profileView','scorersView','adminView','light']);
   }).catch(e=> toast('Erreur : '+e.message, true));
 }
 function adminTrigger(btn){
