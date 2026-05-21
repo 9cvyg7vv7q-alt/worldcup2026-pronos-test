@@ -364,7 +364,7 @@ table.table td:last-child,table.table th:last-child{padding-right:5px}
  * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
  *   message vert/rouge inline + toast de confirmation
  * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbwhOQ7-WDq8X_5juM1eqsTko4eBtk_LUKfRDCoYWxV9gZiEWwBQ9MqO1kyou9VGA9kW/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycby_CURf261T1bnDROGbqZu63dRkDoUT7efVqPq9RruF3JYe_zgiygUF_9-lgepzK1H5/exec";
 
 const MAX_JOKERS     = 3;
 const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
@@ -578,27 +578,22 @@ function startApp(){
   $('aBadge').classList.toggle('hide', !user.isAdmin);
   dropLocalCache();
 
-  // OVERLAY BLOQUANT : empêche toute interaction tant que initFull n'est pas terminé.
-  openBootOverlay('Chargement de l\'application…');
+  // OVERLAY BLOQUANT pendant initLight (ultra-rapide, ~300ms).
+  openBootOverlay('Connexion…');
 
-  // UN SEUL APPEL API : initFull renvoie light + les 7 vues d'un coup.
-  // Côté backend, lecture directe des caches BD = ~500ms-1s, pas plus.
-  api('initFull', {userId:user.userId}).then(d=>{
-    // Application SYNCHRONE de toutes les vues : pas de race condition, tout est en mémoire
-    // avant le 1er redraw. Plus aucune désynchronisation possible.
-    if (d.light)       applyLight(d.light);
-    if (d.pronosView)  applyViewData('pronosView',  d.pronosView);
-    if (d.rankView)    applyViewData('rankView',    d.rankView);
-    if (d.groupsView)  applyViewData('groupsView',  d.groupsView);
-    if (d.summaryView) applyViewData('summaryView', d.summaryView);
-    if (d.profileView) applyViewData('profileView', d.profileView);
-    if (d.scorersView) applyViewData('scorersView', d.scorersView);
-    if (d.adminView)   applyViewData('adminView',   d.adminView);
-    show('Home');
-  }).catch(e=> {
+  // 1) initLight : payload minimum vital pour afficher l'accueil.
+  // 2) pronosView : preload en arrière-plan (onglet le + utilisé, on l'anticipe).
+  // 3) Toutes les autres vues : LAZY-LOAD pur via show(). Aucun fetch préemptif.
+  const u = user.userId;
+  api('initLight', {userId:u}).then(d=>{
+    applyLight(d);
+    show('Home'); // Accueil affiché immédiatement après initLight
+    closeBootOverlay();
+    // Preload silencieux de pronosView (onglet le plus probable)
+    fetchView('pronosView', 'getPronosView', {userId:u});
+  }).catch(e=>{
     toast('Erreur de chargement : '+e.message, true);
     show('Home');
-  }).finally(()=> {
     closeBootOverlay();
   });
 
@@ -945,16 +940,19 @@ function submitPronoFromSwipe(id, btn){
     successLabel: 'Prono validé',
     promise: api('submitPronostic', {userId:user.userId, matchId:id, scoreA:a.value, scoreB:b.value, joker:(j?j.checked:false)}),
     onSuccess: d => {
-      // Applique IMMÉDIATEMENT les données fraîches renvoyées par l'API
-      // Ordre important : pronosView D'ABORD (peut contenir vieux bonusJokers),
-      // puis light qui écrase bonusJokers avec la valeur fraîche.
-      if (d.pronosView) applyViewData('pronosView', d.pronosView);
-      if (d.light)      applyLight(d.light); // applique APRÈS pour bonusJokers à jour
-      // Refetch en arrière-plan les vues secondaires impactées
-      dataLoaded.rankView = false; dataLoaded.summaryView = false; dataLoaded.profileView = false;
-      fetchView('rankView','getRankView',{userId:user.userId});
-      fetchView('summaryView','getSummaryView',{});
-      fetchView('profileView','getProfileView',{userId:user.userId});
+      // MUTATION LOCALE : on insère le prono dans l'état en mémoire sans refetch
+      if (d.prono) {
+        pronos[String(d.prono.matchId)] = d.prono;
+        // La bannière joker bonus de l'accueil est calculée depuis bonusJokers.
+        // On retire le match qu'on vient de pronostiquer (puisqu'on a maintenant un prono dessus).
+        bonusJokers = (bonusJokers || []).filter(b => String(b.matchId) !== String(d.prono.matchId));
+      }
+      // INVALIDATION PARESSEUSE : les autres vues sont marquées obsolètes.
+      // Aucun fetch lancé maintenant ; au prochain clic sur l'onglet,
+      // show() détectera dataLoaded === false et fera le fetch propre.
+      dataLoaded.rankView = false;
+      dataLoaded.summaryView = false;
+      dataLoaded.profileView = false;
     }
   });
 }
