@@ -325,7 +325,8 @@ table.table td:last-child,table.table th:last-child{padding-right:5px}
   <div id="vScorers" class="view">
     <div class="sec">Mon pari meilleur buteur</div>
     <div class="card" id="myScorerVote"><div class="viewLoading">Chargement…</div></div>
-    <input id="playerSearch" placeholder="Rechercher un joueur ou une équipe…" oninput="drawPlayers()"><br><br>
+    <select id="teamScorerFilter" onchange="drawPlayers()" style="margin-bottom:8px"><option value="">Toutes les équipes</option></select>
+    <input id="playerSearch" placeholder="Rechercher un joueur…" oninput="drawPlayers()"><br><br>
     <div id="playerPick"></div>
     <button class="btn" id="btnVoteScorer" onclick="confirmScorerVote()">Valider mon choix de meilleur buteur</button>
     <div id="scorerMsg" class="small" style="margin-top:8px"></div>
@@ -431,6 +432,7 @@ let authMode='login', user=null;
 let matches=[], pronos={}, pronosticStats={}, butsMatch={};
 let classement=[], fun=[], buteur=null, bonusJokers=[], equipes=[];
 let joueurs=[], myScorerVote=null, scorersClosed=false, scorersDeadline='';
+let userState = {};
 let groupsData={}, summaryData={}, profileData={}, adminData={};
 let currentFilter='all', currentProfileFilter='all';
 // Filtre par statut dans l'onglet Matchs (indépendant du filtre par groupe)
@@ -631,7 +633,11 @@ function redrawCurrent(){
 }
 
 /* === Application des données reçues dans les variables globales === */
-function applyLight(d){ bonusJokers = d.bonusJokers || []; drawHome(); }
+function applyLight(d){
+  bonusJokers = d.bonusJokers || [];
+  userState = d.userState || {};
+  drawHome();
+}
 let stadesList = [], diffuseursList = [];
 function applyViewData(key, d){
   if (key==='pronosView'){
@@ -781,10 +787,21 @@ function groupStyle(g){ const c=groupTheme(g); return 'style="--group-bg:'+c[0]+
  * VUE HOME
  * ============================================================================= */
 function drawHome(){
-  $('homeSummary').innerHTML = (bonusJokers||[]).map(b=>{
+  const bonusHtml = (bonusJokers||[]).map(b=>{
     const id=String(b.matchId||'');
     return '<div class="card bonusBanner" onclick="goPronosMatch(\''+id+'\')">⭐ <b>Joker bonus actif</b> sur <b>'+cleanText(b.label)+'</b><br><span class="muted">Clique pour aller directement au pronostic — points doublés sur ce match.</span></div>';
   }).join('');
+  // Bouton vers la vue Buteurs uniquement si le user n'a PAS encore voté
+  const voted = bool(userState && userState.hasScorerVote) || !!myScorerVote;
+  const scorerBtn = voted ? '' :
+    '<button class="btn" style="margin-bottom:10px" onclick="show(\'Scorers\')">⚽ Choisir mon meilleur buteur</button>';
+  $('homeSummary').innerHTML = bonusHtml + scorerBtn;
+}
+// bool() local : accepte true / "true" / 1 / "1" / "oui"
+function bool(v){
+  if (v === true || v === 1) return true;
+  const s = String(v == null ? '' : v).toLowerCase().trim();
+  return s === 'true' || s === '1' || s === 'oui' || s === 'yes';
 }
 function goPronosMatch(id){ currentFilter='all'; directPronoMatchId=String(id); show('Pronos'); }
 
@@ -1182,7 +1199,10 @@ function drawRank(){
 function drawRankScorers(){
   const scorers = (buteur && buteur.scorers) || [];
   const ranking = (buteur && buteur.ranking) || (buteur && buteur.votes) || [];
-  $('rankScorerBlock').innerHTML =
+  const voted = bool(userState && userState.hasScorerVote) || !!myScorerVote;
+  const scorerBtn = voted ? '' :
+    '<button class="btn" style="margin-bottom:10px" onclick="show(\'Scorers\')">⚽ Choisir mon meilleur buteur</button>';
+  $('rankScorerBlock').innerHTML = scorerBtn +
     (scorers.length
       ? scorers.slice(0,8).map((s,i)=>
         '<div class="card player"><b>'+(i+1)+'</b><div class="info"><b>'+cleanText(s.nomComplet||s.initialNom||s.nom)+'</b><div class="muted">'+(s.emoji||'')+' '+cleanText(s.equipe||'')+'</div></div><div class="pts">'+s.buts+'</div></div>'
@@ -1233,6 +1253,20 @@ function drawScorers(){
     $('playerPick').innerHTML = '';
     return;
   }
+  // Peuple le select des équipes (idempotent : on ne re-remplit que si nécessaire)
+  const sel = $('teamScorerFilter');
+  if (sel && sel.options.length <= 1 && (equipes||[]).length) {
+    const currentVal = sel.value;
+    const opts = ['<option value="">Toutes les équipes</option>'].concat(
+      (equipes||[]).filter(e=> e.actif !== false)
+        .map(e => cleanText(e.nomAffiche || e.nomSource || ''))
+        .filter(Boolean)
+        .sort()
+        .map(name => '<option value="'+name+'">'+name+'</option>')
+    );
+    sel.innerHTML = opts.join('');
+    if (currentVal) sel.value = currentVal;
+  }
   const my = myScorerVote;
   $('myScorerVote').innerHTML = scorersClosed
     ? '⛔ Vote meilleur buteur fermé'+(scorersDeadline?' depuis le <b>'+scorersDeadline+'</b>':'')+'.<br>'+(my?'Ton choix : <b>'+cleanText(my.joueur)+'</b>':'Aucun choix enregistré.')
@@ -1244,11 +1278,18 @@ function drawScorers(){
   drawPlayers();
 }
 function drawPlayers(){
-  const q=($('playerSearch').value||'').toLowerCase();
+  const q = ($('playerSearch').value || '').toLowerCase().trim();
+  const teamFilter = ($('teamScorerFilter') && $('teamScorerFilter').value || '').toLowerCase().trim();
   if (scorersClosed){ $('playerPick').innerHTML='<div class="card muted">Le vote est fermé.</div>'; return; }
   if (myScorerVote){ $('playerPick').innerHTML='<div class="card muted">Ton choix est déjà validé.</div>'; return; }
   if (!joueurs.length){ $('playerPick').innerHTML='<div class="card muted">Liste joueurs vide. À remplir en juin.</div>'; return; }
-  const list = joueurs.filter(j=> ((j.nomComplet||j.nom||'')+' '+(j.equipe||'')).toLowerCase().indexOf(q)>=0).slice(0,40);
+  // Croise les 2 filtres : texte tapé ET équipe sélectionnée (si une est choisie)
+  const list = joueurs.filter(j => {
+    const eq = String(j.equipe || '').toLowerCase().trim();
+    if (teamFilter && eq !== teamFilter) return false;
+    if (!q) return true;
+    return (String(j.nomComplet || j.nom || '') + ' ' + (j.equipe || '')).toLowerCase().indexOf(q) >= 0;
+  }).slice(0, 40);
   $('playerPick').innerHTML = list.map(j=>
     '<div class="card player '+(selectedPlayer&&String(selectedPlayer.id)===String(j.id)?'selectedPlayer':'')+'" onclick=\'selectedPlayer='+JSON.stringify(j).replace(/'/g,'&#39;')+';drawPlayers()\'>' +
       '<div class="flag">'+(FLAG_BY_CODE(j.codePays)||'⚽')+'</div>' +
@@ -1266,8 +1307,10 @@ function confirmScorerVote(){
     successLabel: 'Choix buteur validé ⚽',
     promise: api('voteButeur', {userId:user.userId, joueurId:selectedPlayer.id}),
     onSuccess: d => {
+      // Mutation locale : marque le vote comme fait pour cacher les boutons immédiatement
+      userState.hasScorerVote = true;
       if (d.scorersView) applyViewData('scorersView', d.scorersView);
-      if (d.light) applyLight(d.light);
+      if (d.light)       applyLight(d.light);
       dataLoaded.rankView = false;
       fetchView('rankView','getRankView',{userId:user.userId});
     }
