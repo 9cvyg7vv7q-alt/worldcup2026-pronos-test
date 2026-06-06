@@ -13,7 +13,6 @@ body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(
 .hide{display:none!important}
 .view{display:none;padding:12px}
 .view.active{display:block}
-
 /* HEADER & NAV */
 .hdr{position:sticky;top:0;z-index:5;background:var(--g);padding:12px 15px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 12px #0008}
 .hdr h1{font-size:1rem;margin:0;color:var(--gold);font-weight:900}
@@ -26,7 +25,6 @@ body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(
 .bnav button{flex:1;background:none;border:0;color:var(--muted);font-size:.64rem;padding:7px 2px 6px;font-weight:800;display:flex;flex-direction:column;gap:2px;align-items:center}
 .bnav button .ico{font-size:1.25rem;line-height:1.25}
 .bnav button.active{color:var(--gold)}
-
 /* COMPOSANTS DE BASE */
 .card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:13px;margin-bottom:10px}
 .hero{text-align:center;background:linear-gradient(135deg,var(--g),#092d1b);padding:22px;border-radius:16px;margin-bottom:12px}
@@ -45,14 +43,12 @@ button:disabled{opacity:.65;cursor:wait}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .bonusBanner{border:1px solid #ffd70060;background:#ffd70010;color:#ffe680;cursor:pointer}
 .summaryHero{background:linear-gradient(135deg,#2e8b5722,#0d2b1d)}
-
 /* LOGIN */
 #login{min-height:100vh;display:flex;justify-content:center;align-items:center;padding:22px;background:linear-gradient(160deg,#0d1117,#0d2b1d)}
 .loginbox{max-width:370px;width:100%}
 .tabs{display:flex;background:var(--bg);border-radius:10px;padding:3px;margin:12px 0}
 .tabs button{flex:1;border:0;background:transparent;color:var(--muted);padding:9px;border-radius:8px;font-weight:900}
 .tabs button.active{background:var(--g2);color:#fff}
-
 /* CARTES DE MATCH */
 .match{background:var(--card);border:1px solid var(--bdr);border-radius:13px;padding:12px;margin-bottom:8px}
 .match.has{border-left:4px solid var(--g2)}
@@ -79,7 +75,6 @@ button:disabled{opacity:.65;cursor:wait}
 .countdown{font-size:.68rem;color:#ffdf80;font-weight:900;margin-top:7px}
 .centeredLine{text-align:center}
 .bonusPill{border:1px solid #ffd70060;background:#ffd70010;border-radius:10px;padding:5px 8px}
-
 /* FILTRES */
 .filters{display:flex;gap:6px;overflow-x:auto;padding:4px 0 8px;margin-bottom:6px}
 .filters button{background:var(--card);border:1px solid var(--bdr);color:var(--muted);border-radius:99px;padding:6px 12px;font-weight:900;font-size:.68rem;white-space:nowrap}
@@ -89,7 +84,6 @@ button:disabled{opacity:.65;cursor:wait}
 .grouped{background:linear-gradient(135deg,var(--group-bg),var(--card) 62%);border-color:var(--group-border)}
 .groupCard{background:linear-gradient(135deg,var(--group-bg),var(--card) 70%);border-color:var(--group-border)}
 .groupTitle{color:var(--group-text);font-weight:900;display:block;margin-bottom:8px}
-
 /* VUE PRONOS */
 .pronosSticky{position:sticky;top:50px;z-index:6;background:var(--bg);margin-left:-12px;margin-right:-12px;padding:8px 12px;box-shadow:0 8px 18px #0006}
 .matchesSticky{position:sticky;top:50px;z-index:6;background:var(--bg);margin-left:-12px;margin-right:-12px;padding:8px 12px 4px;box-shadow:0 8px 18px #0006;display:flex;flex-direction:column;gap:4px}
@@ -106,7 +100,6 @@ button:disabled{opacity:.65;cursor:wait}
 .jokerMiddle span{font-size:1.15rem;line-height:1}
 .jokerMiddle small{font-size:.6rem;color:var(--muted);font-weight:900}
 .pronoBottomHint{display:flex;justify-content:space-between;align-items:center;font-size:.66rem;color:var(--muted);font-weight:800;margin-top:6px}
-
 /* STATS MIROIR */
 .mirrorGrid{display:grid;grid-template-columns:1fr;gap:8px;margin-top:9px}
 @media(min-width:620px){.mirrorGrid{grid-template-columns:1fr 1fr}}
@@ -126,7 +119,6 @@ button:disabled{opacity:.65;cursor:wait}
 .riskCenter{text-align:center}
 .pronoGroups{display:flex;flex-direction:column;gap:7px;margin-top:8px}
 .pronoGroup{border:1px solid #ffffff12;border-radius:12px;padding:9px;background:#ffffff05}
-
 /* CLASSEMENT */
 .rank{display:flex;align-items:center;gap:10px}
 .rank .pos{font-size:1.1rem;min-width:28px;text-align:center}
@@ -143,12 +135,10 @@ button:disabled{opacity:.65;cursor:wait}
 .fun{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .fun .card{margin-bottom:0;text-align:center}
 .fun .em{font-size:1.6rem;margin-bottom:6px}
-
 /* BUTEURS */
 .player{display:flex;align-items:center;gap:9px}
 .player .info{flex:1}
 .selectedPlayer{border:2px solid var(--gold)}
-
 /* PROFIL */
 .profileHero{text-align:center}
 .profileHero h2{margin:6px 0}
@@ -165,7 +155,6 @@ button:disabled{opacity:.65;cursor:wait}
 .profileFilters button.groupFilter{background:var(--group-bg);border-color:var(--group-border);color:var(--txt)}
 .profileFilters button.groupFilter.active{background:var(--group-border);color:#fff}
 .profilePronostic{font-size:.86rem}
-
 /* ADMIN INTÉGRÉ AU PROFIL */
 .adminLabel{font-size:.7rem;color:var(--muted);margin-bottom:4px;font-weight:800}
 .scorerRow{display:grid;grid-template-columns:1fr 1fr 60px 80px 32px;gap:5px;margin-bottom:6px}
@@ -174,7 +163,6 @@ button:disabled{opacity:.65;cursor:wait}
 .adminCoverageFilters{display:flex;gap:6px;overflow-x:auto;margin-bottom:8px;padding-bottom:3px}
 .adminCoverageFilters button{background:var(--card);border:1px solid var(--bdr);color:var(--muted);border-radius:99px;padding:6px 10px;font-weight:900;font-size:.68rem;white-space:nowrap}
 .adminCoverageFilters button.active{background:var(--g2);color:#fff}
-
 /* TABLEAUX POULES — alignement propre */
 table.table{width:100%;border-collapse:collapse;font-size:.68rem;table-layout:fixed}
 table.table th,table.table td{border-bottom:1px solid var(--bdr);padding:5px 2px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -183,13 +171,11 @@ table.table th:first-child,table.table td:first-child{text-align:left;width:28%;
 table.table th:nth-child(2),table.table td:nth-child(2){width:11%;color:var(--gold);font-weight:900}
 table.table th:not(:first-child):not(:nth-child(2)),table.table td:not(:first-child):not(:nth-child(2)){width:8.7%}
 table.table td:last-child,table.table th:last-child{padding-right:5px}
-
 /* MODALE DÉTAIL MATCH */
 .modal{display:none;position:fixed;inset:0;z-index:50;background:#000d;align-items:flex-end}
 .modal.open{display:flex}
 .sheet{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-height:92vh;overflow-y:auto;padding:20px 16px 30px}
 .drag{width:42px;height:5px;background:#444;border-radius:5px;margin:0 auto 10px}
-
 /* TOAST + LOADING */
 .toast{position:fixed;bottom:90px;left:12px;right:12px;background:var(--g);color:#fff;padding:11px;border-radius:10px;text-align:center;font-weight:700;z-index:60;box-shadow:0 8px 20px #0008}
 .toast.ko{background:#7a1f25;color:#ffd6d6}
@@ -215,219 +201,199 @@ table.table td:last-child,table.table th:last-child{padding-right:5px}
 </style>
 </head>
 <body>
-
 <!-- Bootstrap overlay : bloque l'écran pendant le initFull -->
 <div id="bootOverlay" class="bootOverlay hide">
-  <div class="bootSpinner"></div>
-  <h2 class="bootTitle">🏆 CdM 2026 Pronos</h2>
-  <div id="bootLabel" class="bootLabel">Chargement de l'application…</div>
-  <div class="bootSub">Ne ferme pas la page, les données arrivent…</div>
+  <div class="bootSpinner"></div>
+  <h2 class="bootTitle">🏆 CdM 2026 Pronos</h2>
+  <div id="bootLabel" class="bootLabel">Chargement de l'application…</div>
+  <div class="bootSub">Ne ferme pas la page, les données arrivent…</div>
 </div>
-
 <!-- ÉCRAN DE CONNEXION -->
 <div id="login">
-  <div class="loginbox">
-    <div style="text-align:center;margin-bottom:14px">
-      <div style="font-size:2.6rem">🏆</div>
-      <h1 style="margin:6px 0;color:var(--gold)">CdM 2026 Pronos</h1>
-      <div class="muted">Identifie-toi pour pronostiquer</div>
-    </div>
-    <div class="tabs">
-      <button id="tabLogin" class="active" onclick="setAuthMode('login')">Connexion</button>
-      <button id="tabRegister"             onclick="setAuthMode('register')">Inscription</button>
-    </div>
-    <input id="authPseudo" placeholder="Pseudo"><br><br>
-    <input id="authPin" placeholder="PIN (4+ chiffres)" type="password" inputmode="numeric"><br><br>
-    <button id="authBtn" class="btn" onclick="doAuth()">Se connecter</button>
-    <div id="authErr" class="small" style="margin-top:8px;text-align:center"></div>
-  </div>
+  <div class="loginbox">
+    <div style="text-align:center;margin-bottom:14px">
+      <div style="font-size:2.6rem">🏆</div>
+      <h1 style="margin:6px 0;color:var(--gold)">CdM 2026 Pronos</h1>
+      <div class="muted">Identifie-toi pour pronostiquer</div>
+    </div>
+    <div class="tabs">
+      <button id="tabLogin" class="active" onclick="setAuthMode('login')">Connexion</button>
+      <button id="tabRegister"             onclick="setAuthMode('register')">Inscription</button>
+    </div>
+    <input id="authPseudo" placeholder="Pseudo"><br>
+    <input id="authPin" placeholder="PIN (4+ chiffres)" type="password" inputmode="numeric"><br>
+    <button id="authBtn" class="btn" onclick="doAuth()">Se connecter</button>
+    <div id="authErr" class="small" style="margin-top:8px;text-align:center"></div>
+  </div>
 </div>
-
 <!-- APPLICATION PRINCIPALE -->
 <div id="app" class="hide">
-
-  <div class="hdr">
-    <h1>🏆 CdM 2026 Pronos</h1>
-    <div>
-      <span class="badge" id="uBadge"></span>
-      <span class="badge admin hide" id="aBadge">ADMIN</span>
-      <button type="button" id="logoutTopBtn" class="topLogoutBtn" onclick="logout()">Déconnexion</button>
-    </div>
-  </div>
-
-  <div id="globalLoading" class="globalLoading hide">Chargement…</div>
-
-  <!-- VUE ACCUEIL -->
-  <div id="vHome" class="view active">
-    <div class="hero">
-      <div style="font-size:2.5rem">🏆</div>
-      <h2>Pronostics Coupe du Monde 2026</h2>
-      <div class="muted">Pronostique les scores, utilise tes jokers et suis le classement.</div>
-    </div>
-    <div id="homeSummary"></div>
-    <div class="sec">Règles</div>
-    <div class="card">🎯 <b>Score exact</b> : 3 points<br><span class="muted">Le score pronostiqué correspond exactement au résultat final.</span></div>
-    <div class="card">✅ <b>Bon résultat</b> : 1 point<br><span class="muted">Bon vainqueur ou bon match nul, sans le score exact.</span></div>
-    <div class="card">⭐ <b>Joker</b> : points ×2<br><span class="muted">3 jokers disponibles sur l'ensemble de la compétition.</span></div>
-    <div class="card">⚽ <b>Meilleur buteur</b> : 0 point<br><span class="muted">Pari secondaire pour suivre les buteurs et les choix des participants.</span></div>
-    <div class="card notice"><b>⏱️ Temps réglementaire</b><br><span class="muted">Important : pour les matchs à élimination directe, seul le score à la fin du temps réglementaire est pris en compte. Les prolongations et tirs au but ne sont pas pris en compte.</span></div>
-    <div class="card">🛠️ <b>Correction admin</b><br><span class="muted">En cas de grosse erreur de saisie sur un pronostic, contactez l'admin avant le début du match.</span></div>
-    <div class="card">😈 <b>Pari contre-courant</b><br><span class="muted">Certains paris vraiment risqués peuvent rapporter un bonus : +1 sur bon résultat, +2 sur score exact. Le bonus n'est jamais doublé par les jokers.</span></div>
-    <div class="card">
-      🏆 <b>Répartition de la cagnotte</b><br>
-      <span class="muted">La dotation totale est redistribuée selon les performances finales :</span><br>
-      <ul style="margin:8px 0;padding-left:20px;font-size:.8rem;line-height:1.7">
-        <li>🥇 <b>1er :</b> 50% du montant total</li>
-        <li>🥈 <b>2ème :</b> 25% du montant total</li>
-        <li>🥉 <b>3ème :</b> 12,5% du montant total</li>
-        <li>⚽ <b>Meilleur buteur :</b> 12,5% du montant total</li>
-      </ul>
-      <span class="muted" style="font-size:.7rem"><i>Note : en cas d'égalité sur le buteur, le mieux classé au général l'emporte.</i></span>
-    </div>
-    <div class="card">🔥 <b>Badges de match</b><br><span class="muted">"Match risqué" signale un match avec votes partagés, cotes serrées ou beaucoup de jokers. "Pari outsider" est provisoire avant le résultat.</span></div>
-  </div>
-
-  <div id="vPronos" class="view">
-    <div class="pronosSticky"><div class="filters" id="pronosFilters"></div></div>
-    <div class="matchSelectWrap"><select id="pronoMatchSelect" onchange="selectPronoMatch(this.value)"></select></div>
-    <div id="pronoSwipeBox"><div class="viewLoading">Chargement…</div></div>
-  </div>
-
-  <div id="vMatches" class="view">
-    <div class="matchesSticky">
-      <div class="filters" id="matchesStatusFilters"></div>
-      <div class="filters" id="matchesFilters"></div>
-    </div>
-    <div id="matchList"><div class="viewLoading">Chargement…</div></div>
-  </div>
-
-  <div id="vGroups" class="view">
-    <div class="sec">Classement des poules</div>
-    <div id="groupsBox"><div class="viewLoading">Chargement…</div></div>
-  </div>
-
-  <div id="vSummary" class="view">
-    <div class="sec">Résumé des 3 jours</div>
-    <div id="summary3Days"><div class="viewLoading">Chargement…</div></div>
-  </div>
-
-  <div id="vRank" class="view">
-    <div class="rankTabs">
-      <button class="active" data-rank="records"   onclick="showRankSection('records',this)">Records</button>
-      <button data-rank="classement"               onclick="showRankSection('classement',this)">Classement</button>
-      <button data-rank="buteurs"                  onclick="showRankSection('buteurs',this)">Buteurs</button>
-    </div>
-    <div id="rankRecords"><div class="sec">Records du tournoi</div><div class="fun" id="funBox"><div class="viewLoading">Chargement…</div></div></div>
-    <div id="rankClassement" class="hide"><div class="sec">Classement pronostiqueurs</div><div id="rankList"></div></div>
-    <div id="rankButeurs" class="hide"><div class="sec">Suivi meilleur buteur</div><div id="rankScorerBlock"></div></div>
-  </div>
-
-  <div id="vScorers" class="view">
-    <div class="sec">Mon pari meilleur buteur</div>
-    <div class="card" id="myScorerVote"><div class="viewLoading">Chargement…</div></div>
-    <select id="teamScorerFilter" onchange="drawPlayers()" style="margin-bottom:8px"><option value="">Toutes les équipes</option></select>
-    <input id="playerSearch" placeholder="Rechercher un joueur…" oninput="drawPlayers()"><br><br>
-    <div id="playerPick"></div>
-    <button class="btn" id="btnVoteScorer" onclick="confirmScorerVote()">Valider mon choix de meilleur buteur</button>
-    <div id="scorerMsg" class="small" style="margin-top:8px"></div>
-  </div>
-
-  <div id="vProfile" class="view"><div class="viewLoading">Chargement…</div></div>
-
-  <div class="bnav" id="nav">
-    <button data-view="Home"    class="active" onclick="show('Home',this)"   ><span class="ico">🏠</span><span>Accueil</span></button>
-    <button data-view="Summary"                onclick="show('Summary',this)"><span class="ico">🧾</span><span>Résumé</span></button>
-    <button data-view="Groups"                 onclick="show('Groups',this)" ><span class="ico">📊</span><span>Poules</span></button>
-    <button data-view="Pronos"                 onclick="show('Pronos',this)" ><span class="ico">⚽</span><span>Pronos</span></button>
-    <button data-view="Matches"                onclick="show('Matches',this)"><span class="ico">📅</span><span>Matchs</span></button>
-    <button data-view="Rank"                   onclick="show('Rank',this)"   ><span class="ico">🏅</span><span>Classement</span></button>
-    <button data-view="Profile"                onclick="show('Profile',this)"><span class="ico">👤</span><span>Profil</span></button>
-  </div>
+  <div class="hdr">
+    <h1>🏆 CdM 2026 Pronos</h1>
+    <div>
+      <span class="badge" id="uBadge"></span>
+      <span class="badge admin hide" id="aBadge">ADMIN</span>
+      <button type="button" id="logoutTopBtn" class="topLogoutBtn" onclick="logout()">Déconnexion</button>
+    </div>
+  </div>
+  <div id="globalLoading" class="globalLoading hide">Chargement…</div>
+  <!-- VUE ACCUEIL -->
+  <div id="vHome" class="view active">
+    <div class="hero">
+      <div style="font-size:2.5rem">🏆</div>
+      <h2>Pronostics Coupe du Monde 2026</h2>
+      <div class="muted">Pronostique les scores, utilise tes jokers et suis le classement.</div>
+    </div>
+    <div id="homeSummary"></div>
+    <div class="sec">Règles</div>
+    <div class="card">🎯 <b>Score exact</b> : 3 points<br><span class="muted">Le score pronostiqué correspond exactement au résultat final.</span></div>
+    <div class="card">✅ <b>Bon résultat</b> : 1 point<br><span class="muted">Bon vainqueur ou bon match nul, sans le score exact.</span></div>
+    <div class="card">⭐ <b>Joker</b> : points ×2<br><span class="muted">3 jokers disponibles sur l'ensemble de la compétition.</span></div>
+    <div class="card">⚽ <b>Meilleur buteur</b> : 0 point<br><span class="muted">Pari secondaire pour suivre les buteurs et les choix des participants.</span></div>
+    <div class="card notice"><b>⏱️ Temps réglementaire</b><br><span class="muted">Important : pour les matchs à élimination directe, seul le score à la fin du temps réglementaire est pris en compte. Les prolongations et tirs au but ne sont pas pris en compte.</span></div>
+    <div class="card">🛠️ <b>Correction admin</b><br><span class="muted">En cas de grosse erreur de saisie sur un pronostic, contactez l'admin avant le début du match.</span></div>
+    <div class="card">😈 <b>Pari contre-courant</b><br><span class="muted">Certains paris vraiment risqués peuvent rapporter un bonus : +1 sur bon résultat, +2 sur score exact. Le bonus n'est jamais doublé par les jokers.</span></div>
+    <div class="card">
+      🏆 <b>Répartition de la cagnotte</b>
+      <span class="muted">La dotation totale est redistribuée selon les performances finales :</span>
+      <ul style="margin:8px 0;padding-left:20px;font-size:.8rem;line-height:1.7">
+        <li>🥇 <b>1er :</b> 50% du montant total</li>
+        <li>🥈 <b>2ème :</b> 25% du montant total</li>
+        <li>🥉 <b>3ème :</b> 12,5% du montant total</li>
+        <li>⚽ <b>Meilleur buteur :</b> 12,5% du montant total</li>
+      </ul>
+      <span class="muted" style="font-size:.7rem"><i>Note : en cas d'égalité sur le buteur, le mieux classé au général l'emporte.</i></span>
+    </div>
+    <div class="card">🔥 <b>Badges de match</b><br><span class="muted">"Match risqué" signale un match avec votes partagés, cotes serrées ou beaucoup de jokers. "Pari outsider" est provisoire avant le résultat.</span></div>
+  </div>
+  <div id="vPronos" class="view">
+    <div class="pronosSticky"><div class="filters" id="pronosFilters"></div></div>
+    <div class="matchSelectWrap"><select id="pronoMatchSelect" onchange="selectPronoMatch(this.value)"></select></div>
+    <div id="pronoSwipeBox"><div class="viewLoading">Chargement…</div></div>
+  </div>
+  <div id="vMatches" class="view">
+    <div class="matchesSticky">
+      <div class="filters" id="matchesStatusFilters"></div>
+      <div class="filters" id="matchesFilters"></div>
+    </div>
+    <div id="matchList"><div class="viewLoading">Chargement…</div></div>
+  </div>
+  <div id="vGroups" class="view">
+    <div class="sec">Classement des poules</div>
+    <div id="groupsBox"><div class="viewLoading">Chargement…</div></div>
+  </div>
+  <div id="vSummary" class="view">
+    <div class="sec">Résumé des 3 jours</div>
+    <div id="summary3Days"><div class="viewLoading">Chargement…</div></div>
+  </div>
+  <div id="vRank" class="view">
+    <div class="rankTabs">
+      <button class="active" data-rank="records"   onclick="showRankSection('records',this)">Records</button>
+      <button data-rank="classement"               onclick="showRankSection('classement',this)">Classement</button>
+      <button data-rank="buteurs"                  onclick="showRankSection('buteurs',this)">Buteurs</button>
+    </div>
+    <div id="rankRecords"><div class="sec">Records du tournoi</div><div class="fun" id="funBox"><div class="viewLoading">Chargement…</div></div></div>
+    <div id="rankClassement" class="hide"><div class="sec">Classement pronostiqueurs</div><div id="rankList"></div></div>
+    <div id="rankButeurs" class="hide"><div class="sec">Suivi meilleur buteur</div><div id="rankScorerBlock"></div></div>
+  </div>
+  <div id="vScorers" class="view">
+    <div class="sec">Mon pari meilleur buteur</div>
+    <div class="card" id="myScorerVote"><div class="viewLoading">Chargement…</div></div>
+    <select id="teamScorerFilter" onchange="drawPlayers()" style="margin-bottom:8px"><option value="">Toutes les équipes</option></select>
+    <input id="playerSearch" placeholder="Rechercher un joueur…" oninput="drawPlayers()"><br>
+    <div id="playerPick"></div>
+    <button class="btn" id="btnVoteScorer" onclick="confirmScorerVote()">Valider mon choix de meilleur buteur</button>
+    <div id="scorerMsg" class="small" style="margin-top:8px"></div>
+  </div>
+  <div id="vProfile" class="view"><div class="viewLoading">Chargement…</div></div>
+  <div class="bnav" id="nav">
+    <button data-view="Home"    class="active" onclick="show('Home',this)"   ><span class="ico">🏠</span><span>Accueil</span></button>
+    <button data-view="Summary"                onclick="show('Summary',this)"><span class="ico">🧾</span><span>Résumé</span></button>
+    <button data-view="Groups"                 onclick="show('Groups',this)" ><span class="ico">📊</span><span>Poules</span></button>
+    <button data-view="Pronos"                 onclick="show('Pronos',this)" ><span class="ico">⚽</span><span>Pronos</span></button>
+    <button data-view="Matches"                onclick="show('Matches',this)"><span class="ico">📅</span><span>Matchs</span></button>
+    <button data-view="Rank"                   onclick="show('Rank',this)"   ><span class="ico">🏅</span><span>Classement</span></button>
+    <button data-view="Profile"                onclick="show('Profile',this)"><span class="ico">👤</span><span>Profil</span></button>
+  </div>
 </div>
-
 <div class="modal" id="matchModal"><div class="sheet"><div class="drag"></div><div id="matchModalContent"></div></div></div>
 <div id="actionOverlay" class="actionOverlay">
-  <div id="actionSpinner" class="actionSpinner"></div>
-  <div id="actionLabel" class="actionLabel">Validation en cours…</div>
+  <div id="actionSpinner" class="actionSpinner"></div>
+  <div id="actionLabel" class="actionLabel">Validation en cours…</div>
 </div>
 <div class="toast hide" id="toast"></div>
-
 <script>
 /* =============================================================================
- * CONFIG + STRATÉGIE DE CHARGEMENT
- *
- * - initLight au démarrage : payload minimal (home, userState, bonusJokers)
- * - Préchargement parallèle des autres vues juste après → tout est prêt quand
- *   l'utilisateur navigue, pas de lag
- * - Cache localStorage TTL 5 min pour le rechargement de la page
- * - INVALIDATION IMMÉDIATE après chaque action utilisateur ou admin : on
- *   reload les vues affectées tout de suite, l'utilisateur voit le changement.
- * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
- *   message vert/rouge inline + toast de confirmation
- * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycby_CURf261T1bnDROGbqZu63dRkDoUT7efVqPq9RruF3JYe_zgiygUF_9-lgepzK1H5/exec";
-
-const MAX_JOKERS     = 3;
-const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
-
+ * CONFIG + STRATÉGIE DE CHARGEMENT
+ *
+ * - initLight au démarrage : payload minimal (home, userState, bonusJokers)
+ * - Préchargement parallèle des autres vues juste après → tout est prêt quand
+ *   l'utilisateur navigue, pas de lag
+ * - Cache localStorage TTL 5 min pour le rechargement de la page
+ * - INVALIDATION IMMÉDIATE après chaque action utilisateur ou admin : on
+ *   reload les vues affectées tout de suite, l'utilisateur voit le changement.
+ * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
+ *   message vert/rouge inline + toast de confirmation
+ * ============================================================================= */
+const API_URL = "https://script.google.com/macros/s/AKfycbz8hNUCihdSP5cPLzyDRQthBBdG1QtHoU6CoPRGbFtLXED74W2SU3CsnpaGB9cEuBU71Q/exec";
+const MAX_JOKERS     = 3;
+const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
 // Format date français : "12/06/2026" → "Ven. 12 juin 2026"
 const MONTHS_FR = ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
 const DAYS_FR = ['Dim.','Lun.','Mar.','Mer.','Jeu.','Ven.','Sam.'];
 // Parse robuste : accepte "12/06/2026", "2026-06-12", "2026-06-12T00:00:00.000Z", ou Date
 function parseDateAny(v){
-  if (!v) return null;
-  if (v instanceof Date) return isNaN(v.getTime()) ? null : v;
-  const s = String(v).trim();
-  // Format français JJ/MM/AAAA
-  if (s.indexOf('/') >= 0) {
-    const p = s.split('/');
-    if (p.length === 3) {
-      const d = new Date(+p[2], +p[1]-1, +p[0]);
-      return isNaN(d.getTime()) ? null : d;
-    }
-  }
-  // Format ISO YYYY-MM-DD ou complet YYYY-MM-DDTHH:MM:SS...
-  if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
-    const d = new Date(s);
-    return isNaN(d.getTime()) ? null : d;
-  }
-  return null;
+  if (!v) return null;
+  if (v instanceof Date) return isNaN(v.getTime()) ? null : v;
+  const s = String(v).trim();
+  // Format français JJ/MM/AAAA
+  if (s.indexOf('/') >= 0) {
+    const p = s.split('/');
+    if (p.length === 3) {
+      const d = new Date(+p[2], +p[1]-1, +p[0]);
+      return isNaN(d.getTime()) ? null : d;
+    }
+  }
+  // Format ISO YYYY-MM-DD ou complet YYYY-MM-DDTHH:MM:SS...
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  return null;
 }
 function fmtDateFR(dFR){
-  const d = parseDateAny(dFR);
-  if (!d) return dFR || '';
-  return DAYS_FR[d.getDay()]+' '+d.getDate()+' '+MONTHS_FR[d.getMonth()]+' '+d.getFullYear();
+  const d = parseDateAny(dFR);
+  if (!d) return dFR || '';
+  return DAYS_FR[d.getDay()]+' '+d.getDate()+' '+MONTHS_FR[d.getMonth()]+' '+d.getFullYear();
 }
 function fmtDateShort(dFR){
-  const d = parseDateAny(dFR);
-  if (!d) return dFR || '';
-  return d.getDate()+' '+MONTHS_FR[d.getMonth()];
+  const d = parseDateAny(dFR);
+  if (!d) return dFR || '';
+  return d.getDate()+' '+MONTHS_FR[d.getMonth()];
 }
 function fmtHeure(hFR){
-  if (!hFR) return '';
-  const s = String(hFR).trim();
-  // Format direct HH:MM ou HH:MM:SS
-  if (/^\d{1,2}:\d{2}/.test(s)) return s.substring(0, 5);
-  // Format ISO datetime ou Date → extraire heure locale
-  const d = parseDateAny(s) || (s.indexOf('T') >= 0 ? new Date(s) : null);
-  if (d && !isNaN(d.getTime())) {
-    const hh = String(d.getHours()).padStart(2,'0');
-    const mm = String(d.getMinutes()).padStart(2,'0');
-    return hh+':'+mm;
-  }
-  return s;
+  if (!hFR) return '';
+  const s = String(hFR).trim();
+  // Format direct HH:MM ou HH:MM:SS
+  if (/^\d{1,2}:\d{2}/.test(s)) return s.substring(0, 5);
+  // Format ISO datetime ou Date → extraire heure locale
+  const d = parseDateAny(s) || (s.indexOf('T') >= 0 ? new Date(s) : null);
+  if (d && !isNaN(d.getTime())) {
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mm = String(d.getMinutes()).padStart(2,'0');
+    return hh+':'+mm;
+  }
+  return s;
 }
 // Statut affiché d'un match : "À venir" / "En cours" / "Terminé"
 function matchStatusBadge(m){
-  if (String(m.status)==='FINISHED') return '<span class="pill finishedP">Terminé</span>';
-  if (String(m.status)==='LOCKED')   return '<span class="pill lockedP">En cours</span>';
-  return '<span class="pill open">À venir</span>';
+  if (String(m.status)==='FINISHED') return '<span class="pill finishedP">Terminé</span>';
+  if (String(m.status)==='LOCKED')   return '<span class="pill lockedP">En cours</span>';
+  return '<span class="pill open">À venir</span>';
 }
-
 // État "données chargées" : tant qu'on n'a pas reçu la 1re réponse + cache vide,
 // les vues affichent "Chargement..." au lieu de "aucun ..."
 const dataLoaded = { pronosView:false, rankView:false, groupsView:false, summaryView:false, profileView:false, scorersView:false, adminView:false };
-
 let authMode='login', user=null;
 let matches=[], pronos={}, pronosticStats={}, butsMatch={};
 let classement=[], fun=[], buteur=null, bonusJokers=[], equipes=[];
@@ -442,183 +408,201 @@ let activeRankSection='records';
 let currentPronoIndex=0, directPronoMatchId=null;
 let selectedPlayer=null;
 const rankCharts = {};
-
 // PAS DE CACHE LOCALSTORAGE — chaque navigation fait un fetch frais.
 // Les caches BD côté backend (CACHE_*) garantissent une réponse en ~300ms.
 // État en mémoire de la vie de la page seulement.
 const viewLoading = {}; // key → Promise en cours, ou null
+// --- OPTIM CHARGEMENT : hashs de version des vues (fournis par initLightSmart) ---
+// Le backend précalcule chaque vue toutes les 15 min. On garde le hash de chaque vue
+// qu'on a déjà téléchargée ; si le backend renvoie le même hash, on NE retélécharge PAS.
+// Conséquence : changer d'onglet quand rien n'a bougé = 0 transfert utile, affichage instantané.
+let viewHashes = {};   // clé serveur ('pronos','rank','groups','summary','scorers','profile') → hash connu
+// Correspondance clé front (vue UI) → clé serveur de la couche VIEW précalculée
+const VIEW_SERVER_KEY = {
+  pronosView:'pronos', rankView:'rank', groupsView:'groups',
+  summaryView:'summary', scorersView:'scorers', profileView:'profile'
+};
 function dropLocalCache(){ try{ localStorage.removeItem('cdmCache_v2'); }catch(e){} }
-
 function $(id){ return document.getElementById(id); }
 function api(action, params){
-  params = params || {};
-  let url = API_URL + '?action=' + encodeURIComponent(action);
-  Object.keys(params).forEach(k=>{ url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(params[k]); });
-  return fetch(url).then(r=>r.json()).then(j=>{ if(!j.ok) throw new Error(j.error || 'Erreur API'); return j.data; });
+  params = params || {};
+  let url = API_URL + '?action=' + encodeURIComponent(action);
+  Object.keys(params).forEach(k=>{ url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(params[k]); });
+  return fetch(url).then(r=>r.json()).then(j=>{ if(!j.ok) throw new Error(j.error || 'Erreur API'); return j.data; });
 }
 function toast(t, isError){
-  const e=$('toast'); e.textContent=t; e.classList.remove('hide','ko');
-  if (isError) e.classList.add('ko');
-  clearTimeout(toast._tid); toast._tid=setTimeout(()=>e.classList.add('hide'),2500);
+  const e=$('toast'); e.textContent=t; e.classList.remove('hide','ko');
+  if (isError) e.classList.add('ko');
+  clearTimeout(toast._tid); toast._tid=setTimeout(()=>e.classList.add('hide'),2500);
 }
 function cleanText(v){ return String(v==null?'':v).replace(/[\uFFFD]/g,''); }
 function pct(n,t){ return t?Math.round(n*100/t):0; }
 function pct2(n){ n=Number(n)||0; return Math.max(0,Math.min(100,Math.round(n))); }
-
 /* ============================================================
- * GESTION DES ACTIONS UTILISATEUR
- * ============================================================
- * Helper unique : runAction(label, successLabel, promise, onSuccess)
- *   - Affiche un overlay gros + spinner + label "Validation en cours…"
- *   - Désactive le bouton pendant l'action
- *   - À la résolution : remplace par "✓ {successLabel}" pendant ~700ms puis ferme
- *   - À l'échec : remplace par "✕ {message}" pendant ~1500ms
- *   - onSuccess(data) est appelé entre les deux pour rafraîchir les données
- * ============================================================ */
+ * GESTION DES ACTIONS UTILISATEUR
+ * ============================================================
+ * Helper unique : runAction(label, successLabel, promise, onSuccess)
+ *   - Affiche un overlay gros + spinner + label "Validation en cours…"
+ *   - Désactive le bouton pendant l'action
+ *   - À la résolution : remplace par "✓ {successLabel}" pendant ~700ms puis ferme
+ *   - À l'échec : remplace par "✕ {message}" pendant ~1500ms
+ *   - onSuccess(data) est appelé entre les deux pour rafraîchir les données
+ * ============================================================ */
 let _globalLoadingCount = 0;
 function setLoading(on, msg){
-  if (on) _globalLoadingCount++; else _globalLoadingCount = Math.max(0, _globalLoadingCount-1);
-  const el = $('globalLoading');
-  if (_globalLoadingCount > 0){ el.textContent = (msg || 'Chargement…') + ' '; el.classList.remove('hide'); }
-  else el.classList.add('hide');
+  if (on) _globalLoadingCount++; else _globalLoadingCount = Math.max(0, _globalLoadingCount-1);
+  const el = $('globalLoading');
+  if (_globalLoadingCount > 0){ el.textContent = (msg || 'Chargement…') + ' '; el.classList.remove('hide'); }
+  else el.classList.add('hide');
 }
 function openActionOverlay(label){
-  $('actionLabel').textContent = label || 'Validation en cours…';
-  $('actionSpinner').className = 'actionSpinner';
-  $('actionSpinner').textContent = '';
-  $('actionOverlay').classList.add('show');
+  $('actionLabel').textContent = label || 'Validation en cours…';
+  $('actionSpinner').className = 'actionSpinner';
+  $('actionSpinner').textContent = '';
+  $('actionOverlay').classList.add('show');
 }
 function closeActionOverlay(){ $('actionOverlay').classList.remove('show'); }
 function openBootOverlay(label){ $('bootLabel').textContent = label || 'Chargement de l\'application…'; $('bootOverlay').classList.remove('hide'); }
 function closeBootOverlay(){ $('bootOverlay').classList.add('hide'); }
 function showActionSuccess(label){
-  $('actionSpinner').className = 'actionOk';
-  $('actionSpinner').textContent = '✓';
-  $('actionLabel').textContent = label || 'OK';
+  $('actionSpinner').className = 'actionOk';
+  $('actionSpinner').textContent = '✓';
+  $('actionLabel').textContent = label || 'OK';
 }
 function showActionError(label){
-  $('actionSpinner').className = 'actionKo';
-  $('actionSpinner').textContent = '✕';
-  $('actionLabel').textContent = label || 'Erreur';
+  $('actionSpinner').className = 'actionKo';
+  $('actionSpinner').textContent = '✕';
+  $('actionLabel').textContent = label || 'Erreur';
 }
 function buttonLoading(btn, on, label){
-  if (!btn) return;
-  if (on){ btn.dataset.oldText = btn.textContent; btn.disabled = true; btn.textContent = (label||'En cours…'); }
-  else { btn.disabled = false; if (btn.dataset.oldText) btn.textContent = btn.dataset.oldText; }
+  if (!btn) return;
+  if (on){ btn.dataset.oldText = btn.textContent; btn.disabled = true; btn.textContent = (label||'En cours…'); }
+  else { btn.disabled = false; if (btn.dataset.oldText) btn.textContent = btn.dataset.oldText; }
 }
 function formMsg(id, msg, ok){
-  const el = $(id); if (!el) return;
-  el.innerHTML = ok ? '<span class="ok">'+msg+'</span>' : '<span class="ko">'+msg+'</span>';
+  const el = $(id); if (!el) return;
+  el.innerHTML = ok ? '<span class="ok">'+msg+'</span>' : '<span class="ko">'+msg+'</span>';
 }
 // runAction : helper UNIQUE pour toutes les actions utilisateur/admin
 // - inProgressLabel : texte montré pendant l'attente API ("Enregistrement du pronostic…")
-// - successLabel    : texte montré 700ms à la réussite ("Prono validé")
-// - promise         : la promesse de l'appel API
-// - onSuccess       : callback (data) → rafraîchit les vues impactées et redessine
-// - btn             : (optionnel) bouton à désactiver pendant l'action
+// - successLabel    : texte montré 700ms à la réussite ("Prono validé")
+// - promise         : la promesse de l'appel API
+// - onSuccess       : callback (data) → rafraîchit les vues impactées et redessine
+// - btn             : (optionnel) bouton à désactiver pendant l'action
 // Retourne une promesse qui résout APRÈS la fermeture de l'overlay et le redraw.
 function runAction(opts){
-  const { inProgressLabel, successLabel, promise, onSuccess, btn } = opts;
-  buttonLoading(btn, true, 'En cours…');
-  openActionOverlay(inProgressLabel || 'Validation en cours…');
-  return Promise.resolve(promise).then(data => {
-    if (data && data.error){
-      showActionError(data.error);
-      return new Promise(r => setTimeout(()=>{ closeActionOverlay(); buttonLoading(btn, false); r(null); }, 1500));
-    }
-    if (onSuccess) {
-      try { onSuccess(data); } catch(e){ console.error(e); }
-    }
-    showActionSuccess(successLabel || 'OK');
-    return new Promise(r => setTimeout(()=>{
-      closeActionOverlay();
-      buttonLoading(btn, false);
-      redrawCurrent();
-      r(data);
-    }, 700));
-  }).catch(err => {
-    showActionError(err.message || 'Erreur');
-    return new Promise(r => setTimeout(()=>{ closeActionOverlay(); buttonLoading(btn, false); r(null); }, 1500));
-  });
+  const { inProgressLabel, successLabel, promise, onSuccess, btn } = opts;
+  buttonLoading(btn, true, 'En cours…');
+  openActionOverlay(inProgressLabel || 'Validation en cours…');
+  return Promise.resolve(promise).then(data => {
+    if (data && data.error){
+      showActionError(data.error);
+      return new Promise(r => setTimeout(()=>{ closeActionOverlay(); buttonLoading(btn, false); r(null); }, 1500));
+    }
+    if (onSuccess) {
+      try { onSuccess(data); } catch(e){ console.error(e); }
+    }
+    showActionSuccess(successLabel || 'OK');
+    return new Promise(r => setTimeout(()=>{
+      closeActionOverlay();
+      buttonLoading(btn, false);
+      redrawCurrent();
+      r(data);
+    }, 700));
+  }).catch(err => {
+    showActionError(err.message || 'Erreur');
+    return new Promise(r => setTimeout(()=>{ closeActionOverlay(); buttonLoading(btn, false); r(null); }, 1500));
+  });
 }
 // Compatibilité : withAction conservé mais redirige vers runAction (pour code existant)
 function withAction(btn, msg, promise){
-  setLoading(true, msg);
-  buttonLoading(btn, true, 'En cours…');
-  return Promise.resolve(promise).finally(()=>{ setLoading(false); buttonLoading(btn, false); });
+  setLoading(true, msg);
+  buttonLoading(btn, true, 'En cours…');
+  return Promise.resolve(promise).finally(()=>{ setLoading(false); buttonLoading(btn, false); });
 }
-
 /* =============================================================================
- * AUTH
- * ============================================================================= */
+ * AUTH
+ * ============================================================================= */
 function setAuthMode(m){
-  authMode=m;
-  $('tabLogin').classList.toggle('active', m==='login');
-  $('tabRegister').classList.toggle('active', m==='register');
-  $('authBtn').textContent = m==='login' ? 'Se connecter' : 'Créer mon compte';
-  $('authErr').textContent='';
+  authMode=m;
+  $('tabLogin').classList.toggle('active', m==='login');
+  $('tabRegister').classList.toggle('active', m==='register');
+  $('authBtn').textContent = m==='login' ? 'Se connecter' : 'Créer mon compte';
+  $('authErr').textContent='';
 }
 function doAuth(){
-  const pseudo=$('authPseudo').value.trim(), pin=$('authPin').value.trim();
-  const btn = $('authBtn');
-  withAction(btn, authMode==='login'?'Connexion…':'Création…',
-    api(authMode,{pseudo,pin})
-  ).then(d=>{
-    if (d && d.error){ $('authErr').innerHTML='<span class="ko">'+d.error+'</span>'; return; }
-    user=d; localStorage.setItem('cdmUser',JSON.stringify(user)); dropLocalCache(); startApp();
-  }).catch(e=> $('authErr').innerHTML='<span class="ko">'+e.message+'</span>');
+  const pseudo=$('authPseudo').value.trim(), pin=$('authPin').value.trim();
+  const btn = $('authBtn');
+  withAction(btn, authMode==='login'?'Connexion…':'Création…',
+    api(authMode,{pseudo,pin})
+  ).then(d=>{
+    if (d && d.error){ $('authErr').innerHTML='<span class="ko">'+d.error+'</span>'; return; }
+    user=d; localStorage.setItem('cdmUser',JSON.stringify(user)); dropLocalCache(); startApp();
+  }).catch(e=> $('authErr').innerHTML='<span class="ko">'+e.message+'</span>');
 }
 function logout(){ localStorage.removeItem('cdmUser'); localStorage.removeItem(PERSIST_KEY); location.reload(); }
-
 /* =============================================================================
- * DÉMARRAGE — initLight rapide + précharge silencieuse en parallèle
- * ============================================================================= */
+ * DÉMARRAGE — initLight rapide + précharge silencieuse en parallèle
+ * ============================================================================= */
 function startApp(){
-  $('login').classList.add('hide');
-  $('app').classList.remove('hide');
-  $('uBadge').textContent = user.pseudo;
-  $('aBadge').classList.toggle('hide', !user.isAdmin);
-  dropLocalCache();
-
-  // OVERLAY BLOQUANT pendant initLight (ultra-rapide, ~300ms).
-  openBootOverlay('Connexion…');
-
-  const u = user.userId;
-  api('initLight', {userId:u}).then(d=>{
+  $('login').classList.add('hide');
+  $('app').classList.remove('hide');
+  $('uBadge').textContent = user.pseudo;
+  $('aBadge').classList.toggle('hide', !user.isAdmin);
+  dropLocalCache();
+  // OVERLAY BLOQUANT pendant initLight (ultra-rapide, ~300ms).
+  openBootOverlay('Connexion…');
+  const u = user.userId;
+  api('initLightSmart', {userId:u}).then(d=>{
+    viewHashes = d.viewHashes || {};
     applyLight(d);
-    show('Home');           // Accueil affiché IMMÉDIATEMENT
-    closeBootOverlay();     // Plus de blocage
-    prefetchPriorityViews(); // Chargement séquentiel en arrière-plan
-  }).catch(e=>{
-    toast('Erreur de chargement : '+e.message, true);
-    show('Home');
-    closeBootOverlay();
-  });
-
-  setInterval(()=>{ if ($('vMatches').classList.contains('active')) drawMatches(); }, 60000);
+    show('Home');           // Accueil affiché IMMÉDIATEMENT
+    closeBootOverlay();     // Plus de blocage
+    prefetchPriorityViews(); // Chargement séquentiel en arrière-plan
+  }).catch(e=>{
+    toast('Erreur de chargement : '+e.message, true);
+    show('Home');
+    closeBootOverlay();
+  });
+  setInterval(()=>{ if ($('vMatches').classList.contains('active')) drawMatches(); }, 60000);
 }
-
 // Précharge les vues prioritaires en SÉQUENTIEL (pronosView → rankView → profileView).
 // Chaque vue n'est lancée qu'après la résolution de la précédente pour ne pas saturer
 // Apps Script. Les autres vues (Poules, Résumé, Buteurs, Admin) restent en lazy-load
 // pur — chargées seulement au clic sur l'onglet.
 function prefetchPriorityViews(){
-  const u = user.userId;
-  fetchView('pronosView', 'getPronosView', {userId:u})
-    .then(()=> fetchView('rankView',   'getRankView',   {userId:u}))
-    .then(()=> fetchView('profileView','getProfileView',{userId:u}))
-    .catch(e => console.warn('prefetch séquentiel interrompu:', e?.message));
+  const u = user.userId;
+  fetchView('pronosView', 'getPronosView', {userId:u})
+    .then(()=> fetchView('rankView',   'getRankView',   {userId:u}))
+    .then(()=> fetchView('profileView','getProfileView',{userId:u}))
+    .catch(e => console.warn('prefetch séquentiel interrompu:', e?.message));
 }
 // fetchView : fetch frais d'une vue, dédupe les appels concurrents.
 // Marque la vue chargée et redessine si on est sur la vue concernée.
 function fetchView(key, action, params){
   if (viewLoading[key]) return viewLoading[key];
-  const p = api(action, params).then(d=>{
-    applyViewData(key, d);
-    redrawCurrent(); // redessine la vue active si elle dépend de cette donnée
-    return d;
-  }).catch(e=> { console.warn('Erreur '+action+' :', e.message); throw e; })
-    .finally(()=> { viewLoading[key] = null; });
+  const serverKey = VIEW_SERVER_KEY[key];
+  let p;
+  if (serverKey){
+    // Vue precalculee : on envoie le hash connu. Si le backend renvoie skip=true,
+    // les donnees en memoire sont deja a jour -> aucun re-render, aucun transfert utile.
+    const known = viewHashes[serverKey] || '';
+    p = api('getView', { userId: (params&&params.userId)||'', view: serverKey, hash: known }).then(d=>{
+      if (d && d.skip){ dataLoaded[key] = true; return null; }
+      viewHashes[serverKey] = (d && d.hash) || known;
+      applyViewData(key, d ? d.data : null);
+      redrawCurrent();
+      return d ? d.data : null;
+    });
+  } else {
+    p = api(action, params).then(d=>{
+      applyViewData(key, d);
+      redrawCurrent();
+      return d;
+    });
+  }
+  p = p.catch(e=> { console.warn('Erreur '+(serverKey||action)+' :', e.message); throw e; })
+       .finally(()=> { viewLoading[key] = null; });
   viewLoading[key] = p;
   return p;
 }
@@ -626,1061 +610,1039 @@ function fetchView(key, action, params){
 function loadView(key, action, params){ return fetchView(key, action, params); }
 // Redessine la vue actuellement affichée
 function redrawCurrent(){
-  const active = document.querySelector('.view.active');
-  if (!active) return;
-  const id = active.id.replace(/^v/, '');
-  drawView(id);
+  const active = document.querySelector('.view.active');
+  if (!active) return;
+  const id = active.id.replace(/^v/, '');
+  drawView(id);
 }
-
 /* === Application des données reçues dans les variables globales === */
 function applyLight(d){
-  bonusJokers = d.bonusJokers || [];
-  userState = d.userState || {};
-  drawHome();
+  bonusJokers = d.bonusJokers || [];
+  userState = d.userState || {};
+  drawHome();
 }
 let stadesList = [], diffuseursList = [];
 function applyViewData(key, d){
-  if (key==='pronosView'){
-    matches = d.matches || [];
-    pronos = d.myPronos || {};
-    pronosticStats = d.pronosticStats || {};
-    butsMatch = d.butsMatch || {};
-    bonusJokers = d.bonusJokers || bonusJokers;
-    equipes = d.equipes || equipes;
-    if (d.stades)     stadesList     = d.stades;
-    if (d.diffuseurs) diffuseursList = d.diffuseurs;
-  } else if (key==='rankView'){
-    classement = d.classement || [];
-    fun = d.fun || [];
-    buteur = d.buteur || null;
-  } else if (key==='groupsView') groupsData = d || {};
-  else if (key==='summaryView') summaryData = d || {};
-  else if (key==='profileView') profileData = d || {};
-  else if (key==='scorersView'){
-    joueurs = d.joueurs || [];
-    myScorerVote = d.myVote || null;
-    scorersClosed = !!d.closed;
-    scorersDeadline = d.deadline || '';
-  } else if (key==='adminView'){
-    adminData = d || {};
-    if (d.stades)     stadesList     = d.stades;
-    if (d.diffuseurs) diffuseursList = d.diffuseurs;
-  }
-  dataLoaded[key] = true;
+  if (key==='pronosView'){
+    matches = d.matches || [];
+    pronos = d.myPronos || {};
+    pronosticStats = d.pronosticStats || {};
+    butsMatch = d.butsMatch || {};
+    bonusJokers = d.bonusJokers || bonusJokers;
+    equipes = d.equipes || equipes;
+    if (d.stades)     stadesList     = d.stades;
+    if (d.diffuseurs) diffuseursList = d.diffuseurs;
+  } else if (key==='rankView'){
+    classement = d.classement || [];
+    fun = d.fun || [];
+    buteur = d.buteur || null;
+  } else if (key==='groupsView') groupsData = d || {};
+  else if (key==='summaryView') summaryData = d || {};
+  else if (key==='profileView') profileData = d || {};
+  else if (key==='scorersView'){
+    joueurs = d.joueurs || [];
+    myScorerVote = d.myVote || null;
+    scorersClosed = !!d.closed;
+    scorersDeadline = d.deadline || '';
+  } else if (key==='adminView'){
+    adminData = d || {};
+    if (d.stades)     stadesList     = d.stades;
+    if (d.diffuseurs) diffuseursList = d.diffuseurs;
+  }
+  dataLoaded[key] = true;
 }
-
 /* =============================================================================
- * NAVIGATION
- * ============================================================================= */
+ * NAVIGATION
+ * ============================================================================= */
 function show(viewName, btn){
-  const target = $('v'+viewName); if (!target) return;
-  document.querySelectorAll('.view').forEach(x=> x.classList.remove('active'));
-  target.classList.add('active');
-  document.querySelectorAll('.bnav button').forEach(x=> x.classList.remove('active'));
-  const navBtn = btn || document.querySelector('.bnav button[data-view="'+viewName+'"]');
-  if (navBtn) navBtn.classList.add('active');
-  window.scrollTo(0,0);
-  // Sécurité lazy-load : si pour une raison X la vue n'a pas ses données, fetch-la
-  const u = user.userId;
-  const needs = {
-    'Pronos':   ['pronosView',   'getPronosView',  {userId:u}],
-    'Matches':  ['pronosView',   'getPronosView',  {userId:u}],
-    'Groups':   ['groupsView',   'getGroupsView',  {}],
-    'Summary':  ['summaryView',  'getSummaryView', {}],
-    'Rank':     ['rankView',     'getRankView',    {userId:u}],
-    'Scorers':  ['scorersView',  'getScorersView', {userId:u}],
-    'Profile':  ['profileView',  'getProfileView', {userId:u}]
-  };
-  const req = needs[viewName];
-  if (req && !dataLoaded[req[0]] && !viewLoading[req[0]]) fetchView(req[0], req[1], req[2]);
-  if (viewName === 'Profile' && user.isAdmin && !dataLoaded.adminView && !viewLoading.adminView){
-    fetchView('adminView', 'getAdminView', {userId:u});
-  }
-  drawView(viewName);
+  const target = $('v'+viewName); if (!target) return;
+  document.querySelectorAll('.view').forEach(x=> x.classList.remove('active'));
+  target.classList.add('active');
+  document.querySelectorAll('.bnav button').forEach(x=> x.classList.remove('active'));
+  const navBtn = btn || document.querySelector('.bnav button[data-view="'+viewName+'"]');
+  if (navBtn) navBtn.classList.add('active');
+  window.scrollTo(0,0);
+  // Sécurité lazy-load : si pour une raison X la vue n'a pas ses données, fetch-la
+  const u = user.userId;
+  const needs = {
+    'Pronos':   ['pronosView',   'getPronosView',  {userId:u}],
+    'Matches':  ['pronosView',   'getPronosView',  {userId:u}],
+    'Groups':   ['groupsView',   'getGroupsView',  {}],
+    'Summary':  ['summaryView',  'getSummaryView', {}],
+    'Rank':     ['rankView',     'getRankView',    {userId:u}],
+    'Scorers':  ['scorersView',  'getScorersView', {userId:u}],
+    'Profile':  ['profileView',  'getProfileView', {userId:u}]
+  };
+  const req = needs[viewName];
+  if (req && !dataLoaded[req[0]] && !viewLoading[req[0]]) fetchView(req[0], req[1], req[2]);
+  if (viewName === 'Profile' && user.isAdmin && !dataLoaded.adminView && !viewLoading.adminView){
+    fetchView('adminView', 'getAdminView', {userId:u});
+  }
+  drawView(viewName);
 }
 function drawView(v){
-  switch(v){
-    case 'Home':    drawHome(); break;
-    case 'Pronos':  drawFilters(); drawPronos(); break;
-    case 'Matches': drawFilters(); drawMatches(); break;
-    case 'Groups':  drawGroups(); break;
-    case 'Summary': drawSummary(); break;
-    case 'Rank':    drawRank(); break;
-    case 'Scorers': drawScorers(); break;
-    case 'Profile': drawProfile(); break;
-  }
+  switch(v){
+    case 'Home':    drawHome(); break;
+    case 'Pronos':  drawFilters(); drawPronos(); break;
+    case 'Matches': drawFilters(); drawMatches(); break;
+    case 'Groups':  drawGroups(); break;
+    case 'Summary': drawSummary(); break;
+    case 'Rank':    drawRank(); break;
+    case 'Scorers': drawScorers(); break;
+    case 'Profile': drawProfile(); break;
+  }
 }
-
 /* =============================================================================
- * HELPERS DE FORMAT
- * ============================================================================= */
+ * HELPERS DE FORMAT
+ * ============================================================================= */
 function teamObjById(id){ id=String(id||''); return (equipes||[]).find(e=> String(e.id)===id) || {}; }
 function mId(m){ return m.matchId || m.id; }
 function mName(m, side){
-  if (side==='A') return m.nomAfficheA || teamObjById(m.equipeAId).nomAffiche || '';
-  return m.nomAfficheB || teamObjById(m.equipeBId).nomAffiche || '';
+  if (side==='A') return m.nomAfficheA || teamObjById(m.equipeAId).nomAffiche || '';
+  return m.nomAfficheB || teamObjById(m.equipeBId).nomAffiche || '';
 }
 function mFlag(m, side){
-  if (side==='A') return m.emojiA || teamObjById(m.equipeAId).emoji || FLAG_BY_CODE(m.codePaysA) || '🏳️';
-  return m.emojiB || teamObjById(m.equipeBId).emoji || FLAG_BY_CODE(m.codePaysB) || '🏳️';
+  if (side==='A') return m.emojiA || teamObjById(m.equipeAId).emoji || FLAG_BY_CODE(m.codePaysA) || '🏳️';
+  return m.emojiB || teamObjById(m.equipeBId).emoji || FLAG_BY_CODE(m.codePaysB) || '🏳️';
 }
 function isBonusMatch(id){ return (bonusJokers||[]).some(b=> String(b.matchId)===String(id)); }
 function isPoolFilter(k){ return /^[A-L]$/.test(String(k||'')); }
 function isGroupMatch(m){ return String(m.phase||'').toLowerCase().indexOf('groupe')>=0 || isPoolFilter(m.groupe); }
 function impliedProbs(m){
-  // Sheets renvoie les cotes au format FR avec virgule ("1,44"). Number() retournerait NaN.
-  // On remplace la virgule par un point juste pour le calcul, sans toucher au format d'origine.
-  const a = Number(String(m.cote1||'').replace(',','.')) || 0;
-  const x = Number(String(m.coteX||'').replace(',','.')) || 0;
-  const b = Number(String(m.cote2||'').replace(',','.')) || 0;
-  if (!a||!x||!b) return {A:0,X:0,B:0};
-  const ia=1/a, ix=1/x, ib=1/b, t=ia+ix+ib;
-  return {A:Math.round(ia/t*100), X:Math.round(ix/t*100), B:Math.round(ib/t*100)};
+  // Sheets renvoie les cotes au format FR avec virgule ("1,44"). Number() retournerait NaN.
+  // On remplace la virgule par un point juste pour le calcul, sans toucher au format d'origine.
+  const a = Number(String(m.cote1||'').replace(',','.')) || 0;
+  const x = Number(String(m.coteX||'').replace(',','.')) || 0;
+  const b = Number(String(m.cote2||'').replace(',','.')) || 0;
+  if (!a||!x||!b) return {A:0,X:0,B:0};
+  const ia=1/a, ix=1/x, ib=1/b, t=ia+ix+ib;
+  return {A:Math.round(ia/t*100), X:Math.round(ix/t*100), B:Math.round(ib/t*100)};
 }
 function parseMatchDate(m){
-  const d=String(m.dateFR||'').split('/'), h=String(m.heureFR||'00:00').split(':');
-  if (d.length!==3) return null;
-  return new Date(+d[2], +d[1]-1, +d[0], +h[0]||0, +h[1]||0, 0);
+  const d=String(m.dateFR||'').split('/'), h=String(m.heureFR||'00:00').split(':');
+  if (d.length!==3) return null;
+  return new Date(+d[2], +d[1]-1, +d[0], +h[0]||0, +h[1]||0, 0);
 }
 function timeLeftText(m){
-  if (String(m.status)!=='OPEN') return '';
-  const dt=parseMatchDate(m); if(!dt) return '';
-  const diff=dt.getTime()-Date.now();
-  if (diff<=0) return 'Verrouillage imminent';
-  const min=Math.floor(diff/60000);
-  const d=Math.floor(min/1440), h=Math.floor((min%1440)/60), mm=min%60;
-  if (d>0) return 'Verrouillage dans '+d+'j '+h+'h';
-  if (h>0) return 'Verrouillage dans '+h+'h'+String(mm).padStart(2,'0');
-  return 'Dernière chance : '+mm+' min restantes';
+  if (String(m.status)!=='OPEN') return '';
+  const dt=parseMatchDate(m); if(!dt) return '';
+  const diff=dt.getTime()-Date.now();
+  if (diff<=0) return 'Verrouillage imminent';
+  const min=Math.floor(diff/60000);
+  const d=Math.floor(min/1440), h=Math.floor((min%1440)/60), mm=min%60;
+  if (d>0) return 'Verrouillage dans '+d+'j '+h+'h';
+  if (h>0) return 'Verrouillage dans '+h+'h'+String(mm).padStart(2,'0');
+  return 'Dernière chance : '+mm+' min restantes';
 }
 function matchTitle(m){
-  if (String(m.status)==='FINISHED') return 'Match terminé';
-  if (String(m.status)==='LOCKED')   return 'Verrouillé · en attente de résultat';
-  if (pronos[String(mId(m))])         return 'Pronostiqué';
-  return 'Match à venir';
+  if (String(m.status)==='FINISHED') return 'Match terminé';
+  if (String(m.status)==='LOCKED')   return 'Verrouillé · en attente de résultat';
+  if (pronos[String(mId(m))])         return 'Pronostiqué';
+  return 'Match à venir';
 }
 function goalMin(v){ const n=parseInt(String(v||'').replace(/[^0-9]/g,''),10); return isNaN(n)?999:n; }
 function goalType(t){ t=String(t||'').toUpperCase(); if(t==='P'||t==='PENALTY')return ' (P)'; if(t==='CSC'||t==='OWN_GOAL')return ' (CSC)'; return ''; }
 function goalsForSide(m, side){
-  const arr = (butsMatch[String(mId(m))]||[]).filter(g=>{
-    const gid=String(g.equipeId||'');
-    if (side==='A') return gid===String(m.equipeAId);
-    return gid===String(m.equipeBId);
-  }).sort((a,b)=> goalMin(a.minute)-goalMin(b.minute));
-  if (!arr.length) return '';
-  return '<div class="teamGoals">'+arr.map(g=> '<div class="teamGoal">'+(g.minute?g.minute+'\u2019 \u00b7 ':'')+cleanText(g.nomAffiche||g.nom||'')+goalType(g.type)+'</div>').join('')+'</div>';
+  const arr = (butsMatch[String(mId(m))]||[]).filter(g=>{
+    const gid=String(g.equipeId||'');
+    if (side==='A') return gid===String(m.equipeAId);
+    return gid===String(m.equipeBId);
+  }).sort((a,b)=> goalMin(a.minute)-goalMin(b.minute));
+  if (!arr.length) return '';
+  return '<div class="teamGoals">'+arr.map(g=> '<div class="teamGoal">'+(g.minute?g.minute+'\u2019 \u00b7 ':'')+cleanText(g.nomAffiche||g.nom||'')+goalType(g.type)+'</div>').join('')+'</div>';
 }
 function tvFor(m){ return m.diffuseursLabel ? '📺 '+cleanText(m.diffuseursLabel) : ''; }
 function oddsInline(m){
-  if (!m.cote1||!m.coteX||!m.cote2) return '';
-  return '<span class="oddsInline">🎲 '+m.cote1+' · '+m.coteX+' · '+m.cote2+'</span>';
+  if (!m.cote1||!m.coteX||!m.cote2) return '';
+  return '<span class="oddsInline">🎲 '+m.cote1+' · '+m.coteX+' · '+m.cote2+'</span>';
 }
 function issueIcon(issue, m){ if (issue==='A') return mFlag(m,'A'); if (issue==='B') return mFlag(m,'B'); return 'Nul'; }
 function issueName(issue, m){ if (issue==='A') return mFlag(m,'A')+' '+mName(m,'A'); if (issue==='B') return mFlag(m,'B')+' '+mName(m,'B'); return 'Nul'; }
 function groupTheme(g){
-  const t={A:['rgba(46,139,87,.18)','rgba(46,139,87,.55)','#9ff0c1'],B:['rgba(46,117,182,.18)','rgba(46,117,182,.55)','#9bd0ff'],C:['rgba(255,215,0,.16)','rgba(255,215,0,.50)','#ffe680'],D:['rgba(239,83,80,.15)','rgba(239,83,80,.48)','#ffb0ad'],E:['rgba(156,39,176,.16)','rgba(156,39,176,.50)','#e1a9ec'],F:['rgba(255,152,0,.15)','rgba(255,152,0,.50)','#ffc46d'],G:['rgba(0,188,212,.15)','rgba(0,188,212,.50)','#8eefff'],H:['rgba(139,195,74,.15)','rgba(139,195,74,.50)','#c5ef8e'],I:['rgba(121,85,72,.16)','rgba(121,85,72,.50)','#d7b7aa'],J:['rgba(63,81,181,.16)','rgba(63,81,181,.50)','#aab6ff'],K:['rgba(233,30,99,.15)','rgba(233,30,99,.48)','#ff9bc2'],L:['rgba(96,125,139,.18)','rgba(96,125,139,.55)','#c3d2d8']};
-  return t[String(g||'').toUpperCase()] || ['transparent','var(--bdr)','var(--gold)'];
+  const t={A:['rgba(46,139,87,.18)','rgba(46,139,87,.55)','#9ff0c1'],B:['rgba(46,117,182,.18)','rgba(46,117,182,.55)','#9bd0ff'],C:['rgba(255,215,0,.16)','rgba(255,215,0,.50)','#ffe680'],D:['rgba(239,83,80,.15)','rgba(239,83,80,.48)','#ffb0ad'],E:['rgba(156,39,176,.16)','rgba(156,39,176,.50)','#e1a9ec'],F:['rgba(255,152,0,.15)','rgba(255,152,0,.50)','#ffc46d'],G:['rgba(0,188,212,.15)','rgba(0,188,212,.50)','#8eefff'],H:['rgba(139,195,74,.15)','rgba(139,195,74,.50)','#c5ef8e'],I:['rgba(121,85,72,.16)','rgba(121,85,72,.50)','#d7b7aa'],J:['rgba(63,81,181,.16)','rgba(63,81,181,.50)','#aab6ff'],K:['rgba(233,30,99,.15)','rgba(233,30,99,.48)','#ff9bc2'],L:['rgba(96,125,139,.18)','rgba(96,125,139,.55)','#c3d2d8']};
+  return t[String(g||'').toUpperCase()] || ['transparent','var(--bdr)','var(--gold)'];
 }
 function groupStyle(g){ const c=groupTheme(g); return 'style="--group-bg:'+c[0]+';--group-border:'+c[1]+';--group-text:'+c[2]+'"'; }
-
 /* =============================================================================
- * VUE HOME
- * ============================================================================= */
+ * VUE HOME
+ * ============================================================================= */
 function drawHome(){
-  const bonusHtml = (bonusJokers||[]).map(b=>{
-    const id=String(b.matchId||'');
-    return '<div class="card bonusBanner" onclick="goPronosMatch(\''+id+'\')">⭐ <b>Joker bonus actif</b> sur <b>'+cleanText(b.label)+'</b><br><span class="muted">Clique pour aller directement au pronostic — points doublés sur ce match.</span></div>';
-  }).join('');
-  // Bouton vers la vue Buteurs uniquement si le user n'a PAS encore voté
-  const voted = bool(userState && userState.hasScorerVote) || !!myScorerVote;
-  const scorerBtn = voted ? '' :
-    '<button class="btn" style="margin-bottom:10px" onclick="show(\'Scorers\')">⚽ Choisir mon meilleur buteur</button>';
-  $('homeSummary').innerHTML = bonusHtml + scorerBtn;
+  const bonusHtml = (bonusJokers||[]).map(b=>{
+    const id=String(b.matchId||'');
+    return '<div class="card bonusBanner" onclick="goPronosMatch(\''+id+'\')">⭐ <b>Joker bonus actif</b> sur <b>'+cleanText(b.label)+'</b><br><span class="muted">Clique pour aller directement au pronostic — points doublés sur ce match.</span></div>';
+  }).join('');
+  // Bouton vers la vue Buteurs uniquement si le user n'a PAS encore voté
+  const voted = bool(userState && userState.hasScorerVote) || !!myScorerVote;
+  const scorerBtn = voted ? '' :
+    '<button class="btn" style="margin-bottom:10px" onclick="show(\'Scorers\')">⚽ Choisir mon meilleur buteur</button>';
+  $('homeSummary').innerHTML = bonusHtml + scorerBtn;
 }
 // bool() local : accepte true / "true" / 1 / "1" / "oui"
 function bool(v){
-  if (v === true || v === 1) return true;
-  const s = String(v == null ? '' : v).toLowerCase().trim();
-  return s === 'true' || s === '1' || s === 'oui' || s === 'yes';
+  if (v === true || v === 1) return true;
+  const s = String(v == null ? '' : v).toLowerCase().trim();
+  return s === 'true' || s === '1' || s === 'oui' || s === 'yes';
 }
 function goPronosMatch(id){ currentFilter='all'; directPronoMatchId=String(id); show('Pronos'); }
-
 /* =============================================================================
- * FILTRES
- * ============================================================================= */
+ * FILTRES
+ * ============================================================================= */
 function filterItems(){
-  return ['all:Tous','today:Aujourd\'hui','A:A','B:B','C:C','D:D','E:E','F:F','G:G','H:H','I:I','J:J','K:K','L:L','PF:Finales'];
+  return ['all:Tous','today:Aujourd\'hui','A:A','B:B','C:C','D:D','E:E','F:F','G:G','H:H','I:I','J:J','K:K','L:L','PF:Finales'];
 }
 function drawFilters(){
-  ['pronosFilters','matchesFilters'].forEach(id=>{
-    const box=$(id); if(!box) return;
-    box.innerHTML = filterItems().map(x=>{
-      const [k,l]=x.split(':'); const pool=isPoolFilter(k);
-      return '<button class="'+(currentFilter===k?'active':'')+(pool?' groupFilter':'')+'" '+
-             (pool?groupStyle(k):'')+' onclick="setFilter(\''+k+'\')">'+l+'</button>';
-    }).join('');
-  });
+  ['pronosFilters','matchesFilters'].forEach(id=>{
+    const box=$(id); if(!box) return;
+    box.innerHTML = filterItems().map(x=>{
+      const [k,l]=x.split(':'); const pool=isPoolFilter(k);
+      return '<button class="'+(currentFilter===k?'active':'')+(pool?' groupFilter':'')+'" '+
+             (pool?groupStyle(k):'')+' onclick="setFilter(\''+k+'\')">'+l+'</button>';
+    }).join('');
+  });
 }
 function setFilter(k){ currentFilter=k; drawFilters(); drawPronos(); drawMatches(); }
 function setMatchesStatus(k){ matchesStatusFilter=k; drawMatchesStatusFilters(); drawMatches(); }
 function passMatchesStatus(m){
-  if (matchesStatusFilter==='all') return true;
-  const hasProno = !!pronos[String(mId(m))];
-  if (matchesStatusFilter==='topredict') return String(m.status)==='OPEN' && !hasProno;
-  if (matchesStatusFilter==='predicted') return hasProno;
-  if (matchesStatusFilter==='done')      return String(m.status)==='LOCKED' || String(m.status)==='FINISHED';
-  return true;
+  if (matchesStatusFilter==='all') return true;
+  const hasProno = !!pronos[String(mId(m))];
+  if (matchesStatusFilter==='topredict') return String(m.status)==='OPEN' && !hasProno;
+  if (matchesStatusFilter==='predicted') return hasProno;
+  if (matchesStatusFilter==='done')      return String(m.status)==='LOCKED' || String(m.status)==='FINISHED';
+  return true;
 }
 function drawMatchesStatusFilters(){
-  const box = $('matchesStatusFilters'); if (!box) return;
-  const items = [['all','Tous'],['topredict','À pronostiquer'],['predicted','Déjà pronostiqués'],['done','En cours / Terminés']];
-  box.innerHTML = items.map(x=> '<button class="'+(matchesStatusFilter===x[0]?'active':'')+'" onclick="setMatchesStatus(\''+x[0]+'\')">'+x[1]+'</button>').join('');
+  const box = $('matchesStatusFilters'); if (!box) return;
+  const items = [['all','Tous'],['topredict','À pronostiquer'],['predicted','Déjà pronostiqués'],['done','En cours / Terminés']];
+  box.innerHTML = items.map(x=> '<button class="'+(matchesStatusFilter===x[0]?'active':'')+'" onclick="setMatchesStatus(\''+x[0]+'\')">'+x[1]+'</button>').join('');
 }
 function passFilter(m){
-  if (currentFilter==='all') return true;
-  if (currentFilter==='today'){ const t=new Date().toLocaleDateString('fr-FR'); return m.dateFR===t; }
-  if (currentFilter==='PF') return !isPoolFilter(m.groupe);
-  return m.groupe===currentFilter;
+  if (currentFilter==='all') return true;
+  if (currentFilter==='today'){ const t=new Date().toLocaleDateString('fr-FR'); return m.dateFR===t; }
+  if (currentFilter==='PF') return !isPoolFilter(m.groupe);
+  return m.groupe===currentFilter;
 }
-
 /* =============================================================================
- * STATS MIROIR
- * ============================================================================= */
+ * STATS MIROIR
+ * ============================================================================= */
 function statMirrorHtml(m){
-  const s = pronosticStats[String(mId(m))] || {totalPronos:0,aWin:0,draw:0,bWin:0};
-  const total = s.totalPronos || s.total || 0;
-  const p = { A: pct(s.aWin,total), X: pct(s.draw,total), B: pct(s.bWin,total) };
-  const o = impliedProbs(m);
-  return '<div class="mirrorGrid">' +
-    '<div class="statBlock"><div class="statTitle">Votes du groupe '+(total?'('+total+')':'')+'</div>' +
-      barRow(issueIcon('A',m), p.A, false) +
-      barRow('Nul', p.X, false) +
-      barRow(issueIcon('B',m), p.B, false) +
-    '</div>' +
-    '<div class="statBlock"><div class="statTitleLine"><span class="statTitle">Tendance des cotes</span>'+oddsInline(m)+'</div>' +
-      barRow(issueIcon('A',m), o.A, true) +
-      barRow('Nul', o.X, true) +
-      barRow(issueIcon('B',m), o.B, true) +
-    '</div>' +
-  '</div>';
+  const s = pronosticStats[String(mId(m))] || {totalPronos:0,aWin:0,draw:0,bWin:0};
+  const total = s.totalPronos || s.total || 0;
+  const p = { A: pct(s.aWin,total), X: pct(s.draw,total), B: pct(s.bWin,total) };
+  const o = impliedProbs(m);
+  return '<div class="mirrorGrid">' +
+    '<div class="statBlock"><div class="statTitle">Votes du groupe '+(total?'('+total+')':'')+'</div>' +
+      barRow(issueIcon('A',m), p.A, false) +
+      barRow('Nul', p.X, false) +
+      barRow(issueIcon('B',m), p.B, false) +
+    '</div>' +
+    '<div class="statBlock"><div class="statTitleLine"><span class="statTitle">Tendance des cotes</span>'+oddsInline(m)+'</div>' +
+      barRow(issueIcon('A',m), o.A, true) +
+      barRow('Nul', o.X, true) +
+      barRow(issueIcon('B',m), o.B, true) +
+    '</div>' +
+  '</div>';
 }
 function barRow(label, val, right){
-  val=pct2(val);
-  if (right) return '<div class="hrow right"><b>'+val+'%</b><div class="hbar"><span style="width:'+val+'%"></span></div><span>'+label+'</span></div>';
-  return '<div class="hrow"><span>'+label+'</span><div class="hbar"><span style="width:'+val+'%"></span></div><b>'+val+'%</b></div>';
+  val=pct2(val);
+  if (right) return '<div class="hrow right"><b>'+val+'%</b><div class="hbar"><span style="width:'+val+'%"></span></div><span>'+label+'</span></div>';
+  return '<div class="hrow"><span>'+label+'</span><div class="hbar"><span style="width:'+val+'%"></span></div><b>'+val+'%</b></div>';
 }
 function riskHtml(m){
-  const s = pronosticStats[String(mId(m))] || {};
-  const jc = s.jokerCount != null ? s.jokerCount : (s.jokers||0);
-  const rn = s.riskNamesJson ? (function(){ try{return JSON.parse(s.riskNamesJson);}catch(e){return [];} })() : (s.riskNames||[]);
-  let out='';
-  if (jc) out += '<span class="riskPill">'+(jc>=5?'🔥':'⭐')+' '+jc+' joker(s) joué(s)</span>';
-  if ((rn||[]).length) out += '<span class="riskPill devilPill">😈 '+rn.map(cleanText).join(', ')+' tente(nt) un pari outsider</span>';
-  return out ? '<div class="statBlock riskCenter">'+out+'</div>' : '';
+  const s = pronosticStats[String(mId(m))] || {};
+  const jc = s.jokerCount != null ? s.jokerCount : (s.jokers||0);
+  const rn = s.riskNamesJson ? (function(){ try{return JSON.parse(s.riskNamesJson);}catch(e){return [];} })() : (s.riskNames||[]);
+  let out='';
+  if (jc) out += '<span class="riskPill">'+(jc>=5?'🔥':'⭐')+' '+jc+' joker(s) joué(s)</span>';
+  if ((rn||[]).length) out += '<span class="riskPill devilPill">😈 '+rn.map(cleanText).join(', ')+' tente(nt) un pari outsider</span>';
+  return out ? '<div class="statBlock riskCenter">'+out+'</div>' : '';
 }
-
 /* =============================================================================
- * VUE PRONOS (avec submitPronoFromSwipe qui invalide cache + recharge tout)
- * ============================================================================= */
+ * VUE PRONOS (avec submitPronoFromSwipe qui invalide cache + recharge tout)
+ * ============================================================================= */
 function getPlayablePronos(){
-  return matches
-    .filter(m=> String(m.status)==='OPEN' && !pronos[String(mId(m))])
-    .filter(passFilter)
-    .sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||'')) || Number(mId(a))-Number(mId(b)));
+  return matches
+    .filter(m=> String(m.status)==='OPEN' && !pronos[String(mId(m))])
+    .filter(passFilter)
+    .sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||'')) || Number(mId(a))-Number(mId(b)));
 }
 function selectPronoMatch(id){
-  const list = getPlayablePronos();
-  const idx = list.findIndex(m=> String(mId(m))===String(id));
-  if (idx>=0){ currentPronoIndex=idx; directPronoMatchId=null; drawPronos(); }
+  const list = getPlayablePronos();
+  const idx = list.findIndex(m=> String(mId(m))===String(id));
+  if (idx>=0){ currentPronoIndex=idx; directPronoMatchId=null; drawPronos(); }
 }
 function drawPronos(){
-  const box=$('pronoSwipeBox'), sel=$('pronoMatchSelect'); if(!box||!sel) return;
-  if (!dataLoaded.pronosView && !matches.length){
-    sel.innerHTML='<option>Chargement…</option>';
-    box.innerHTML='<div class="viewLoading">Chargement…</div>';
-    return;
-  }
-  const list = getPlayablePronos();
-  if (directPronoMatchId){
-    const idx = list.findIndex(m=> String(mId(m))===String(directPronoMatchId));
-    if (idx>=0) currentPronoIndex = idx;
-    directPronoMatchId = null;
-  }
-  if (currentPronoIndex >= list.length) currentPronoIndex=0;
-  if (!list.length){
-    sel.innerHTML='<option>Tous tes pronostics sont à jour</option>';
-    box.innerHTML='<div class="card muted">Tous tes pronostics sont à jour. 🎉</div>'; return;
-  }
-  const m = list[currentPronoIndex];
-  sel.innerHTML = list.map((x,i)=>{
-    const phase = isGroupMatch(x) ? ('Poule '+(x.groupe||'')) : (x.phase||'Phase finale');
-    return '<option value="'+mId(x)+'"'+(String(mId(x))===String(mId(m))?' selected':'')+'>'+phase+' : '+mName(x,'A')+' - '+mName(x,'B')+' · '+fmtDateShort(x.dateFR)+'</option>';
-  }).join('');
-  box.innerHTML = bigPronoCard(m, currentPronoIndex+1, list.length);
-  addSwipe(box, list.length);
+  const box=$('pronoSwipeBox'), sel=$('pronoMatchSelect'); if(!box||!sel) return;
+  if (!dataLoaded.pronosView && !matches.length){
+    sel.innerHTML='<option>Chargement…</option>';
+    box.innerHTML='<div class="viewLoading">Chargement…</div>';
+    return;
+  }
+  const list = getPlayablePronos();
+  if (directPronoMatchId){
+    const idx = list.findIndex(m=> String(mId(m))===String(directPronoMatchId));
+    if (idx>=0) currentPronoIndex = idx;
+    directPronoMatchId = null;
+  }
+  if (currentPronoIndex >= list.length) currentPronoIndex=0;
+  if (!list.length){
+    sel.innerHTML='<option>Tous tes pronostics sont à jour</option>';
+    box.innerHTML='<div class="card muted">Tous tes pronostics sont à jour. 🎉</div>'; return;
+  }
+  const m = list[currentPronoIndex];
+  sel.innerHTML = list.map((x,i)=>{
+    const phase = isGroupMatch(x) ? ('Poule '+(x.groupe||'')) : (x.phase||'Phase finale');
+    return '<option value="'+mId(x)+'"'+(String(mId(x))===String(mId(m))?' selected':'')+'>'+phase+' : '+mName(x,'A')+' - '+mName(x,'B')+' · '+fmtDateShort(x.dateFR)+'</option>';
+  }).join('');
+  box.innerHTML = bigPronoCard(m, currentPronoIndex+1, list.length);
+  addSwipe(box, list.length);
 }
 function addSwipe(el, total){
-  let sx=0;
-  el.ontouchstart = e=>{ sx=e.changedTouches[0].screenX; };
-  el.ontouchend = e=>{
-    const dx=e.changedTouches[0].screenX-sx;
-    if (Math.abs(dx)>55){
-      currentPronoIndex += (dx<0?1:-1);
-      if (currentPronoIndex<0) currentPronoIndex=0;
-      if (currentPronoIndex>=total) currentPronoIndex=total-1;
-      drawPronos();
-    }
-  };
+  let sx=0;
+  el.ontouchstart = e=>{ sx=e.changedTouches[0].screenX; };
+  el.ontouchend = e=>{
+    const dx=e.changedTouches[0].screenX-sx;
+    if (Math.abs(dx)>55){
+      currentPronoIndex += (dx<0?1:-1);
+      if (currentPronoIndex<0) currentPronoIndex=0;
+      if (currentPronoIndex>=total) currentPronoIndex=total-1;
+      drawPronos();
+    }
+  };
 }
 function bigPronoCard(m, idx, total){
-  const grouped=isPoolFilter(m.groupe);
-  const phase=isGroupMatch(m)?'Groupe '+(m.groupe||''):(m.phase||'Phase finale');
-  return '<div class="card bigPronoCard'+(grouped?' grouped':'')+'" '+(grouped?groupStyle(m.groupe):'')+'>' +
-    '<div class="matchCardTitle">'+matchTitle(m)+'</div>' +
-    '<div class="matchHeaderClean">' +
-      '<div class="bigTeams">' +
-        '<div class="team"><div class="flag">'+mFlag(m,'A')+'</div><div class="name">'+mName(m,'A')+'</div></div>' +
-        '<div class="vsBig">VS</div>' +
-        '<div class="team"><div class="flag">'+mFlag(m,'B')+'</div><div class="name">'+mName(m,'B')+'</div></div>' +
-      '</div>' +
-      '<div class="meta metaClean"><span>📅 '+fmtDateFR(m.dateFR)+' · 🕒 '+fmtHeure(m.heureFR)+' · 🏷️ '+phase+'<br>🏟️ '+(m.stadeLabel||'Stade à confirmer')+(tvFor(m)?'<br>'+tvFor(m):'')+'</span></div>' +
-    '</div>' +
-    (isBonusMatch(mId(m))?'<div class="countdown bonusPill centeredLine">⭐ Joker bonus : points doublés sur ce match</div>':'') +
-    '<div class="scoreEntryRow">' +
-      '<div class="scoreEntryBox"><input id="quickScoreA" type="number" min="0" placeholder="'+mName(m,'A')+'"></div>' +
-      (isBonusMatch(mId(m))
-        ? '<div class="jokerMiddle"><span>⭐</span><small>Bonus</small></div>'
-        : '<label class="jokerMiddle"><input id="quickJoker" type="checkbox"><span>🃏</span><small>Joker</small></label>') +
-      '<div class="scoreEntryBox"><input id="quickScoreB" type="number" min="0" placeholder="'+mName(m,'B')+'"></div>' +
-    '</div>' +
-    '<div id="quickPronoErr" class="small centeredLine" style="margin-top:6px"></div>' +
-    '<button class="btn" onclick="submitPronoFromSwipe(\''+mId(m)+'\',this)">Valider mon pronostic</button>' +
-    statMirrorHtml(m) + riskHtml(m) +
-    '<div class="pronoBottomHint"><span>Swiper pour changer de match</span><span>'+idx+'/'+total+' · Filtre : '+(currentFilter==='all'?'Tous':currentFilter)+'</span></div>' +
-  '</div>';
+  const grouped=isPoolFilter(m.groupe);
+  const phase=isGroupMatch(m)?'Groupe '+(m.groupe||''):(m.phase||'Phase finale');
+  return '<div class="card bigPronoCard'+(grouped?' grouped':'')+'" '+(grouped?groupStyle(m.groupe):'')+'>' +
+    '<div class="matchCardTitle">'+matchTitle(m)+'</div>' +
+    '<div class="matchHeaderClean">' +
+      '<div class="bigTeams">' +
+        '<div class="team"><div class="flag">'+mFlag(m,'A')+'</div><div class="name">'+mName(m,'A')+'</div></div>' +
+        '<div class="vsBig">VS</div>' +
+        '<div class="team"><div class="flag">'+mFlag(m,'B')+'</div><div class="name">'+mName(m,'B')+'</div></div>' +
+      '</div>' +
+      '<div class="meta metaClean"><span>📅 '+fmtDateFR(m.dateFR)+' · 🕒 '+fmtHeure(m.heureFR)+' · 🏷️ '+phase+'<br>🏟️ '+(m.stadeLabel||'Stade à confirmer')+(tvFor(m)?'<br>'+tvFor(m):'')+'</span></div>' +
+    '</div>' +
+    (isBonusMatch(mId(m))?'<div class="countdown bonusPill centeredLine">⭐ Joker bonus : points doublés sur ce match</div>':'') +
+    '<div class="scoreEntryRow">' +
+      '<div class="scoreEntryBox"><input id="quickScoreA" type="number" min="0" placeholder="'+mName(m,'A')+'"></div>' +
+      (isBonusMatch(mId(m))
+        ? '<div class="jokerMiddle"><span>⭐</span><small>Bonus</small></div>'
+        : '<label class="jokerMiddle"><input id="quickJoker" type="checkbox"><span>🃏</span><small>Joker</small></label>') +
+      '<div class="scoreEntryBox"><input id="quickScoreB" type="number" min="0" placeholder="'+mName(m,'B')+'"></div>' +
+    '</div>' +
+    '<div id="quickPronoErr" class="small centeredLine" style="margin-top:6px"></div>' +
+    '<button class="btn" onclick="submitPronoFromSwipe(\''+mId(m)+'\',this)">Valider mon pronostic</button>' +
+    statMirrorHtml(m) + riskHtml(m) +
+    '<div class="pronoBottomHint"><span>Swiper pour changer de match</span><span>'+idx+'/'+total+' · Filtre : '+(currentFilter==='all'?'Tous':currentFilter)+'</span></div>' +
+  '</div>';
 }
 function submitPronoFromSwipe(id, btn){
-  const a=$('quickScoreA'), b=$('quickScoreB'), j=$('quickJoker');
-  if (!a || !b){ return; }
-  if (a.value==='' || b.value===''){ formMsg('quickPronoErr','Saisis les deux scores.', false); return; }
-  runAction({
-    btn,
-    inProgressLabel: 'Enregistrement du pronostic…',
-    successLabel: 'Prono validé',
-    promise: api('submitPronostic', {userId:user.userId, matchId:id, scoreA:a.value, scoreB:b.value, joker:(j?j.checked:false)}),
-    onSuccess: d => {
-      // 1) MUTATION LOCALE : insère le prono dans l'état en mémoire (UI à jour en 0,1s)
-      if (d.prono) {
-        pronos[String(d.prono.matchId)] = d.prono;
-        // Retire la bannière joker bonus de l'accueil si c'était ce match
-        bonusJokers = (bonusJokers || []).filter(b => String(b.matchId) !== String(d.prono.matchId));
-      }
-      // 2) Invalide les vues secondaires (au cas où le user clique avant la fin du refetch)
-      dataLoaded.rankView = false;
-      dataLoaded.profileView = false;
-      dataLoaded.summaryView = false;
-      // 3) Refetch SILENCIEUX et SÉQUENTIEL en arrière-plan : rankView puis profileView.
-      //    Aucun overlay, aucun toast — fetchView se contente d'appliquer les données
-      //    et de redessiner si la vue concernée est active.
-      const u = user.userId;
-      fetchView('rankView', 'getRankView', {userId:u})
-        .then(()=> fetchView('profileView','getProfileView',{userId:u}))
-        .catch(()=>{ /* échec silencieux : la vue se rechargera au prochain show() */ });
-    }
-  });
+  const a=$('quickScoreA'), b=$('quickScoreB'), j=$('quickJoker');
+  if (!a || !b){ return; }
+  if (a.value==='' || b.value===''){ formMsg('quickPronoErr','Saisis les deux scores.', false); return; }
+  runAction({
+    btn,
+    inProgressLabel: 'Enregistrement du pronostic…',
+    successLabel: 'Prono validé',
+    promise: api('submitPronostic', {userId:user.userId, matchId:id, scoreA:a.value, scoreB:b.value, joker:(j?j.checked:false)}),
+    onSuccess: d => {
+      // 1) MUTATION LOCALE : insère le prono dans l'état en mémoire (UI à jour en 0,1s)
+      if (d.prono) {
+        pronos[String(d.prono.matchId)] = d.prono;
+        // Retire la bannière joker bonus de l'accueil si c'était ce match
+        bonusJokers = (bonusJokers || []).filter(b => String(b.matchId) !== String(d.prono.matchId));
+      }
+      // 2) Invalide les vues secondaires (au cas où le user clique avant la fin du refetch)
+      dataLoaded.rankView = false;
+      dataLoaded.profileView = false;
+      dataLoaded.summaryView = false;
+      // 3) Refetch SILENCIEUX et SÉQUENTIEL en arrière-plan : rankView puis profileView.
+      //    Aucun overlay, aucun toast — fetchView se contente d'appliquer les données
+      //    et de redessiner si la vue concernée est active.
+      const u = user.userId;
+      fetchView('rankView', 'getRankView', {userId:u})
+        .then(()=> fetchView('profileView','getProfileView',{userId:u}))
+        .catch(()=>{ /* échec silencieux : la vue se rechargera au prochain show() */ });
+    }
+  });
 }
-
 /* =============================================================================
- * VUE MATCHES
- * ============================================================================= */
+ * VUE MATCHES
+ * ============================================================================= */
 function drawMatches(){
-  const box=$('matchList'); if(!box) return;
-  drawMatchesStatusFilters();
-  if (!dataLoaded.pronosView && !matches.length){ box.innerHTML='<div class="viewLoading">Chargement…</div>'; return; }
-  // Affiche TOUS les matchs ; les filtres sticky (statut + groupe) permettent de restreindre.
-  const list = matches
-    .filter(passFilter)
-    .filter(passMatchesStatus)
-    .sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||'')));
-  if (!list.length){ box.innerHTML='<div class="card muted">Aucun match dans ce filtre.</div>'; return; }
-  box.innerHTML = list.map(m=>{
-    const id=mId(m), p=pronos[String(id)], grouped=isPoolFilter(m.groupe);
-    const canPlay = String(m.status)==='OPEN' && !p;
-    const phase = isGroupMatch(m) ? 'Groupe '+(m.groupe||'') : (m.phase||'Phase finale');
-    return '<div class="match'+(grouped?' grouped':'')+(String(m.status)==='FINISHED'?' finished':'')+(p?' predicted has':'')+'" '+(grouped?groupStyle(m.groupe):'')+'>' +
-      '<div class="matchCardTitle">'+matchTitle(m)+'</div>' +
-      '<div class="matchHeaderClean">' +
-        '<div class="mtop">' +
-          '<div class="team"><div class="flag">'+mFlag(m,'A')+'</div><div class="name">'+mName(m,'A')+'</div>'+(String(m.status)==='FINISHED'?goalsForSide(m,'A'):'')+'</div>' +
-          '<div class="score">'+(String(m.status)==='FINISHED'?(m.scoreA+' - '+m.scoreB):'VS')+'</div>' +
-          '<div class="team"><div class="flag">'+mFlag(m,'B')+'</div><div class="name">'+mName(m,'B')+'</div>'+(String(m.status)==='FINISHED'?goalsForSide(m,'B'):'')+'</div>' +
-        '</div>' +
-        '<div class="meta metaClean"><span>📅 '+fmtDateFR(m.dateFR)+' · 🕒 '+fmtHeure(m.heureFR)+' · 🏷️ '+phase+'<br>🏟️ '+(m.stadeLabel||'Stade à confirmer')+(tvFor(m)?'<br>'+tvFor(m):'')+'</span></div>' +
-      '</div>' +
-      (isBonusMatch(id)?'<div class="countdown bonusPill centeredLine">⭐ Joker bonus : points doublés sur ce match</div>':'') +
-      (timeLeftText(m)?'<div class="countdown centeredLine">⏳ '+timeLeftText(m)+'</div>':'') +
-      statMirrorHtml(m) + riskHtml(m) +
-      (p?'<div class="prono"><span>✅ Ton prono : '+p.scoreA+'-'+p.scoreB+(p.joker?' ⭐':'')+(p.counterCurrent?' 😈':'')+(Number(p.riskBonus)?(' 🎁 +'+p.riskBonus):'')+'</span><b>'+(p.points!==''&&p.points!=null?p.points+' pts':'En attente')+'</b></div>':'') +
-      (canPlay?'<button class="btn" onclick="goPronosMatch(\''+id+'\')">Pronostiquer ce match</button>':'') +
-      publicPronosHtml(m) +
-      (isGroupMatch(m)?'<button class="btn btn2" style="margin-top:8px" onclick="openMatchDetail(\''+id+'\')">Voir classement local + historique</button>':'') +
-    '</div>';
-  }).join('');
+  const box=$('matchList'); if(!box) return;
+  drawMatchesStatusFilters();
+  if (!dataLoaded.pronosView && !matches.length){ box.innerHTML='<div class="viewLoading">Chargement…</div>'; return; }
+  // Affiche TOUS les matchs ; les filtres sticky (statut + groupe) permettent de restreindre.
+  const list = matches
+    .filter(passFilter)
+    .filter(passMatchesStatus)
+    .sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||'')));
+  if (!list.length){ box.innerHTML='<div class="card muted">Aucun match dans ce filtre.</div>'; return; }
+  box.innerHTML = list.map(m=>{
+    const id=mId(m), p=pronos[String(id)], grouped=isPoolFilter(m.groupe);
+    const canPlay = String(m.status)==='OPEN' && !p;
+    const phase = isGroupMatch(m) ? 'Groupe '+(m.groupe||'') : (m.phase||'Phase finale');
+    return '<div class="match'+(grouped?' grouped':'')+(String(m.status)==='FINISHED'?' finished':'')+(p?' predicted has':'')+'" '+(grouped?groupStyle(m.groupe):'')+'>' +
+      '<div class="matchCardTitle">'+matchTitle(m)+'</div>' +
+      '<div class="matchHeaderClean">' +
+        '<div class="mtop">' +
+          '<div class="team"><div class="flag">'+mFlag(m,'A')+'</div><div class="name">'+mName(m,'A')+'</div>'+(String(m.status)==='FINISHED'?goalsForSide(m,'A'):'')+'</div>' +
+          '<div class="score">'+(String(m.status)==='FINISHED'?(m.scoreA+' - '+m.scoreB):'VS')+'</div>' +
+          '<div class="team"><div class="flag">'+mFlag(m,'B')+'</div><div class="name">'+mName(m,'B')+'</div>'+(String(m.status)==='FINISHED'?goalsForSide(m,'B'):'')+'</div>' +
+        '</div>' +
+        '<div class="meta metaClean"><span>📅 '+fmtDateFR(m.dateFR)+' · 🕒 '+fmtHeure(m.heureFR)+' · 🏷️ '+phase+'<br>🏟️ '+(m.stadeLabel||'Stade à confirmer')+(tvFor(m)?'<br>'+tvFor(m):'')+'</span></div>' +
+      '</div>' +
+      (isBonusMatch(id)?'<div class="countdown bonusPill centeredLine">⭐ Joker bonus : points doublés sur ce match</div>':'') +
+      (timeLeftText(m)?'<div class="countdown centeredLine">⏳ '+timeLeftText(m)+'</div>':'') +
+      statMirrorHtml(m) + riskHtml(m) +
+      (p?'<div class="prono"><span>✅ Ton prono : '+p.scoreA+'-'+p.scoreB+(p.joker?' ⭐':'')+(p.counterCurrent?' 😈':'')+(Number(p.riskBonus)?(' 🎁 +'+p.riskBonus):'')+'</span><b>'+(p.points!==''&&p.points!=null?p.points+' pts':'En attente')+'</b></div>':'') +
+      (canPlay?'<button class="btn" onclick="goPronosMatch(\''+id+'\')">Pronostiquer ce match</button>':'') +
+      publicPronosHtml(m) +
+      (isGroupMatch(m)?'<button class="btn btn2" style="margin-top:8px" onclick="openMatchDetail(\''+id+'\')">Voir classement local + historique</button>':'') +
+    '</div>';
+  }).join('');
 }
 function publicPronosHtml(m){
-  if (String(m.status)==='OPEN') return '';
-  const s = pronosticStats[String(mId(m))] || {};
-  const raw = s.publicPronos || (s.publicPronosJson ? (function(){try{return JSON.parse(s.publicPronosJson);}catch(e){return {A:[],X:[],B:[]};}})() : {A:[],X:[],B:[]});
-  if (!(raw.A||[]).length && !(raw.X||[]).length && !(raw.B||[]).length) return '';
-  const resIssue = String(m.status)==='FINISHED'
-    ? (Number(m.scoreA)>Number(m.scoreB)?'A':(Number(m.scoreA)<Number(m.scoreB)?'B':'X'))
-    : '';
-  return '<div class="sec">Pronostics des joueurs</div><div class="pronoGroups">' +
-    ['A','X','B'].map(issue=>{
-      const arr = raw[issue] || [];
-      return '<div class="pronoGroup"><b>'+issueName(issue,m)+'</b>' +
-        (arr.length
-          ? arr.map(p=>{
-              const exact = String(m.status)==='FINISHED' && String(p.scoreA)===String(m.scoreA) && String(p.scoreB)===String(m.scoreB);
-              const good = String(m.status)==='FINISHED' && issue===resIssue;
-              const tag = String(m.status)==='FINISHED' ? (exact?'🎯 Score exact':good?'✅ Bon résultat':'❌ Échec') : '';
-              const risk = p.counterCurrent?' — 😈 Contre-courant':'';
-              const bonus = p.riskBonus?' — 🎁 Bonus +'+p.riskBonus:'';
-              return '<div class="small">'+cleanText(p.pseudo)+' : <b>'+p.scoreA+'-'+p.scoreB+'</b>'+(p.joker?' ⭐':'')+(tag?(' — '+tag):'')+risk+bonus+'</div>';
-            }).join('')
-          : '<div class="muted small">Aucun</div>'
-        ) +
-      '</div>';
-    }).join('') +
-  '</div>';
+  if (String(m.status)==='OPEN') return '';
+  const s = pronosticStats[String(mId(m))] || {};
+  const raw = s.publicPronos || (s.publicPronosJson ? (function(){try{return JSON.parse(s.publicPronosJson);}catch(e){return {A:[],X:[],B:[]};}})() : {A:[],X:[],B:[]});
+  if (!(raw.A||[]).length && !(raw.X||[]).length && !(raw.B||[]).length) return '';
+  const resIssue = String(m.status)==='FINISHED'
+    ? (Number(m.scoreA)>Number(m.scoreB)?'A':(Number(m.scoreA)<Number(m.scoreB)?'B':'X'))
+    : '';
+  return '<div class="sec">Pronostics des joueurs</div><div class="pronoGroups">' +
+    ['A','X','B'].map(issue=>{
+      const arr = raw[issue] || [];
+      return '<div class="pronoGroup"><b>'+issueName(issue,m)+'</b>' +
+        (arr.length
+          ? arr.map(p=>{
+              const exact = String(m.status)==='FINISHED' && String(p.scoreA)===String(m.scoreA) && String(p.scoreB)===String(m.scoreB);
+              const good = String(m.status)==='FINISHED' && issue===resIssue;
+              const tag = String(m.status)==='FINISHED' ? (exact?'🎯 Score exact':good?'✅ Bon résultat':'❌ Échec') : '';
+              const risk = p.counterCurrent?' — 😈 Contre-courant':'';
+              const bonus = p.riskBonus?' — 🎁 Bonus +'+p.riskBonus:'';
+              return '<div class="small">'+cleanText(p.pseudo)+' : <b>'+p.scoreA+'-'+p.scoreB+'</b>'+(p.joker?' ⭐':'')+(tag?(' — '+tag):'')+risk+bonus+'</div>';
+            }).join('')
+          : '<div class="muted small">Aucun</div>'
+        ) +
+      '</div>';
+    }).join('') +
+  '</div>';
 }
-
 /* =============================================================================
- * MODALE DÉTAIL MATCH
- * ============================================================================= */
+ * MODALE DÉTAIL MATCH
+ * ============================================================================= */
 function localGroupStandings(g){
-  const teams={};
-  matches.filter(m=> m.groupe===g && isGroupMatch(m)).forEach(m=>{
-    [['A',m.equipeAId,mName(m,'A'),mFlag(m,'A')],['B',m.equipeBId,mName(m,'B'),mFlag(m,'B')]].forEach(x=>{
-      if (!teams[x[1]]) teams[x[1]]={id:x[1],nom:x[2],flag:x[3],mp:0,w:0,d:0,l:0,gf:0,ga:0,pts:0};
-    });
-  });
-  matches.filter(m=> m.groupe===g && String(m.status)==='FINISHED').forEach(m=>{
-    const a=teams[m.equipeAId], b=teams[m.equipeBId]; if(!a||!b) return;
-    const sa=Number(m.scoreA)||0, sb=Number(m.scoreB)||0;
-    a.mp++; b.mp++; a.gf+=sa; a.ga+=sb; b.gf+=sb; b.ga+=sa;
-    if (sa>sb){ a.w++; a.pts+=3; b.l++; } else if (sb>sa){ b.w++; b.pts+=3; a.l++; } else { a.d++; b.d++; a.pts++; b.pts++; }
-  });
-  return Object.values(teams).map(t=>{t.gd=t.gf-t.ga; return t;}).sort((a,b)=> b.pts-a.pts||b.gd-a.gd||b.gf-a.gf);
+  const teams={};
+  matches.filter(m=> m.groupe===g && isGroupMatch(m)).forEach(m=>{
+    [['A',m.equipeAId,mName(m,'A'),mFlag(m,'A')],['B',m.equipeBId,mName(m,'B'),mFlag(m,'B')]].forEach(x=>{
+      if (!teams[x[1]]) teams[x[1]]={id:x[1],nom:x[2],flag:x[3],mp:0,w:0,d:0,l:0,gf:0,ga:0,pts:0};
+    });
+  });
+  matches.filter(m=> m.groupe===g && String(m.status)==='FINISHED').forEach(m=>{
+    const a=teams[m.equipeAId], b=teams[m.equipeBId]; if(!a||!b) return;
+    const sa=Number(m.scoreA)||0, sb=Number(m.scoreB)||0;
+    a.mp++; b.mp++; a.gf+=sa; a.ga+=sb; b.gf+=sb; b.ga+=sa;
+    if (sa>sb){ a.w++; a.pts+=3; b.l++; } else if (sb>sa){ b.w++; b.pts+=3; a.l++; } else { a.d++; b.d++; a.pts++; b.pts++; }
+  });
+  return Object.values(teams).map(t=>{t.gd=t.gf-t.ga; return t;}).sort((a,b)=> b.pts-a.pts||b.gd-a.gd||b.gf-a.gf);
 }
 function historyForTeam(eqId, beforeId){
-  return matches.filter(m=> Number(mId(m))<Number(beforeId) && (String(m.equipeAId)===String(eqId)||String(m.equipeBId)===String(eqId)) && String(m.status)==='FINISHED')
-                .slice(-3)
-                .map(m=> mName(m,'A')+' '+m.scoreA+'-'+m.scoreB+' '+mName(m,'B')).join('<br>');
+  return matches.filter(m=> Number(mId(m))<Number(beforeId) && (String(m.equipeAId)===String(eqId)||String(m.equipeBId)===String(eqId)) && String(m.status)==='FINISHED')
+                .slice(-3)
+                .map(m=> mName(m,'A')+' '+m.scoreA+'-'+m.scoreB+' '+mName(m,'B')).join('<br>');
 }
 function openMatchDetail(id){
-  const m = matches.find(x=> String(mId(x))===String(id)); if (!m) return;
-  let stHtml='';
-  if (isGroupMatch(m)){
-    const st=localGroupStandings(m.groupe);
-    stHtml='<div class="sec">Classement groupe '+m.groupe+'</div>' +
-      '<table class="table"><tr><th>Équipe</th><th>Pts</th><th>J</th><th>G</th><th>N</th><th>P</th><th>BP</th><th>BC</th><th>Diff</th></tr>' +
-      st.map(t=>'<tr><td>'+t.flag+' '+cleanText(t.nom)+'</td><td><b>'+t.pts+'</b></td><td>'+t.mp+'</td><td>'+t.w+'</td><td>'+t.d+'</td><td>'+t.l+'</td><td>'+t.gf+'</td><td>'+t.ga+'</td><td>'+t.gd+'</td></tr>').join('') +
-      '</table>';
-  }
-  const hA=historyForTeam(m.equipeAId,mId(m)), hB=historyForTeam(m.equipeBId,mId(m));
-  const hist=(hA||hB)?'<div class="sec">Historique dans la compétition</div><div class="card"><b>'+mName(m,'A')+'</b><br><span class="muted">'+(hA||'Aucun match joué')+'</span><br><br><b>'+mName(m,'B')+'</b><br><span class="muted">'+(hB||'Aucun match joué')+'</span></div>':'';
-  $('matchModalContent').innerHTML =
-    '<h3>'+mFlag(m,'A')+' '+mName(m,'A')+' - '+mName(m,'B')+' '+mFlag(m,'B')+'</h3>' +
-    '<div class="muted">'+fmtDateFR(m.dateFR)+' · '+fmtHeure(m.heureFR)+' · '+(m.stadeLabel||'')+'</div>' +
-    statMirrorHtml(m) + stHtml + hist +
-    '<br><button class="btn btn2" onclick="closeMatchDetail()">Fermer</button>';
-  $('matchModal').classList.add('open');
+  const m = matches.find(x=> String(mId(x))===String(id)); if (!m) return;
+  let stHtml='';
+  if (isGroupMatch(m)){
+    const st=localGroupStandings(m.groupe);
+    stHtml='<div class="sec">Classement groupe '+m.groupe+'</div>' +
+      '<table class="table"><tr><th>Équipe</th><th>Pts</th><th>J</th><th>G</th><th>N</th><th>P</th><th>BP</th><th>BC</th><th>Diff</th></tr>' +
+      st.map(t=>'<tr><td>'+t.flag+' '+cleanText(t.nom)+'</td><td><b>'+t.pts+'</b></td><td>'+t.mp+'</td><td>'+t.w+'</td><td>'+t.d+'</td><td>'+t.l+'</td><td>'+t.gf+'</td><td>'+t.ga+'</td><td>'+t.gd+'</td></tr>').join('') +
+      '</table>';
+  }
+  const hA=historyForTeam(m.equipeAId,mId(m)), hB=historyForTeam(m.equipeBId,mId(m));
+  const hist=(hA||hB)?'<div class="sec">Historique dans la compétition</div><div class="card"><b>'+mName(m,'A')+'</b><br><span class="muted">'+(hA||'Aucun match joué')+'</span><br><br><b>'+mName(m,'B')+'</b><br><span class="muted">'+(hB||'Aucun match joué')+'</span></div>':'';
+  $('matchModalContent').innerHTML =
+    '<h3>'+mFlag(m,'A')+' '+mName(m,'A')+' - '+mName(m,'B')+' '+mFlag(m,'B')+'</h3>' +
+    '<div class="muted">'+fmtDateFR(m.dateFR)+' · '+fmtHeure(m.heureFR)+' · '+(m.stadeLabel||'')+'</div>' +
+    statMirrorHtml(m) + stHtml + hist +
+    '<br><button class="btn btn2" onclick="closeMatchDetail()">Fermer</button>';
+  $('matchModal').classList.add('open');
 }
 function closeMatchDetail(){ $('matchModal').classList.remove('open'); }
-
 /* =============================================================================
- * VUE POULES
- * ============================================================================= */
+ * VUE POULES
+ * ============================================================================= */
 function drawGroups(){
-  const data=groupsData||{}, keys=Object.keys(data).sort();
-  if (!dataLoaded.groupsView && !keys.length){ $('groupsBox').innerHTML='<div class="viewLoading">Chargement…</div>'; return; }
-  if (!keys.length){ $('groupsBox').innerHTML='<div class="card muted">Classement indisponible : aucun groupe configuré.</div>'; return; }
-  $('groupsBox').innerHTML = keys.map(g=>{
-    const rows = data[g] || [];
-    return '<div class="card groupCard" '+groupStyle(g)+'>' +
-      '<b class="groupTitle">Groupe '+g+'</b>' +
-      '<table class="table">' +
-      '<tr><th>Équipe</th><th>Pts</th><th>J</th><th>G</th><th>N</th><th>P</th><th>BP</th><th>BC</th><th>Diff</th></tr>' +
-      rows.map(t=> '<tr><td>'+(t.emoji||'🏳️')+' '+cleanText(t.nom||t.equipe||'')+'</td><td><b>'+(t.pts||0)+'</b></td><td>'+(t.j||t.mp||0)+'</td><td>'+(t.w||0)+'</td><td>'+(t.d||0)+'</td><td>'+(t.l||0)+'</td><td>'+(t.gf||0)+'</td><td>'+(t.ga||0)+'</td><td>'+(t.diff||t.gd||0)+'</td></tr>').join('') +
-      '</table></div>';
-  }).join('');
+  const data=groupsData||{}, keys=Object.keys(data).sort();
+  if (!dataLoaded.groupsView && !keys.length){ $('groupsBox').innerHTML='<div class="viewLoading">Chargement…</div>'; return; }
+  if (!keys.length){ $('groupsBox').innerHTML='<div class="card muted">Classement indisponible : aucun groupe configuré.</div>'; return; }
+  $('groupsBox').innerHTML = keys.map(g=>{
+    const rows = data[g] || [];
+    return '<div class="card groupCard" '+groupStyle(g)+'>' +
+      '<b class="groupTitle">Groupe '+g+'</b>' +
+      '<table class="table">' +
+      '<tr><th>Équipe</th><th>Pts</th><th>J</th><th>G</th><th>N</th><th>P</th><th>BP</th><th>BC</th><th>Diff</th></tr>' +
+      rows.map(t=> '<tr><td>'+(t.emoji||'🏳️')+' '+cleanText(t.nom||t.equipe||'')+'</td><td><b>'+(t.pts||0)+'</b></td><td>'+(t.j||t.mp||0)+'</td><td>'+(t.w||0)+'</td><td>'+(t.d||0)+'</td><td>'+(t.l||0)+'</td><td>'+(t.gf||0)+'</td><td>'+(t.ga||0)+'</td><td>'+(t.diff||t.gd||0)+'</td></tr>').join('') +
+      '</table></div>';
+  }).join('');
 }
-
 /* =============================================================================
- * VUE RÉSUMÉ
- * ============================================================================= */
+ * VUE RÉSUMÉ
+ * ============================================================================= */
 function drawSummary(){
-  const rs=summaryData||{}, el=$('summary3Days'); if(!el) return;
-  if (!dataLoaded.summaryView && !rs.matchesCount){ el.innerHTML='<div class="viewLoading">Chargement…</div>'; return; }
-  if (!rs.matchesCount){ el.innerHTML='<div class="card muted">Aucun résultat récent à résumer pour l\'instant.</div>'; return; }
-  el.innerHTML =
-    '<div class="card summaryHero"><b>📊 Résumé des derniers résultats saisis</b><br><span class="muted">'+rs.matchesCount+' match(s) · '+(rs.pronosCount||0)+' prono(s) calculé(s) · '+(rs.exacts||0)+' score(s) exact(s) · '+(rs.jokersWon||0)+' joker(s) gagnant(s)</span></div>' +
-    '<div class="grid2">' +
-      '<div class="card">🏆 <b>'+(rs.best?cleanText(rs.best.pseudo):'—')+'</b><br><span class="muted">Meilleur sur la période · '+(rs.best?rs.best.points:0)+' pt(s)</span></div>' +
-      '<div class="card">😅 <b>'+(rs.worst?cleanText(rs.worst.pseudo):'—')+'</b><br><span class="muted">Plus compliqué · '+(rs.worst?rs.worst.points:0)+' pt(s)</span></div>' +
-    '</div>' +
-    '<div class="sec">⚽ Matchs résumés</div>' +
-    (rs.matches||[]).map(m=>
-      '<div class="card"><b>'+(m.emojiA||'')+' '+cleanText(m.equipeA)+' '+m.scoreA+'-'+m.scoreB+' '+cleanText(m.equipeB)+' '+(m.emojiB||'')+'</b><br>' +
-      '<span class="muted">📅 '+fmtDateFR(m.dateFR)+' · 🎯 scores exacts : '+((m.exactUsers||[]).length?m.exactUsers.map(cleanText).join(', '):'aucun')+'</span></div>'
-    ).join('') +
-    '<div class="sec">🏅 Classement sur la période</div>' +
-    (rs.users||[]).slice(0,8).map((u,i)=>{
-      const medal = i<3 ? ['🥇','🥈','🥉'][i] : (i+1);
-      return '<div class="card rank"><div class="pos">'+medal+'</div><div class="nm">'+cleanText(u.pseudo)+'<div class="muted">'+u.exact+' exact(s) · '+u.good+' bon(s) · '+u.wrong+' à 0 pt</div></div><div class="pts">'+u.points+'</div></div>';
-    }).join('');
+  const rs=summaryData||{}, el=$('summary3Days'); if(!el) return;
+  if (!dataLoaded.summaryView && !rs.matchesCount){ el.innerHTML='<div class="viewLoading">Chargement…</div>'; return; }
+  if (!rs.matchesCount){ el.innerHTML='<div class="card muted">Aucun résultat récent à résumer pour l\'instant.</div>'; return; }
+  el.innerHTML =
+    '<div class="card summaryHero"><b>📊 Résumé des derniers résultats saisis</b><br><span class="muted">'+rs.matchesCount+' match(s) · '+(rs.pronosCount||0)+' prono(s) calculé(s) · '+(rs.exacts||0)+' score(s) exact(s) · '+(rs.jokersWon||0)+' joker(s) gagnant(s)</span></div>' +
+    '<div class="grid2">' +
+      '<div class="card">🏆 <b>'+(rs.best?cleanText(rs.best.pseudo):'—')+'</b><br><span class="muted">Meilleur sur la période · '+(rs.best?rs.best.points:0)+' pt(s)</span></div>' +
+      '<div class="card">😅 <b>'+(rs.worst?cleanText(rs.worst.pseudo):'—')+'</b><br><span class="muted">Plus compliqué · '+(rs.worst?rs.worst.points:0)+' pt(s)</span></div>' +
+    '</div>' +
+    '<div class="sec">⚽ Matchs résumés</div>' +
+    (rs.matches||[]).map(m=>
+      '<div class="card"><b>'+(m.emojiA||'')+' '+cleanText(m.equipeA)+' '+m.scoreA+'-'+m.scoreB+' '+cleanText(m.equipeB)+' '+(m.emojiB||'')+'</b><br>' +
+      '<span class="muted">📅 '+fmtDateFR(m.dateFR)+' · 🎯 scores exacts : '+((m.exactUsers||[]).length?m.exactUsers.map(cleanText).join(', '):'aucun')+'</span></div>'
+    ).join('') +
+    '<div class="sec">🏅 Classement sur la période</div>' +
+    (rs.users||[]).slice(0,8).map((u,i)=>{
+      const medal = i<3 ? ['🥇','🥈','🥉'][i] : (i+1);
+      return '<div class="card rank"><div class="pos">'+medal+'</div><div class="nm">'+cleanText(u.pseudo)+'<div class="muted">'+u.exact+' exact(s) · '+u.good+' bon(s) · '+u.wrong+' à 0 pt</div></div><div class="pts">'+u.points+'</div></div>';
+    }).join('');
 }
-
 /* =============================================================================
- * VUE CLASSEMENT (Records / Classement / Buteurs)
- * ============================================================================= */
+ * VUE CLASSEMENT (Records / Classement / Buteurs)
+ * ============================================================================= */
 function showRankSection(name, btn){
-  activeRankSection = name || 'records';
-  ['records','classement','buteurs'].forEach(s=>{
-    const el = $('rank'+s.charAt(0).toUpperCase()+s.slice(1));
-    if (el) el.classList.toggle('hide', s!==activeRankSection);
-  });
-  document.querySelectorAll('.rankTabs button').forEach(b=> b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  else { const b = document.querySelector('.rankTabs button[data-rank="'+activeRankSection+'"]'); if(b) b.classList.add('active'); }
+  activeRankSection = name || 'records';
+  ['records','classement','buteurs'].forEach(s=>{
+    const el = $('rank'+s.charAt(0).toUpperCase()+s.slice(1));
+    if (el) el.classList.toggle('hide', s!==activeRankSection);
+  });
+  document.querySelectorAll('.rankTabs button').forEach(b=> b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  else { const b = document.querySelector('.rankTabs button[data-rank="'+activeRankSection+'"]'); if(b) b.classList.add('active'); }
 }
 function trendHtml(s){
-  const t = s.trend || 'flat';
-  if (t==='up')   return '<span class="rankTrend trendUp" title="A progressé au classement">▲</span>';
-  if (t==='down') return '<span class="rankTrend trendDown" title="A reculé au classement">▼</span>';
-  return '<span class="rankTrend trendFlat" title="Stable ou historique insuffisant">•</span>';
+  const t = s.trend || 'flat';
+  if (t==='up')   return '<span class="rankTrend trendUp" title="A progressé au classement">▲</span>';
+  if (t==='down') return '<span class="rankTrend trendDown" title="A reculé au classement">▼</span>';
+  return '<span class="rankTrend trendFlat" title="Stable ou historique insuffisant">•</span>';
 }
 function drawRank(){
-  if (!dataLoaded.rankView && !classement.length){
-    $('funBox').innerHTML = '<div class="viewLoading">Chargement…</div>';
-    $('rankList').innerHTML = '';
-    $('rankScorerBlock').innerHTML = '';
-    return;
-  }
-  $('funBox').innerHTML = (fun||[]).map(x=>
-    '<div class="card"><div class="em">'+(x.emoji||'•')+'</div><b>'+cleanText(x.value)+'</b>' +
-    '<div class="muted">'+cleanText(x.label)+(x.detail?'<br>'+cleanText(x.detail):'')+'</div></div>'
-  ).join('') || '<div class="card muted">Pas encore de records — il faut au moins un match terminé.</div>';
-
-  $('rankList').innerHTML = (classement||[]).map(s=>{
-    const safe = String(cleanText(s.pseudo)).replace(/'/g,'&#39;');
-    const points = s.points!=null?s.points:(s.total||0);
-    const rate   = s.successRate!=null?s.successRate:(s.rate||0);
-    const jUsed  = s.jokersUsed!=null?s.jokersUsed:(s.jokers||0);
-    const but    = s.buteurChoisi!=null?s.buteurChoisi:(s.buteur||'—');
-    const risk   = Number(s.counterCurrentSuccess)?'<br>😈 '+s.counterCurrentSuccess+' contre-courant réussi(s) · 🎁 +'+(s.riskBonus||0):'';
-    return '<div class="card">' +
-      '<div class="rank rankClickable" onclick="toggleRankHistory(\''+s.userId+'\',\''+safe+'\')">' +
-        '<div class="pos">'+(s.rank<=3?['🥇','🥈','🥉'][s.rank-1]:s.rank)+'</div>' +
-        trendHtml(s) +
-        '<div class="nm">'+cleanText(s.pseudo) +
-          '<div class="muted">'+s.exact+' exacts · '+s.good+' bons · '+rate+'% réussite<br>⭐ '+jUsed+'/'+MAX_JOKERS+' jokers utilisés · ⚽ '+cleanText(but)+risk+'</div>' +
-        '</div>' +
-        '<div class="pts">'+points+'</div>' +
-      '</div>' +
-      '<div id="rankChart_'+s.userId+'" class="rankChart hide"><canvas id="rankCanvas_'+s.userId+'"></canvas></div>' +
-    '</div>';
-  }).join('') || '<div class="card muted">Aucun joueur inscrit.</div>';
-
-  drawRankScorers();
-  showRankSection(activeRankSection);
+  if (!dataLoaded.rankView && !classement.length){
+    $('funBox').innerHTML = '<div class="viewLoading">Chargement…</div>';
+    $('rankList').innerHTML = '';
+    $('rankScorerBlock').innerHTML = '';
+    return;
+  }
+  $('funBox').innerHTML = (fun||[]).map(x=>
+    '<div class="card"><div class="em">'+(x.emoji||'•')+'</div><b>'+cleanText(x.value)+'</b>' +
+    '<div class="muted">'+cleanText(x.label)+(x.detail?'<br>'+cleanText(x.detail):'')+'</div></div>'
+  ).join('') || '<div class="card muted">Pas encore de records — il faut au moins un match terminé.</div>';
+  $('rankList').innerHTML = (classement||[]).map(s=>{
+    const safe = String(cleanText(s.pseudo)).replace(/'/g,'&#39;');
+    const points = s.points!=null?s.points:(s.total||0);
+    const rate   = s.successRate!=null?s.successRate:(s.rate||0);
+    const jUsed  = s.jokersUsed!=null?s.jokersUsed:(s.jokers||0);
+    const but    = s.buteurChoisi!=null?s.buteurChoisi:(s.buteur||'—');
+    const risk   = Number(s.counterCurrentSuccess)?'<br>😈 '+s.counterCurrentSuccess+' contre-courant réussi(s) · 🎁 +'+(s.riskBonus||0):'';
+    return '<div class="card">' +
+      '<div class="rank rankClickable" onclick="toggleRankHistory(\''+s.userId+'\',\''+safe+'\')">' +
+        '<div class="pos">'+(s.rank<=3?['🥇','🥈','🥉'][s.rank-1]:s.rank)+'</div>' +
+        trendHtml(s) +
+        '<div class="nm">'+cleanText(s.pseudo) +
+          '<div class="muted">'+s.exact+' exacts · '+s.good+' bons · '+rate+'% réussite<br>⭐ '+jUsed+'/'+MAX_JOKERS+' jokers utilisés · ⚽ '+cleanText(but)+risk+'</div>' +
+        '</div>' +
+        '<div class="pts">'+points+'</div>' +
+      '</div>' +
+      '<div id="rankChart_'+s.userId+'" class="rankChart hide"><canvas id="rankCanvas_'+s.userId+'"></canvas></div>' +
+    '</div>';
+  }).join('') || '<div class="card muted">Aucun joueur inscrit.</div>';
+  drawRankScorers();
+  showRankSection(activeRankSection);
 }
 function drawRankScorers(){
-  const scorers = (buteur && buteur.scorers) || [];
-  const ranking = (buteur && buteur.ranking) || (buteur && buteur.votes) || [];
-  const voted = bool(userState && userState.hasScorerVote) || !!myScorerVote;
-  const scorerBtn = voted ? '' :
-    '<button class="btn" style="margin-bottom:10px" onclick="show(\'Scorers\')">⚽ Choisir mon meilleur buteur</button>';
-  $('rankScorerBlock').innerHTML = scorerBtn +
-    (scorers.length
-      ? scorers.slice(0,8).map((s,i)=>
-        '<div class="card player"><b>'+(i+1)+'</b><div class="info"><b>'+cleanText(s.nomComplet||s.initialNom||s.nom)+'</b><div class="muted">'+(s.emoji||'')+' '+cleanText(s.equipe||'')+'</div></div><div class="pts">'+s.buts+'</div></div>'
-      ).join('')
-      : '<div class="card muted">Aucun but enregistré pour l\'instant.</div>'
-    ) +
-    '<div class="sec">Votes meilleur buteur</div>' +
-    (ranking.length
-      ? ranking.map(v=>
-        '<div class="card"><b>'+cleanText(v.joueur)+'</b> · '+(v.buts||0)+' but(s)<br><span class="muted">'+(v.votes||0)+' vote(s) : '+cleanText((v.users||[]).join(', '))+'<br>Départage par classement général si même joueur.</span></div>'
-      ).join('')
-      : '<div class="card muted">Aucun vote pour l\'instant.</div>'
-    );
+  const scorers = (buteur && buteur.scorers) || [];
+  const ranking = (buteur && buteur.ranking) || (buteur && buteur.votes) || [];
+  const voted = bool(userState && userState.hasScorerVote) || !!myScorerVote;
+  const scorerBtn = voted ? '' :
+    '<button class="btn" style="margin-bottom:10px" onclick="show(\'Scorers\')">⚽ Choisir mon meilleur buteur</button>';
+  $('rankScorerBlock').innerHTML = scorerBtn +
+    (scorers.length
+      ? scorers.slice(0,8).map((s,i)=>
+        '<div class="card player"><b>'+(i+1)+'</b><div class="info"><b>'+cleanText(s.nomComplet||s.initialNom||s.nom)+'</b><div class="muted">'+(s.emoji||'')+' '+cleanText(s.equipe||'')+'</div></div><div class="pts">'+s.buts+'</div></div>'
+      ).join('')
+      : '<div class="card muted">Aucun but enregistré pour l\'instant.</div>'
+    ) +
+    '<div class="sec">Votes meilleur buteur</div>' +
+    (ranking.length
+      ? ranking.map(v=>
+        '<div class="card"><b>'+cleanText(v.joueur)+'</b> · '+(v.buts||0)+' but(s)<br><span class="muted">'+(v.votes||0)+' vote(s) : '+cleanText((v.users||[]).join(', '))+'<br>Départage par classement général si même joueur.</span></div>'
+      ).join('')
+      : '<div class="card muted">Aucun vote pour l\'instant.</div>'
+    );
 }
 function toggleRankHistory(userId, pseudo){
-  const box=$('rankChart_'+userId); if(!box) return;
-  const willOpen = box.classList.contains('hide');
-  document.querySelectorAll('.rankChart').forEach(e=> e.classList.add('hide'));
-  if (!willOpen) return;
-  box.classList.remove('hide');
-  api('getUserRankHistory', {userId}).then(rows=> drawRankHistory(userId, pseudo, rows||[]))
-                                     .catch(e=> toast('Erreur historique : '+e.message, true));
+  const box=$('rankChart_'+userId); if(!box) return;
+  const willOpen = box.classList.contains('hide');
+  document.querySelectorAll('.rankChart').forEach(e=> e.classList.add('hide'));
+  if (!willOpen) return;
+  box.classList.remove('hide');
+  api('getUserRankHistory', {userId}).then(rows=> drawRankHistory(userId, pseudo, rows||[]))
+                                     .catch(e=> toast('Erreur historique : '+e.message, true));
 }
 function drawRankHistory(userId, pseudo, rows){
-  const canvas=$('rankCanvas_'+userId); if(!canvas) return;
-  if (rankCharts[userId]) rankCharts[userId].destroy();
-  if (!rows.length){ canvas.parentElement.innerHTML = '<div class="muted small">Aucun historique disponible.</div>'; return; }
-  const gold = getComputedStyle(document.documentElement).getPropertyValue('--gold').trim() || '#FFD700';
-  rankCharts[userId] = new Chart(canvas, {
-    type:'line',
-    data:{ labels: rows.map(r=>r.date), datasets:[{ label:'Points - '+cleanText(pseudo), data: rows.map(r=>r.points), borderColor:gold, backgroundColor:'transparent', fill:false, tension:.2, pointRadius:4 }] },
-    options:{ responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ labels:{ color:'#e6edf3' } }, tooltip:{ callbacks:{ afterLabel:ctx=> 'Rang : '+rows[ctx.dataIndex].rank } } },
-      scales:{
-        x:{ title:{ display:true, text:'Jour', color:'#8b949e' }, ticks:{ color:'#8b949e' }, grid:{ color:'rgba(255,255,255,.07)' } },
-        y:{ beginAtZero:true, title:{ display:true, text:'Points', color:'#8b949e' }, ticks:{ color:'#8b949e', precision:0 }, grid:{ color:'rgba(255,255,255,.07)' } }
-      }
-    }
-  });
+  const canvas=$('rankCanvas_'+userId); if(!canvas) return;
+  if (rankCharts[userId]) rankCharts[userId].destroy();
+  if (!rows.length){ canvas.parentElement.innerHTML = '<div class="muted small">Aucun historique disponible.</div>'; return; }
+  const gold = getComputedStyle(document.documentElement).getPropertyValue('--gold').trim() || '#FFD700';
+  rankCharts[userId] = new Chart(canvas, {
+    type:'line',
+    data:{ labels: rows.map(r=>r.date), datasets:[{ label:'Points - '+cleanText(pseudo), data: rows.map(r=>r.points), borderColor:gold, backgroundColor:'transparent', fill:false, tension:.2, pointRadius:4 }] },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ labels:{ color:'#e6edf3' } }, tooltip:{ callbacks:{ afterLabel:ctx=> 'Rang : '+rows[ctx.dataIndex].rank } } },
+      scales:{
+        x:{ title:{ display:true, text:'Jour', color:'#8b949e' }, ticks:{ color:'#8b949e' }, grid:{ color:'rgba(255,255,255,.07)' } },
+        y:{ beginAtZero:true, title:{ display:true, text:'Points', color:'#8b949e' }, ticks:{ color:'#8b949e', precision:0 }, grid:{ color:'rgba(255,255,255,.07)' } }
+      }
+    }
+  });
 }
-
 /* =============================================================================
- * VUE MEILLEUR BUTEUR
- * ============================================================================= */
+ * VUE MEILLEUR BUTEUR
+ * ============================================================================= */
 function drawScorers(){
-  if (!dataLoaded.scorersView){
-    $('myScorerVote').innerHTML = '<div class="muted">Chargement…</div>';
-    $('playerPick').innerHTML = '';
-    return;
-  }
-  // Peuple le select des équipes (idempotent : on ne re-remplit que si nécessaire)
-  const sel = $('teamScorerFilter');
-  if (sel && sel.options.length <= 1 && (equipes||[]).length) {
-    const currentVal = sel.value;
-    const opts = ['<option value="">Toutes les équipes</option>'].concat(
-      (equipes||[]).filter(e=> e.actif !== false)
-        .map(e => cleanText(e.nomAffiche || e.nomSource || ''))
-        .filter(Boolean)
-        .sort()
-        .map(name => '<option value="'+name+'">'+name+'</option>')
-    );
-    sel.innerHTML = opts.join('');
-    if (currentVal) sel.value = currentVal;
-  }
-  const my = myScorerVote;
-  $('myScorerVote').innerHTML = scorersClosed
-    ? '⛔ Vote meilleur buteur fermé'+(scorersDeadline?' depuis le <b>'+scorersDeadline+'</b>':'')+'.<br>'+(my?'Ton choix : <b>'+cleanText(my.joueur)+'</b>':'Aucun choix enregistré.')
-    : (my
-        ? 'Ton choix validé : <b>'+cleanText(my.joueur)+'</b><br><span class="muted">Choix définitif. Demande à l\'admin pour modifier.</span>'
-        : 'Aucun choix validé pour l\'instant.<br><span class="muted">Sélectionne un joueur puis valide.</span>');
-  $('btnVoteScorer').disabled = scorersClosed || !!my;
-  $('btnVoteScorer').textContent = scorersClosed?'Vote fermé':my?'Choix déjà validé':'Valider mon choix de meilleur buteur';
-  drawPlayers();
+  if (!dataLoaded.scorersView){
+    $('myScorerVote').innerHTML = '<div class="muted">Chargement…</div>';
+    $('playerPick').innerHTML = '';
+    return;
+  }
+  // Peuple le select des équipes (idempotent : on ne re-remplit que si nécessaire)
+  const sel = $('teamScorerFilter');
+  if (sel && sel.options.length <= 1 && (equipes||[]).length) {
+    const currentVal = sel.value;
+    const opts = ['<option value="">Toutes les équipes</option>'].concat(
+      (equipes||[]).filter(e=> e.actif !== false)
+        .map(e => cleanText(e.nomAffiche || e.nomSource || ''))
+        .filter(Boolean)
+        .sort()
+        .map(name => '<option value="'+name+'">'+name+'</option>')
+    );
+    sel.innerHTML = opts.join('');
+    if (currentVal) sel.value = currentVal;
+  }
+  const my = myScorerVote;
+  $('myScorerVote').innerHTML = scorersClosed
+    ? '⛔ Vote meilleur buteur fermé'+(scorersDeadline?' depuis le <b>'+scorersDeadline+'</b>':'')+'.<br>'+(my?'Ton choix : <b>'+cleanText(my.joueur)+'</b>':'Aucun choix enregistré.')
+    : (my
+        ? 'Ton choix validé : <b>'+cleanText(my.joueur)+'</b><br><span class="muted">Choix définitif. Demande à l\'admin pour modifier.</span>'
+        : 'Aucun choix validé pour l\'instant.<br><span class="muted">Sélectionne un joueur puis valide.</span>');
+  $('btnVoteScorer').disabled = scorersClosed || !!my;
+  $('btnVoteScorer').textContent = scorersClosed?'Vote fermé':my?'Choix déjà validé':'Valider mon choix de meilleur buteur';
+  drawPlayers();
 }
 function drawPlayers(){
-  const q = ($('playerSearch').value || '').toLowerCase().trim();
-  const teamFilter = ($('teamScorerFilter') && $('teamScorerFilter').value || '').toLowerCase().trim();
-  if (scorersClosed){ $('playerPick').innerHTML='<div class="card muted">Le vote est fermé.</div>'; return; }
-  if (myScorerVote){ $('playerPick').innerHTML='<div class="card muted">Ton choix est déjà validé.</div>'; return; }
-  if (!joueurs.length){ $('playerPick').innerHTML='<div class="card muted">Liste joueurs vide. À remplir en juin.</div>'; return; }
-  // Croise les 2 filtres : texte tapé ET équipe sélectionnée (si une est choisie)
-  const list = joueurs.filter(j => {
-    const eq = String(j.equipe || '').toLowerCase().trim();
-    if (teamFilter && eq !== teamFilter) return false;
-    if (!q) return true;
-    return (String(j.nomComplet || j.nom || '') + ' ' + (j.equipe || '')).toLowerCase().indexOf(q) >= 0;
-  }).slice(0, 40);
-  $('playerPick').innerHTML = list.map(j=>
-    '<div class="card player '+(selectedPlayer&&String(selectedPlayer.id)===String(j.id)?'selectedPlayer':'')+'" onclick=\'selectedPlayer='+JSON.stringify(j).replace(/'/g,'&#39;')+';drawPlayers()\'>' +
-      '<div class="flag">'+(FLAG_BY_CODE(j.codePays)||'⚽')+'</div>' +
-      '<div class="info"><b>'+cleanText(j.nomComplet||j.nom)+'</b><div class="muted">'+cleanText(j.equipe||'')+' · '+(j.buts||0)+' but(s)</div></div>' +
-    '</div>'
-  ).join('');
+  const q = ($('playerSearch').value || '').toLowerCase().trim();
+  const teamFilter = ($('teamScorerFilter') && $('teamScorerFilter').value || '').toLowerCase().trim();
+  if (scorersClosed){ $('playerPick').innerHTML='<div class="card muted">Le vote est fermé.</div>'; return; }
+  if (myScorerVote){ $('playerPick').innerHTML='<div class="card muted">Ton choix est déjà validé.</div>'; return; }
+  if (!joueurs.length){ $('playerPick').innerHTML='<div class="card muted">Liste joueurs vide. À remplir en juin.</div>'; return; }
+  // Croise les 2 filtres : texte tapé ET équipe sélectionnée (si une est choisie)
+  const list = joueurs.filter(j => {
+    const eq = String(j.equipe || '').toLowerCase().trim();
+    if (teamFilter && eq !== teamFilter) return false;
+    if (!q) return true;
+    return (String(j.nomComplet || j.nom || '') + ' ' + (j.equipe || '')).toLowerCase().indexOf(q) >= 0;
+  }).slice(0, 40);
+  $('playerPick').innerHTML = list.map(j=>
+    '<div class="card player '+(selectedPlayer&&String(selectedPlayer.id)===String(j.id)?'selectedPlayer':'')+'" onclick=\'selectedPlayer='+JSON.stringify(j).replace(/'/g,'&#39;')+';drawPlayers()\'>' +
+      '<div class="flag">'+(FLAG_BY_CODE(j.codePays)||'⚽')+'</div>' +
+      '<div class="info"><b>'+cleanText(j.nomComplet||j.nom)+'</b><div class="muted">'+cleanText(j.equipe||'')+' · '+(j.buts||0)+' but(s)</div></div>' +
+    '</div>'
+  ).join('');
 }
 function confirmScorerVote(){
-  const btn = $('btnVoteScorer');
-  if (myScorerVote){ formMsg('scorerMsg', 'Choix déjà validé.', false); return; }
-  if (!selectedPlayer){ formMsg('scorerMsg', 'Sélectionne un joueur puis valide.', false); return; }
-  runAction({
-    btn,
-    inProgressLabel: 'Enregistrement du choix buteur…',
-    successLabel: 'Choix buteur validé ⚽',
-    promise: api('voteButeur', {userId:user.userId, joueurId:selectedPlayer.id}),
-    onSuccess: d => {
-      // Mutation locale : marque le vote comme fait pour cacher les boutons immédiatement
-      userState.hasScorerVote = true;
-      if (d.scorersView) applyViewData('scorersView', d.scorersView);
-      if (d.light)       applyLight(d.light);
-      dataLoaded.rankView = false;
-      fetchView('rankView','getRankView',{userId:user.userId});
-    }
-  });
+  const btn = $('btnVoteScorer');
+  if (myScorerVote){ formMsg('scorerMsg', 'Choix déjà validé.', false); return; }
+  if (!selectedPlayer){ formMsg('scorerMsg', 'Sélectionne un joueur puis valide.', false); return; }
+  runAction({
+    btn,
+    inProgressLabel: 'Enregistrement du choix buteur…',
+    successLabel: 'Choix buteur validé ⚽',
+    promise: api('voteButeur', {userId:user.userId, joueurId:selectedPlayer.id}),
+    onSuccess: d => {
+      // Mutation locale : marque le vote comme fait pour cacher les boutons immédiatement
+      userState.hasScorerVote = true;
+      if (d.scorersView) applyViewData('scorersView', d.scorersView);
+      if (d.light)       applyLight(d.light);
+      dataLoaded.rankView = false;
+      fetchView('rankView','getRankView',{userId:user.userId});
+    }
+  });
 }
-
 /* =============================================================================
- * VUE PROFIL — profileHero + profileUnifiedTabs (8 sections, admin intégré)
- * ============================================================================= */
+ * VUE PROFIL — profileHero + profileUnifiedTabs (8 sections, admin intégré)
+ * ============================================================================= */
 function drawProfile(){
-  const meRank = (classement||[]).find(x=> String(x.userId)===String(user.userId)) || (profileData||{}).rank || {};
-  const points = meRank.points!=null?meRank.points:(meRank.total||0);
-  const preds  = meRank.predictions || meRank.played || 0;
-  const exact  = meRank.exact || 0;
-  const riskB  = meRank.riskBonus || 0;
-  const jUsed  = meRank.jokersUsed!=null?meRank.jokersUsed:(meRank.jokers!=null?meRank.jokers:(user.jokersUsed||0));
-  const remJok = MAX_JOKERS - jUsed;
-  const rate   = meRank.successRate!=null?meRank.successRate:(meRank.rate||0);
-
-  const badges = [];
-  if (exact>0) badges.push('🎯 Score exact');
-  if ((meRank.jokerPts||0)>0) badges.push('⭐ Joker rentable');
-  if (preds>=10) badges.push('📌 Assidu');
-  if (rate>=50 && preds>=3) badges.push('✨ Bon flair');
-  if (riskB>0) badges.push('😈 Rebelle rentable');
-  if ((meRank.wrong||0)>=3) badges.push('🐈\u200d⬛ Chat noir temporaire');
-
-  let tabs = [['infos','Mes infos'],['pronos','Mes pronos']];
-  if (user.isAdmin) tabs = tabs.concat([
-    ['suivi','Admin suivi'],['resultats','Résultats'],['cotes','Correction / ajout cote'],
-    ['addmatch','Ajout match'],['bonus','Admin joker bonus'],['coverage','Admin couverture pronos']
-  ]);
-  if (!tabs.some(t=> t[0]===activeProfileSection)) activeProfileSection = 'infos';
-
-  let content='';
-  if (activeProfileSection==='infos')          content = profileInfosHtml(points, preds, exact, riskB);
-  else if (activeProfileSection==='pronos')    content = profileMyPronosHtml();
-  else if (activeProfileSection==='suivi')     content = adminSuiviHtml();
-  else if (activeProfileSection==='resultats') content = adminResultsHtml();
-  else if (activeProfileSection==='cotes')     content = adminOddsHtml();
-  else if (activeProfileSection==='addmatch')  content = adminAddMatchHtml();
-  else if (activeProfileSection==='bonus')     content = adminBonusHtml();
-  else if (activeProfileSection==='coverage')  content = adminCoverageHtml();
-
-  $('vProfile').innerHTML =
-    '<div class="card profileHero">' +
-      '<div style="font-size:2.4rem">👤</div>' +
-      '<h2>'+cleanText(user.pseudo)+'</h2>' +
-      '<div class="muted">'+remJok+' joker(s) restant(s) · '+jUsed+'/'+MAX_JOKERS+' utilisés</div>' +
-      '<div class="badgeLine profileBadgeLine">' +
-        (badges.length ? badges.map(b=>'<span class="badgeMini">'+b+'</span>').join('') : '<span class="muted">Badges à venir avec les premiers résultats.</span>') +
-      '</div>' +
-    '</div>' +
-    '<div class="profileUnifiedTabs">' +
-      tabs.map(t=> '<button type="button" class="'+(activeProfileSection===t[0]?'active':'')+'" onclick="setProfileSection(\''+t[0]+'\')">'+t[1]+'</button>').join('') +
-    '</div>' +
-    '<div class="profilePanel">'+content+'</div>' +
-    (user.isAdmin
-      ? '<br><div class="grid2"><button class="btn btn2" onclick="adminRebuild(this)">♻️ Rebuild caches</button><button class="btn btn2" onclick="adminTrigger(this)">⏱️ Réinstaller trigger</button></div>'
-      : '');
-
-  setTimeout(()=>{ if (user.isAdmin) try { fillAdminSelects(); onAddPhaseChange(); } catch(e){} }, 0);
+  const meRank = (classement||[]).find(x=> String(x.userId)===String(user.userId)) || (profileData||{}).rank || {};
+  const points = meRank.points!=null?meRank.points:(meRank.total||0);
+  const preds  = meRank.predictions || meRank.played || 0;
+  const exact  = meRank.exact || 0;
+  const riskB  = meRank.riskBonus || 0;
+  const jUsed  = meRank.jokersUsed!=null?meRank.jokersUsed:(meRank.jokers!=null?meRank.jokers:(user.jokersUsed||0));
+  const remJok = MAX_JOKERS - jUsed;
+  const rate   = meRank.successRate!=null?meRank.successRate:(meRank.rate||0);
+  const badges = [];
+  if (exact>0) badges.push('🎯 Score exact');
+  if ((meRank.jokerPts||0)>0) badges.push('⭐ Joker rentable');
+  if (preds>=10) badges.push('📌 Assidu');
+  if (rate>=50 && preds>=3) badges.push('✨ Bon flair');
+  if (riskB>0) badges.push('😈 Rebelle rentable');
+  if ((meRank.wrong||0)>=3) badges.push('🐈\u200d⬛ Chat noir temporaire');
+  let tabs = [['infos','Mes infos'],['pronos','Mes pronos']];
+  if (user.isAdmin) tabs = tabs.concat([
+    ['suivi','Admin suivi'],['resultats','Résultats'],['cotes','Correction / ajout cote'],
+    ['addmatch','Ajout match'],['bonus','Admin joker bonus'],['coverage','Admin couverture pronos']
+  ]);
+  if (!tabs.some(t=> t[0]===activeProfileSection)) activeProfileSection = 'infos';
+  let content='';
+  if (activeProfileSection==='infos')          content = profileInfosHtml(points, preds, exact, riskB);
+  else if (activeProfileSection==='pronos')    content = profileMyPronosHtml();
+  else if (activeProfileSection==='suivi')     content = adminSuiviHtml();
+  else if (activeProfileSection==='resultats') content = adminResultsHtml();
+  else if (activeProfileSection==='cotes')     content = adminOddsHtml();
+  else if (activeProfileSection==='addmatch')  content = adminAddMatchHtml();
+  else if (activeProfileSection==='bonus')     content = adminBonusHtml();
+  else if (activeProfileSection==='coverage')  content = adminCoverageHtml();
+  $('vProfile').innerHTML =
+    '<div class="card profileHero">' +
+      '<div style="font-size:2.4rem">👤</div>' +
+      '<h2>'+cleanText(user.pseudo)+'</h2>' +
+      '<div class="muted">'+remJok+' joker(s) restant(s) · '+jUsed+'/'+MAX_JOKERS+' utilisés</div>' +
+      '<div class="badgeLine profileBadgeLine">' +
+        (badges.length ? badges.map(b=>'<span class="badgeMini">'+b+'</span>').join('') : '<span class="muted">Badges à venir avec les premiers résultats.</span>') +
+      '</div>' +
+    '</div>' +
+    '<div class="profileUnifiedTabs">' +
+      tabs.map(t=> '<button type="button" class="'+(activeProfileSection===t[0]?'active':'')+'" onclick="setProfileSection(\''+t[0]+'\')">'+t[1]+'</button>').join('') +
+    '</div>' +
+    '<div class="profilePanel">'+content+'</div>' +
+    (user.isAdmin
+      ? '<br><div class="grid2"><button class="btn btn2" onclick="adminRebuild(this)">♻️ Rebuild caches</button><button class="btn btn2" onclick="adminTrigger(this)">⏱️ Réinstaller trigger</button></div>'
+      : '');
+  setTimeout(()=>{ if (user.isAdmin) try { fillAdminSelects(); onAddPhaseChange(); } catch(e){} }, 0);
 }
 function setProfileSection(s){ activeProfileSection=s; drawProfile(); }
-
 function profileInfosHtml(points, preds, exact, riskB){
-  return '<div class="grid2">' +
-    '<div class="card"><div class="pts">'+points+'</div><div class="muted">🏆 Points</div></div>' +
-    '<div class="card"><div class="pts">'+preds+'</div><div class="muted">⚽ Pronostics</div></div>' +
-    '<div class="card"><div class="pts">'+exact+'</div><div class="muted">🎯 Scores exacts</div></div>' +
-    '<div class="card"><div class="pts">+'+riskB+'</div><div class="muted">🎁 Bonus risque</div></div>' +
-  '</div>';
+  return '<div class="grid2">' +
+    '<div class="card"><div class="pts">'+points+'</div><div class="muted">🏆 Points</div></div>' +
+    '<div class="card"><div class="pts">'+preds+'</div><div class="muted">⚽ Pronostics</div></div>' +
+    '<div class="card"><div class="pts">'+exact+'</div><div class="muted">🎯 Scores exacts</div></div>' +
+    '<div class="card"><div class="pts">+'+riskB+'</div><div class="muted">🎁 Bonus risque</div></div>' +
+  '</div>';
 }
 function profileMyPronosHtml(){
-  const items = ['all:Toutes','finished:Terminés','open:Ouverts'].concat(
-    ['A','B','C','D','E','F','G','H','I','J','K','L'].map(g=> g+':'+g)
-  ).concat(['PF:Finales']);
-  const bar = '<div class="profileFilters">' + items.map(x=>{
-    const [k,l]=x.split(':'); const pool=isPoolFilter(k);
-    return '<button class="'+(currentProfileFilter===k?'active':'')+(pool?' groupFilter':'')+'" '+(pool?groupStyle(k):'')+' onclick="currentProfileFilter=\''+k+'\';drawProfile()">'+l+'</button>';
-  }).join('') + '</div>';
-  const rows = matches.filter(m=> pronos[String(mId(m))]).filter(passProfileFilter).sort(profileSort);
-  const list = rows.length
-    ? rows.map(m=>{
-        const p=pronos[String(mId(m))], grouped=isPoolFilter(m.groupe);
-        const finished = String(m.status)==='FINISHED';
-        const inProgress = String(m.status)==='LOCKED';
-        const upcoming = String(m.status)==='OPEN';
-        const statusBadge = finished
-            ? '<span class="pill finishedP">Terminé</span>'
-            : inProgress
-              ? '<span class="pill lockedP">En cours</span>'
-              : '<span class="pill open">À venir</span>';
-        const scoreLine = finished
-            ? '<br>📊 Score final : <b>'+m.scoreA+'-'+m.scoreB+'</b>'+(p.points!==''&&p.points!=null?(' · <b>'+p.points+' pt(s)</b>'):'')
-            : (inProgress ? '<br><span class="muted">Calcul des points après la fin du match.</span>' : '');
-        return '<div class="card profilePronostic'+(grouped?' grouped':'')+'" '+(grouped?groupStyle(m.groupe):'')+'>' +
-          '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:5px"><b>'+mFlag(m,'A')+' '+mName(m,'A')+' - '+mName(m,'B')+' '+mFlag(m,'B')+'</b>'+statusBadge+'</div>' +
-          '<span class="muted">'+(isPoolFilter(m.groupe)?'Groupe '+m.groupe:'Phase finale')+' · '+fmtDateFR(m.dateFR)+(m.heureFR?(' · '+fmtHeure(m.heureFR)):'')+'</span><br>' +
-          '<span>Ton prono : <b>'+p.scoreA+'-'+p.scoreB+'</b>'+(p.joker?' ⭐':'')+(p.counterCurrent?' 😈':'')+(p.riskBonus?(' · 🎁 +'+p.riskBonus):'')+'</span>'+scoreLine +
-        '</div>';
-      }).join('')
-    : '<div class="card muted">'+(dataLoaded.pronosView?'Aucun pronostic dans ce filtre.':'Chargement…')+'</div>';
-  return bar + list;
+  const items = ['all:Toutes','finished:Terminés','open:Ouverts'].concat(
+    ['A','B','C','D','E','F','G','H','I','J','K','L'].map(g=> g+':'+g)
+  ).concat(['PF:Finales']);
+  const bar = '<div class="profileFilters">' + items.map(x=>{
+    const [k,l]=x.split(':'); const pool=isPoolFilter(k);
+    return '<button class="'+(currentProfileFilter===k?'active':'')+(pool?' groupFilter':'')+'" '+(pool?groupStyle(k):'')+' onclick="currentProfileFilter=\''+k+'\';drawProfile()">'+l+'</button>';
+  }).join('') + '</div>';
+  const rows = matches.filter(m=> pronos[String(mId(m))]).filter(passProfileFilter).sort(profileSort);
+  const list = rows.length
+    ? rows.map(m=>{
+        const p=pronos[String(mId(m))], grouped=isPoolFilter(m.groupe);
+        const finished = String(m.status)==='FINISHED';
+        const inProgress = String(m.status)==='LOCKED';
+        const upcoming = String(m.status)==='OPEN';
+        const statusBadge = finished
+            ? '<span class="pill finishedP">Terminé</span>'
+            : inProgress
+              ? '<span class="pill lockedP">En cours</span>'
+              : '<span class="pill open">À venir</span>';
+        const scoreLine = finished
+            ? '<br>📊 Score final : <b>'+m.scoreA+'-'+m.scoreB+'</b>'+(p.points!==''&&p.points!=null?(' · <b>'+p.points+' pt(s)</b>'):'')
+            : (inProgress ? '<br><span class="muted">Calcul des points après la fin du match.</span>' : '');
+        return '<div class="card profilePronostic'+(grouped?' grouped':'')+'" '+(grouped?groupStyle(m.groupe):'')+'>' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:5px"><b>'+mFlag(m,'A')+' '+mName(m,'A')+' - '+mName(m,'B')+' '+mFlag(m,'B')+'</b>'+statusBadge+'</div>' +
+          '<span class="muted">'+(isPoolFilter(m.groupe)?'Groupe '+m.groupe:'Phase finale')+' · '+fmtDateFR(m.dateFR)+(m.heureFR?(' · '+fmtHeure(m.heureFR)):'')+'</span><br>' +
+          '<span>Ton prono : <b>'+p.scoreA+'-'+p.scoreB+'</b>'+(p.joker?' ⭐':'')+(p.counterCurrent?' 😈':'')+(p.riskBonus?(' · 🎁 +'+p.riskBonus):'')+'</span>'+scoreLine +
+        '</div>';
+      }).join('')
+    : '<div class="card muted">'+(dataLoaded.pronosView?'Aucun pronostic dans ce filtre.':'Chargement…')+'</div>';
+  return bar + list;
 }
 function passProfileFilter(m){
-  if (currentProfileFilter==='all') return true;
-  if (currentProfileFilter==='finished') return String(m.status)==='FINISHED';
-  if (currentProfileFilter==='open') return String(m.status)==='OPEN';
-  if (currentProfileFilter==='PF') return !isPoolFilter(m.groupe);
-  return m.groupe===currentProfileFilter;
+  if (currentProfileFilter==='all') return true;
+  if (currentProfileFilter==='finished') return String(m.status)==='FINISHED';
+  if (currentProfileFilter==='open') return String(m.status)==='OPEN';
+  if (currentProfileFilter==='PF') return !isPoolFilter(m.groupe);
+  return m.groupe===currentProfileFilter;
 }
 function profileSort(a,b){
-  const ga=isPoolFilter(a.groupe)?a.groupe:'Z', gb=isPoolFilter(b.groupe)?b.groupe:'Z';
-  return ga.localeCompare(gb) || Number(mId(a))-Number(mId(b));
+  const ga=isPoolFilter(a.groupe)?a.groupe:'Z', gb=isPoolFilter(b.groupe)?b.groupe:'Z';
+  return ga.localeCompare(gb) || Number(mId(a))-Number(mId(b));
 }
-
 function adminSuiviHtml(){
-  const rows = ((adminData||{}).coverage||{}).rows || [];
-  const open = rows.filter(r=> r.status==='OPEN').length;
-  const noProno = rows.filter(r=> r.status==='OPEN' && r.count===0).length;
-  const lowProno = rows.filter(r=> r.status==='OPEN' && r.count>0 && r.count<(r.totalUsers/2)).length;
-  const withBonus = rows.filter(r=> r.bonusJoker).length;
-  return '<div class="card"><b>Vue d\'ensemble admin</b><br><br>' +
-    '<div class="grid2">' +
-      '<div class="card"><div class="pts">'+open+'</div><div class="muted">📅 Matchs ouverts</div></div>' +
-      '<div class="card"><div class="pts">'+noProno+'</div><div class="muted">😶 Sans aucun prono</div></div>' +
-      '<div class="card"><div class="pts">'+lowProno+'</div><div class="muted">⚠️ Couverture &lt; 50%</div></div>' +
-      '<div class="card"><div class="pts">'+withBonus+'</div><div class="muted">⭐ Joker bonus actif</div></div>' +
-    '</div></div>';
+  const rows = ((adminData||{}).coverage||{}).rows || [];
+  const open = rows.filter(r=> r.status==='OPEN').length;
+  const noProno = rows.filter(r=> r.status==='OPEN' && r.count===0).length;
+  const lowProno = rows.filter(r=> r.status==='OPEN' && r.count>0 && r.count<(r.totalUsers/2)).length;
+  const withBonus = rows.filter(r=> r.bonusJoker).length;
+  return '<div class="card"><b>Vue d\'ensemble admin</b><br><br>' +
+    '<div class="grid2">' +
+      '<div class="card"><div class="pts">'+open+'</div><div class="muted">📅 Matchs ouverts</div></div>' +
+      '<div class="card"><div class="pts">'+noProno+'</div><div class="muted">😶 Sans aucun prono</div></div>' +
+      '<div class="card"><div class="pts">'+lowProno+'</div><div class="muted">⚠️ Couverture &lt; 50%</div></div>' +
+      '<div class="card"><div class="pts">'+withBonus+'</div><div class="muted">⭐ Joker bonus actif</div></div>' +
+    '</div></div>';
 }
-
 function adminResultsHtml(){
-  const joueursOpts = (joueurs||[]).map(j=> '<option value="'+cleanText(j.nomComplet||j.nom||'')+'">').join('');
-  return '<datalist id="joueursList">'+joueursOpts+'</datalist>' +
-    '<div class="card"><b>Résultat + buteurs</b><br><br>' +
-    '<select id="adminMatch" onchange="updateAdminScoreLabels();resetScorerRows()"></select><br><br>' +
-    '<div class="grid2">' +
-      '<div><div class="adminLabel" id="adminScoreALabel">Score équipe A</div><input id="adminScoreA" type="number" min="0"></div>' +
-      '<div><div class="adminLabel" id="adminScoreBLabel">Score équipe B</div><input id="adminScoreB" type="number" min="0"></div>' +
-    '</div>' +
-    '<div class="sec">Buteurs du match</div>' +
-    '<div class="muted small">Une ligne = un but. Type P pour pénalty, CSC pour contre son camp.</div><br>' +
-    '<div id="scorerRows"></div>' +
-    '<button class="btn btn2" onclick="addScorerRow()">+ Ajouter un but</button><br><br>' +
-    '<button class="btn" onclick="adminSaveResult(this)">Valider résultat + calcul points</button>' +
-    '<div id="adminMsg" class="small" style="margin-top:8px"></div>' +
-  '</div>';
+  const joueursOpts = (joueurs||[]).map(j=> '<option value="'+cleanText(j.nomComplet||j.nom||'')+'">').join('');
+  return '<datalist id="joueursList">'+joueursOpts+'</datalist>' +
+    '<div class="card"><b>Résultat + buteurs</b><br><br>' +
+    '<select id="adminMatch" onchange="updateAdminScoreLabels();resetScorerRows()"></select><br><br>' +
+    '<div class="grid2">' +
+      '<div><div class="adminLabel" id="adminScoreALabel">Score équipe A</div><input id="adminScoreA" type="number" min="0"></div>' +
+      '<div><div class="adminLabel" id="adminScoreBLabel">Score équipe B</div><input id="adminScoreB" type="number" min="0"></div>' +
+    '</div>' +
+    '<div class="sec">Buteurs du match</div>' +
+    '<div class="muted small">Une ligne = un but. Type P pour pénalty, CSC pour contre son camp.</div><br>' +
+    '<div id="scorerRows"></div>' +
+    '<button class="btn btn2" onclick="addScorerRow()">+ Ajouter un but</button><br><br>' +
+    '<button class="btn" onclick="adminSaveResult(this)">Valider résultat + calcul points</button>' +
+    '<div id="adminMsg" class="small" style="margin-top:8px"></div>' +
+  '</div>';
 }
 function adminOddsHtml(){
-  return '<div class="card"><b>Correction / ajout des cotes</b><br><br>' +
-    '<select id="oddsMatch" onchange="updateOddsLabels();preFillOdds()"></select><br><br>' +
-    '<div class="grid2">' +
-      '<div><div class="adminLabel" id="oddsALabel">Cote équipe A</div><input id="oddsA" type="number" step="0.01" min="1"></div>' +
-      '<div><div class="adminLabel">Cote match nul</div><input id="oddsX" type="number" step="0.01" min="1"></div>' +
-    '</div><br>' +
-    '<div><div class="adminLabel" id="oddsBLabel">Cote équipe B</div><input id="oddsB" type="number" step="0.01" min="1"></div>' +
-    '<br><button class="btn" onclick="adminSaveOdds(this)">Enregistrer les cotes</button>' +
-    '<div id="oddsMsg" class="small" style="margin-top:8px"></div>' +
-  '</div>';
+  return '<div class="card"><b>Correction / ajout des cotes</b><br><br>' +
+    '<select id="oddsMatch" onchange="updateOddsLabels();preFillOdds()"></select><br><br>' +
+    '<div class="grid2">' +
+      '<div><div class="adminLabel" id="oddsALabel">Cote équipe A</div><input id="oddsA" type="number" step="0.01" min="1"></div>' +
+      '<div><div class="adminLabel">Cote match nul</div><input id="oddsX" type="number" step="0.01" min="1"></div>' +
+    '</div><br>' +
+    '<div><div class="adminLabel" id="oddsBLabel">Cote équipe B</div><input id="oddsB" type="number" step="0.01" min="1"></div>' +
+    '<br><button class="btn" onclick="adminSaveOdds(this)">Enregistrer les cotes</button>' +
+    '<div id="oddsMsg" class="small" style="margin-top:8px"></div>' +
+  '</div>';
 }
 function adminAddMatchHtml(){
-  const stadeOpts = (stadesList||[]).map(s=> '<option value="'+(s.labelAffiche||s.stade||'')+'">'+(s.labelAffiche||s.stade||'')+(s.ville?' — '+s.ville:'')+'</option>').join('');
-  const diffOpts = (diffuseursList||[]).map(d=> '<option value="'+(d.label||d.nom||'')+'">'+(d.label||d.nom||'')+'</option>').join('');
-  const equipesOpts = (equipes||[]).filter(e=> e.actif !== false)
-    .map(e=> '<option value="'+cleanText(e.nomAffiche||e.nomSource||'')+'">').join('');
-  return '<datalist id="equipesList">'+equipesOpts+'</datalist>' +
-    '<div class="card"><b>Ajouter un match</b><br><br>' +
-    '<div class="adminLabel">Phase</div>' +
-    '<select id="addPhase" onchange="onAddPhaseChange()">' +
-      '<option>Groupe</option><option>1/16</option><option>1/8</option><option>1/4</option><option>1/2</option><option>3e place</option><option>Finale</option>' +
-    '</select><br><br>' +
-    '<div id="addGroupeWrap"><div class="adminLabel">Groupe (A-L)</div>' +
-      '<select id="addGroupe">' + ['A','B','C','D','E','F','G','H','I','J','K','L'].map(g=>'<option value="'+g+'">'+g+'</option>').join('') + '</select><br><br></div>' +
-    '<div class="grid2">' +
-      '<div><div class="adminLabel">Équipe A</div><input list="equipesList" id="addA" placeholder="Tape pour chercher…" autocomplete="off"></div>' +
-      '<div><div class="adminLabel">Équipe B</div><input list="equipesList" id="addB" placeholder="Tape pour chercher…" autocomplete="off"></div>' +
-    '</div><br>' +
-    '<div class="grid2">' +
-      '<div><div class="adminLabel">Date</div><input id="addDate" type="date"></div>' +
-      '<div><div class="adminLabel">Heure</div><input id="addHeure" type="time"></div>' +
-    '</div><br>' +
-    '<div class="adminLabel">Stade</div>' +
-    '<select id="addStade">' + (stadeOpts || '<option value="">Aucun stade en base</option>') + '</select><br><br>' +
-    '<div class="grid2">' +
-      '<div><div class="adminLabel">Diffuseur 1</div><select id="addDiff1"><option value="">—</option>'+diffOpts+'</select></div>' +
-      '<div><div class="adminLabel">Diffuseur 2</div><select id="addDiff2"><option value="">—</option>'+diffOpts+'</select></div>' +
-    '</div><br>' +
-    '<div class="grid2">' +
-      '<div><div class="adminLabel">Cote A</div><input id="addCote1" type="number" step="0.01" min="1"></div>' +
-      '<div><div class="adminLabel">Cote nul</div><input id="addCoteX" type="number" step="0.01" min="1"></div>' +
-    '</div><br>' +
-    '<div><div class="adminLabel">Cote B</div><input id="addCote2" type="number" step="0.01" min="1"></div>' +
-    '<br><button class="btn" onclick="adminAddMatch(this)">Ajouter le match</button>' +
-    '<div id="addMsg" class="small" style="margin-top:8px"></div>' +
-  '</div>';
+  const stadeOpts = (stadesList||[]).map(s=> '<option value="'+(s.labelAffiche||s.stade||'')+'">'+(s.labelAffiche||s.stade||'')+(s.ville?' — '+s.ville:'')+'</option>').join('');
+  const diffOpts = (diffuseursList||[]).map(d=> '<option value="'+(d.label||d.nom||'')+'">'+(d.label||d.nom||'')+'</option>').join('');
+  const equipesOpts = (equipes||[]).filter(e=> e.actif !== false)
+    .map(e=> '<option value="'+cleanText(e.nomAffiche||e.nomSource||'')+'">').join('');
+  return '<datalist id="equipesList">'+equipesOpts+'</datalist>' +
+    '<div class="card"><b>Ajouter un match</b><br><br>' +
+    '<div class="adminLabel">Phase</div>' +
+    '<select id="addPhase" onchange="onAddPhaseChange()">' +
+      '<option>Groupe</option><option>1/16</option><option>1/8</option><option>1/4</option><option>1/2</option><option>3e place</option><option>Finale</option>' +
+    '</select><br><br>' +
+    '<div id="addGroupeWrap"><div class="adminLabel">Groupe (A-L)</div>' +
+      '<select id="addGroupe">' + ['A','B','C','D','E','F','G','H','I','J','K','L'].map(g=>'<option value="'+g+'">'+g+'</option>').join('') + '</select><br><br></div>' +
+    '<div class="grid2">' +
+      '<div><div class="adminLabel">Équipe A</div><input list="equipesList" id="addA" placeholder="Tape pour chercher…" autocomplete="off"></div>' +
+      '<div><div class="adminLabel">Équipe B</div><input list="equipesList" id="addB" placeholder="Tape pour chercher…" autocomplete="off"></div>' +
+    '</div><br>' +
+    '<div class="grid2">' +
+      '<div><div class="adminLabel">Date</div><input id="addDate" type="date"></div>' +
+      '<div><div class="adminLabel">Heure</div><input id="addHeure" type="time"></div>' +
+    '</div><br>' +
+    '<div class="adminLabel">Stade</div>' +
+    '<select id="addStade">' + (stadeOpts || '<option value="">Aucun stade en base</option>') + '</select><br><br>' +
+    '<div class="grid2">' +
+      '<div><div class="adminLabel">Diffuseur 1</div><select id="addDiff1"><option value="">—</option>'+diffOpts+'</select></div>' +
+      '<div><div class="adminLabel">Diffuseur 2</div><select id="addDiff2"><option value="">—</option>'+diffOpts+'</select></div>' +
+    '</div><br>' +
+    '<div class="grid2">' +
+      '<div><div class="adminLabel">Cote A</div><input id="addCote1" type="number" step="0.01" min="1"></div>' +
+      '<div><div class="adminLabel">Cote nul</div><input id="addCoteX" type="number" step="0.01" min="1"></div>' +
+    '</div><br>' +
+    '<div><div class="adminLabel">Cote B</div><input id="addCote2" type="number" step="0.01" min="1"></div>' +
+    '<br><button class="btn" onclick="adminAddMatch(this)">Ajouter le match</button>' +
+    '<div id="addMsg" class="small" style="margin-top:8px"></div>' +
+  '</div>';
 }
 function onAddPhaseChange(){
-  const phase = ($('addPhase')||{}).value || '';
-  const wrap = $('addGroupeWrap');
-  if (wrap) wrap.style.display = (phase==='Groupe') ? '' : 'none';
+  const phase = ($('addPhase')||{}).value || '';
+  const wrap = $('addGroupeWrap');
+  if (wrap) wrap.style.display = (phase==='Groupe') ? '' : 'none';
 }
 function adminBonusHtml(){
-  const open = matches.filter(m=> String(m.status)==='OPEN');
-  if (!open.length) return '<div class="card muted">Aucun match ouvert disponible.</div>';
-  return '<div class="card"><b>Joker bonus : points doublés sur ce match</b><br><span class="muted small">Active/désactive par match.</span><br><br>' +
-    open.map(m=>{
-      const active = isBonusMatch(mId(m));
-      return '<div class="card" style="display:flex;justify-content:space-between;align-items:center">' +
-        '<div><b>'+mFlag(m,'A')+' '+mName(m,'A')+' - '+mName(m,'B')+' '+mFlag(m,'B')+'</b><br><span class="muted small">'+fmtDateFR(m.dateFR)+' · '+fmtHeure(m.heureFR)+'</span></div>' +
-        '<button class="btn '+(active?'':'btn2')+'" style="width:auto;padding:8px 14px" onclick="adminToggleBonus(\''+mId(m)+'\','+(!active)+',this)">'+(active?'⭐ Actif':'Activer')+'</button>' +
-      '</div>';
-    }).join('') +
-    '<div id="bonusMsg" class="small" style="margin-top:8px"></div>' +
-  '</div>';
+  const open = matches.filter(m=> String(m.status)==='OPEN');
+  if (!open.length) return '<div class="card muted">Aucun match ouvert disponible.</div>';
+  return '<div class="card"><b>Joker bonus : points doublés sur ce match</b><br><span class="muted small">Active/désactive par match.</span><br><br>' +
+    open.map(m=>{
+      const active = isBonusMatch(mId(m));
+      return '<div class="card" style="display:flex;justify-content:space-between;align-items:center">' +
+        '<div><b>'+mFlag(m,'A')+' '+mName(m,'A')+' - '+mName(m,'B')+' '+mFlag(m,'B')+'</b><br><span class="muted small">'+fmtDateFR(m.dateFR)+' · '+fmtHeure(m.heureFR)+'</span></div>' +
+        '<button class="btn '+(active?'':'btn2')+'" style="width:auto;padding:8px 14px" onclick="adminToggleBonus(\''+mId(m)+'\','+(!active)+',this)">'+(active?'⭐ Actif':'Activer')+'</button>' +
+      '</div>';
+    }).join('') +
+    '<div id="bonusMsg" class="small" style="margin-top:8px"></div>' +
+  '</div>';
 }
 function adminCoverageHtml(){
-  const rows = ((adminData||{}).coverage||{}).rows || [];
-  const filters = [['all','Tous'],['none','Aucun prono'],['low','Peu de pronos'],['incomplete','Incomplets'],['complete','Complets'],['bonus','Joker bonus actif']];
-  const filtered = rows.filter(r=>
-       adminCoverageFilter==='all'
-    || (adminCoverageFilter==='none' && r.count===0)
-    || (adminCoverageFilter==='low' && r.count>0 && r.count<(r.totalUsers/2))
-    || (adminCoverageFilter==='incomplete' && r.count<r.totalUsers)
-    || (adminCoverageFilter==='complete' && r.count>=r.totalUsers)
-    || (adminCoverageFilter==='bonus' && r.bonusJoker)
-  );
-  return '<div class="adminCoverageFilters">' +
-    filters.map(f=> '<button type="button" class="'+(adminCoverageFilter===f[0]?'active':'')+'" onclick="adminCoverageFilter=\''+f[0]+'\';drawProfile()">'+f[1]+'</button>').join('') +
-  '</div>' +
-  (filtered.length
-    ? filtered.map(r=>
-      '<div class="card"><b>'+cleanText(r.label)+'</b><br>' +
-        '<span class="muted">'+fmtDateFR(r.dateFR)+' · '+r.status+' · '+r.ratio+' · ⭐ '+(r.jokers||0)+(r.bonusJoker?' · Joker bonus':'')+'</span><br><br>' +
-        '<b>Ont joué :</b><br><span class="small">'+(r.played.length?cleanText(r.played.join(', ')):'Personne')+'</span><br><br>' +
-        '<b>Manquent :</b><br><span class="small">'+(r.missing.length?cleanText(r.missing.join(', ')):'Personne')+'</span>' +
-      '</div>'
-    ).join('')
-    : '<div class="card muted">Aucun match dans ce filtre.</div>'
-  );
+  const rows = ((adminData||{}).coverage||{}).rows || [];
+  const filters = [['all','Tous'],['none','Aucun prono'],['low','Peu de pronos'],['incomplete','Incomplets'],['complete','Complets'],['bonus','Joker bonus actif']];
+  const filtered = rows.filter(r=>
+       adminCoverageFilter==='all'
+    || (adminCoverageFilter==='none' && r.count===0)
+    || (adminCoverageFilter==='low' && r.count>0 && r.count<(r.totalUsers/2))
+    || (adminCoverageFilter==='incomplete' && r.count<r.totalUsers)
+    || (adminCoverageFilter==='complete' && r.count>=r.totalUsers)
+    || (adminCoverageFilter==='bonus' && r.bonusJoker)
+  );
+  return '<div class="adminCoverageFilters">' +
+    filters.map(f=> '<button type="button" class="'+(adminCoverageFilter===f[0]?'active':'')+'" onclick="adminCoverageFilter=\''+f[0]+'\';drawProfile()">'+f[1]+'</button>').join('') +
+  '</div>' +
+  (filtered.length
+    ? filtered.map(r=>
+      '<div class="card"><b>'+cleanText(r.label)+'</b><br>' +
+        '<span class="muted">'+fmtDateFR(r.dateFR)+' · '+r.status+' · '+r.ratio+' · ⭐ '+(r.jokers||0)+(r.bonusJoker?' · Joker bonus':'')+'</span><br><br>' +
+        '<b>Ont joué :</b><br><span class="small">'+(r.played.length?cleanText(r.played.join(', ')):'Personne')+'</span><br><br>' +
+        '<b>Manquent :</b><br><span class="small">'+(r.missing.length?cleanText(r.missing.join(', ')):'Personne')+'</span>' +
+      '</div>'
+    ).join('')
+    : '<div class="card muted">Aucun match dans ce filtre.</div>'
+  );
 }
-
 /* =============================================================================
- * ACTIONS ADMIN — toutes invalident le cache et redessinent immédiatement
- * ============================================================================= */
+ * ACTIONS ADMIN — toutes invalident le cache et redessinent immédiatement
+ * ============================================================================= */
 function fillAdminSelects(){
-  const resSel = $('adminMatch');
-  if (resSel){
-    // Tous les matchs non terminés : OPEN (futurs) et LOCKED (en cours, en attente de résultat).
-    const list = matches.filter(m=> String(m.status)==='OPEN' || String(m.status)==='LOCKED')
-                        .sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||'')));
-    resSel.innerHTML = list.length
-      ? list.map(m=> '<option value="'+mId(m)+'">'+mId(m)+' · '+mName(m,'A')+' - '+mName(m,'B')+' · '+fmtDateShort(m.dateFR)+'</option>').join('')
-      : '<option value="">Aucun match disponible</option>';
-    updateAdminScoreLabels(); resetScorerRows();
-  }
-  const odSel = $('oddsMatch');
-  if (odSel){
-    // Tous les matchs non terminés : on peut SAISIR de nouvelles cotes ou MODIFIER les existantes.
-    const list = matches.filter(m=> String(m.status)!=='FINISHED')
-                        .sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||'')));
-    odSel.innerHTML = list.length
-      ? list.map(m=>{
-          const has = m.cote1 && m.coteX && m.cote2;
-          const tag = has ? ' [actuelles : '+m.cote1+'/'+m.coteX+'/'+m.cote2+']' : ' [cotes manquantes]';
-          return '<option value="'+mId(m)+'">'+mName(m,'A')+' - '+mName(m,'B')+' · '+fmtDateShort(m.dateFR)+tag+'</option>';
-        }).join('')
-      : '<option value="">Aucun match disponible</option>';
-    updateOddsLabels();
-    // Prérempli les inputs avec les cotes existantes du match sélectionné
-    preFillOdds();
-  }
-  // addA / addB sont maintenant des <input list="equipesList"> — la datalist est rendue par adminAddMatchHtml.
-  // Rien à pré-remplir, l'utilisateur tape pour filtrer.
+  const resSel = $('adminMatch');
+  if (resSel){
+    // Tous les matchs non terminés : OPEN (futurs) et LOCKED (en cours, en attente de résultat).
+    const list = matches.filter(m=> String(m.status)==='OPEN' || String(m.status)==='LOCKED')
+                        .sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||'')));
+    resSel.innerHTML = list.length
+      ? list.map(m=> '<option value="'+mId(m)+'">'+mId(m)+' · '+mName(m,'A')+' - '+mName(m,'B')+' · '+fmtDateShort(m.dateFR)+'</option>').join('')
+      : '<option value="">Aucun match disponible</option>';
+    updateAdminScoreLabels(); resetScorerRows();
+  }
+  const odSel = $('oddsMatch');
+  if (odSel){
+    // Tous les matchs non terminés : on peut SAISIR de nouvelles cotes ou MODIFIER les existantes.
+    const list = matches.filter(m=> String(m.status)!=='FINISHED')
+                        .sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||'')));
+    odSel.innerHTML = list.length
+      ? list.map(m=>{
+          const has = m.cote1 && m.coteX && m.cote2;
+          const tag = has ? ' [actuelles : '+m.cote1+'/'+m.coteX+'/'+m.cote2+']' : ' [cotes manquantes]';
+          return '<option value="'+mId(m)+'">'+mName(m,'A')+' - '+mName(m,'B')+' · '+fmtDateShort(m.dateFR)+tag+'</option>';
+        }).join('')
+      : '<option value="">Aucun match disponible</option>';
+    updateOddsLabels();
+    // Prérempli les inputs avec les cotes existantes du match sélectionné
+    preFillOdds();
+  }
+  // addA / addB sont maintenant des <input list="equipesList"> — la datalist est rendue par adminAddMatchHtml.
+  // Rien à pré-remplir, l'utilisateur tape pour filtrer.
 }
-
 // Lookup texte → id équipe (avec normalisation accents/casse)
 function lookupTeamId(name){
-  if (!name) return '';
-  const norm = s => String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
-  const n = norm(name);
-  const m = (equipes||[]).find(e=> norm(e.nomAffiche||e.nomSource) === n);
-  return m ? m.id : '';
+  if (!name) return '';
+  const norm = s => String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+  const n = norm(name);
+  const m = (equipes||[]).find(e=> norm(e.nomAffiche||e.nomSource) === n);
+  return m ? m.id : '';
 }
 function currentAdminMatch(){ const id=($('adminMatch')||{}).value; return matches.find(m=> String(mId(m))===String(id)) || matches[0] || {}; }
-function currentOddsMatch(){ const id=($('oddsMatch')||{}).value;  return matches.find(m=> String(mId(m))===String(id)) || matches[0] || {}; }
+function currentOddsMatch(){ const id=($('oddsMatch')||{}).value;  return matches.find(m=> String(mId(m))===String(id)) || matches[0] || {}; }
 function preFillOdds(){
-  const m = currentOddsMatch(); if (!m) return;
-  if ($('oddsA')) $('oddsA').value = m.cote1 || '';
-  if ($('oddsX')) $('oddsX').value = m.coteX || '';
-  if ($('oddsB')) $('oddsB').value = m.cote2 || '';
+  const m = currentOddsMatch(); if (!m) return;
+  if ($('oddsA')) $('oddsA').value = m.cote1 || '';
+  if ($('oddsX')) $('oddsX').value = m.coteX || '';
+  if ($('oddsB')) $('oddsB').value = m.cote2 || '';
 }
 function updateAdminScoreLabels(){
-  const m=currentAdminMatch(); if(!m||!$('adminScoreALabel')) return;
-  $('adminScoreALabel').textContent = 'Score '+mName(m,'A');
-  $('adminScoreBLabel').textContent = 'Score '+mName(m,'B');
-  $('adminScoreA').placeholder = 'Score '+mName(m,'A');
-  $('adminScoreB').placeholder = 'Score '+mName(m,'B');
+  const m=currentAdminMatch(); if(!m||!$('adminScoreALabel')) return;
+  $('adminScoreALabel').textContent = 'Score '+mName(m,'A');
+  $('adminScoreBLabel').textContent = 'Score '+mName(m,'B');
+  $('adminScoreA').placeholder = 'Score '+mName(m,'A');
+  $('adminScoreB').placeholder = 'Score '+mName(m,'B');
 }
 function updateOddsLabels(){
-  const m=currentOddsMatch(); if(!m||!$('oddsALabel')) return;
-  $('oddsALabel').textContent = 'Cote '+mName(m,'A');
-  $('oddsBLabel').textContent = 'Cote '+mName(m,'B');
+  const m=currentOddsMatch(); if(!m||!$('oddsALabel')) return;
+  $('oddsALabel').textContent = 'Cote '+mName(m,'A');
+  $('oddsBLabel').textContent = 'Cote '+mName(m,'B');
 }
 function resetScorerRows(){ const box=$('scorerRows'); if(box){ box.innerHTML=''; addScorerRow(); } }
 function addScorerRow(){
-  const box=$('scorerRows'); if(!box) return;
-  const m=currentAdminMatch(); const i=box.children.length;
-  const opts='<option value="">— Équipe —</option><option value="A">'+mName(m,'A')+'</option><option value="B">'+mName(m,'B')+'</option>';
-  const div=document.createElement('div'); div.className='scorerRow';
-  div.innerHTML =
-    '<input list="joueursList" id="g_nom_'+i+'" placeholder="Tape le nom…" oninput="onScorerInput('+i+')" autocomplete="off">' +
-    '<select id="g_side_'+i+'">'+opts+'</select>' +
-    '<input placeholder="min" id="g_min_'+i+'" type="number" min="0">' +
-    '<select id="g_type_'+i+'"><option value="">Normal</option><option value="P">Pénalty</option><option value="CSC">CSC</option></select>' +
-    '<button onclick="this.parentNode.remove()">×</button>';
-  box.appendChild(div);
+  const box=$('scorerRows'); if(!box) return;
+  const m=currentAdminMatch(); const i=box.children.length;
+  const opts='<option value="">— Équipe —</option><option value="A">'+mName(m,'A')+'</option><option value="B">'+mName(m,'B')+'</option>';
+  const div=document.createElement('div'); div.className='scorerRow';
+  div.innerHTML =
+    '<input list="joueursList" id="g_nom_'+i+'" placeholder="Tape le nom…" oninput="onScorerInput('+i+')" autocomplete="off">' +
+    '<select id="g_side_'+i+'">'+opts+'</select>' +
+    '<input placeholder="min" id="g_min_'+i+'" type="number" min="0">' +
+    '<select id="g_type_'+i+'"><option value="">Normal</option><option value="P">Pénalty</option><option value="CSC">CSC</option></select>' +
+    '<button onclick="this.parentNode.remove()">×</button>';
+  box.appendChild(div);
 }
-
 // Auto-rempli l'équipe (A ou B) selon le pays du joueur sélectionné, si reconnu en base
 function onScorerInput(i){
-  const input = $('g_nom_'+i); if (!input) return;
-  const val = String(input.value || '').trim();
-  if (!val) return;
-  const norm = s => String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
-  const v = norm(val);
-  const j = (joueurs||[]).find(jx=> norm(jx.nomComplet||jx.nom||'') === v);
-  if (!j) return;
-  const m = currentAdminMatch();
-  const jeq = norm(j.equipe || '');
-  const eqA = norm(m.nomAfficheA || teamObjById(m.equipeAId).nomAffiche || '');
-  const eqB = norm(m.nomAfficheB || teamObjById(m.equipeBId).nomAffiche || '');
-  let side = '';
-  if (jeq && jeq === eqA) side = 'A';
-  else if (jeq && jeq === eqB) side = 'B';
-  if (side){
-    const sel = $('g_side_'+i);
-    if (sel && !sel.value) sel.value = side; // ne force pas si déjà choisi
-  }
+  const input = $('g_nom_'+i); if (!input) return;
+  const val = String(input.value || '').trim();
+  if (!val) return;
+  const norm = s => String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+  const v = norm(val);
+  const j = (joueurs||[]).find(jx=> norm(jx.nomComplet||jx.nom||'') === v);
+  if (!j) return;
+  const m = currentAdminMatch();
+  const jeq = norm(j.equipe || '');
+  const eqA = norm(m.nomAfficheA || teamObjById(m.equipeAId).nomAffiche || '');
+  const eqB = norm(m.nomAfficheB || teamObjById(m.equipeBId).nomAffiche || '');
+  let side = '';
+  if (jeq && jeq === eqA) side = 'A';
+  else if (jeq && jeq === eqB) side = 'B';
+  if (side){
+    const sel = $('g_side_'+i);
+    if (sel && !sel.value) sel.value = side; // ne force pas si déjà choisi
+  }
 }
 function collectScorers(){
-  const m = currentAdminMatch();
-  const norm = s => String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
-  const rows = $('scorerRows').children, out = [];
-  for (let i = 0; i < rows.length; i++){
-    const n  = ($('g_nom_'+i) ||{}).value || '';
-    const s  = ($('g_side_'+i)||{}).value || '';
-    const mn = ($('g_min_'+i) ||{}).value || '';
-    const t  = ($('g_type_'+i)||{}).value || '';
-    if (!n || !s) continue;
-    const equipeId = (s === 'A') ? m.equipeAId : (s === 'B' ? m.equipeBId : '');
-    // Si le nom matche un joueur en base, on transmet l'id (sinon buteur manuel)
-    const j = (joueurs||[]).find(jx => norm(jx.nomComplet || jx.nom || '') === norm(n));
-    out.push({
-      nom:        n,
-      nomAffiche: n,
-      joueurId:   j ? j.id : '',
-      equipeId:   equipeId,
-      side:       s,
-      minute:     mn,
-      type:       t
-    });
-  }
-  return out;
+  const m = currentAdminMatch();
+  const norm = s => String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+  const rows = $('scorerRows').children, out = [];
+  for (let i = 0; i < rows.length; i++){
+    const n  = ($('g_nom_'+i) ||{}).value || '';
+    const s  = ($('g_side_'+i)||{}).value || '';
+    const mn = ($('g_min_'+i) ||{}).value || '';
+    const t  = ($('g_type_'+i)||{}).value || '';
+    if (!n || !s) continue;
+    const equipeId = (s === 'A') ? m.equipeAId : (s === 'B' ? m.equipeBId : '');
+    // Si le nom matche un joueur en base, on transmet l'id (sinon buteur manuel)
+    const j = (joueurs||[]).find(jx => norm(jx.nomComplet || jx.nom || '') === norm(n));
+    out.push({
+      nom:        n,
+      nomAffiche: n,
+      joueurId:   j ? j.id : '',
+      equipeId:   equipeId,
+      side:       s,
+      minute:     mn,
+      type:       t
+    });
+  }
+  return out;
 }
-
 /* Toutes les actions admin : pattern V14.1 — message inline + bouton loading +
- * INVALIDATION CACHE + REFRESH IMMÉDIAT pour que l'utilisateur voie le changement. */
+ * INVALIDATION CACHE + REFRESH IMMÉDIAT pour que l'utilisateur voie le changement. */
 function refreshAffectedViews(keys, callbackAfter){
-  keys.forEach(k => { dataLoaded[k] = false; });
+  keys.forEach(k => {
+    dataLoaded[k] = false;
+    // On invalide aussi le hash connu pour forcer le re-fetch apres une action
+    // (le backend vient de regenerer la vue ; on ne veut jamais "skip" une donnee fraiche).
+    const sk = VIEW_SERVER_KEY[k];
+    if (sk) viewHashes[sk] = '';
+  });
   const u = user.userId;
   const map = {
     pronosView: ()=> loadView('pronosView','getPronosView',{userId:u}),
@@ -1690,114 +1652,112 @@ function refreshAffectedViews(keys, callbackAfter){
     profileView:()=> loadView('profileView','getProfileView',{userId:u}),
     scorersView:()=> loadView('scorersView','getScorersView',{userId:u}),
     adminView:  ()=> loadView('adminView','getAdminView',{userId:u}),
-    light:      ()=> api('initLight',{userId:u}).then(d=> applyLight(d))
+    light:      ()=> api('initLightSmart',{userId:u}).then(d=>{ viewHashes = d.viewHashes || viewHashes; applyLight(d); })
   };
-  return Promise.all(keys.map(k=> (map[k]||(()=>Promise.resolve()))())).then(()=>{
-    if (callbackAfter) callbackAfter();
-  });
+  return Promise.all(keys.map(k=> (map[k]||(()=>Promise.resolve()))())).then(()=>{
+    if (callbackAfter) callbackAfter();
+  });
 }
-
 function adminSaveResult(btn){
-  const sel=$('adminMatch');
-  if (!sel || !sel.value){ formMsg('adminMsg','Choisis un match.',false); return; }
-  formMsg('adminMsg','Calcul des points en cours…',true);
-  withAction(btn, 'Validation du résultat…',
-    api('adminSetResult', {userId:user.userId, matchId:sel.value, scoreA:($('adminScoreA')||{}).value||'', scoreB:($('adminScoreB')||{}).value||'', buteurs: JSON.stringify(collectScorers())})
-  ).then(d=>{
-    if (d && d.error){ formMsg('adminMsg', d.error, false); return; }
-    formMsg('adminMsg', 'Résultat validé · '+(d.pronos||0)+' pronos recalculés · '+(d.buteurs||0)+' but(s).', true);
-    toast('Résultat enregistré ✅');
-    refreshAffectedViews(['pronosView','rankView','groupsView','summaryView','profileView','adminView','light'], ()=>{
-      activeProfileSection='resultats'; drawProfile();
-    });
-  }).catch(e=> formMsg('adminMsg', 'Erreur API : '+e.message, false));
+  const sel=$('adminMatch');
+  if (!sel || !sel.value){ formMsg('adminMsg','Choisis un match.',false); return; }
+  formMsg('adminMsg','Calcul des points en cours…',true);
+  withAction(btn, 'Validation du résultat…',
+    api('adminSetResult', {userId:user.userId, matchId:sel.value, scoreA:($('adminScoreA')||{}).value||'', scoreB:($('adminScoreB')||{}).value||'', buteurs: JSON.stringify(collectScorers())})
+  ).then(d=>{
+    if (d && d.error){ formMsg('adminMsg', d.error, false); return; }
+    formMsg('adminMsg', 'Résultat validé · '+(d.pronos||0)+' pronos recalculés · '+(d.buteurs||0)+' but(s).', true);
+    toast('Résultat enregistré ✅');
+    refreshAffectedViews(['pronosView','rankView','groupsView','summaryView','profileView','adminView','light'], ()=>{
+      activeProfileSection='resultats'; drawProfile();
+    });
+  }).catch(e=> formMsg('adminMsg', 'Erreur API : '+e.message, false));
 }
 function adminSaveOdds(btn){
-  const sel=$('oddsMatch');
-  if (!sel || !sel.value){ formMsg('oddsMsg','Choisis un match.',false); return; }
-  formMsg('oddsMsg','Enregistrement des cotes…',true);
-  withAction(btn, 'Enregistrement des cotes…',
-    api('adminAddCotes', {userId:user.userId, matchId:sel.value, cote1:($('oddsA')||{}).value||'', coteX:($('oddsX')||{}).value||'', cote2:($('oddsB')||{}).value||''})
-  ).then(d=>{
-    if (d && d.error){ formMsg('oddsMsg', d.error, false); return; }
-    formMsg('oddsMsg', 'Cotes enregistrées ✅', true);
-    toast('Cotes enregistrées ✅');
-    refreshAffectedViews(['pronosView'], ()=>{ activeProfileSection='cotes'; drawProfile(); });
-  }).catch(e=> formMsg('oddsMsg', 'Erreur API : '+e.message, false));
+  const sel=$('oddsMatch');
+  if (!sel || !sel.value){ formMsg('oddsMsg','Choisis un match.',false); return; }
+  formMsg('oddsMsg','Enregistrement des cotes…',true);
+  withAction(btn, 'Enregistrement des cotes…',
+    api('adminAddCotes', {userId:user.userId, matchId:sel.value, cote1:($('oddsA')||{}).value||'', coteX:($('oddsX')||{}).value||'', cote2:($('oddsB')||{}).value||''})
+  ).then(d=>{
+    if (d && d.error){ formMsg('oddsMsg', d.error, false); return; }
+    formMsg('oddsMsg', 'Cotes enregistrées ✅', true);
+    toast('Cotes enregistrées ✅');
+    refreshAffectedViews(['pronosView'], ()=>{ activeProfileSection='cotes'; drawProfile(); });
+  }).catch(e=> formMsg('oddsMsg', 'Erreur API : '+e.message, false));
 }
 function adminAddMatch(btn){
-  formMsg('addMsg','Ajout en cours…',true);
-  // Convertit la date ISO YYYY-MM-DD du <input type="date"> en JJ/MM/AAAA attendu par le backend
-  const isoDate = ($('addDate')||{}).value || '';
-  const dateFR = isoDate ? (function(){ const p=isoDate.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; })() : '';
-  const phase = $('addPhase').value;
-  const groupe = (phase==='Groupe') ? ($('addGroupe')||{}).value || '' : '';
-  // Les champs équipes sont des inputs avec datalist : on convertit le nom en id
-  const aName = ($('addA')||{}).value || '';
-  const bName = ($('addB')||{}).value || '';
-  const equipeAId = lookupTeamId(aName);
-  const equipeBId = lookupTeamId(bName);
-  if (!equipeAId){ formMsg('addMsg','Équipe A introuvable. Sélectionne une équipe dans la liste.', false); return; }
-  if (!equipeBId){ formMsg('addMsg','Équipe B introuvable. Sélectionne une équipe dans la liste.', false); return; }
-  if (equipeAId === equipeBId){ formMsg('addMsg','Les deux équipes sont identiques.', false); return; }
-  withAction(btn, 'Ajout du match…',
-    api('adminAddMatch', {
-      userId:user.userId,
-      phase, groupe,
-      equipeAId, equipeBId,
-      date:dateFR, heure:$('addHeure').value,
-      stade:$('addStade').value,
-      diffuseur1:$('addDiff1').value, diffuseur2:$('addDiff2').value,
-      cote1:$('addCote1').value, coteX:$('addCoteX').value, cote2:$('addCote2').value
-    })
-  ).then(d=>{
-    if (d && d.error){ formMsg('addMsg', d.error, false); return; }
-    formMsg('addMsg', 'Match ajouté ✅', true);
-    toast('Match ajouté ✅');
-    refreshAffectedViews(['pronosView','adminView','light'], ()=>{
-      activeProfileSection='addmatch'; drawProfile();
-    });
-  }).catch(e=> formMsg('addMsg', 'Erreur API : '+e.message, false));
+  formMsg('addMsg','Ajout en cours…',true);
+  // Convertit la date ISO YYYY-MM-DD du <input type="date"> en JJ/MM/AAAA attendu par le backend
+  const isoDate = ($('addDate')||{}).value || '';
+  const dateFR = isoDate ? (function(){ const p=isoDate.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; })() : '';
+  const phase = $('addPhase').value;
+  const groupe = (phase==='Groupe') ? ($('addGroupe')||{}).value || '' : '';
+  // Les champs équipes sont des inputs avec datalist : on convertit le nom en id
+  const aName = ($('addA')||{}).value || '';
+  const bName = ($('addB')||{}).value || '';
+  const equipeAId = lookupTeamId(aName);
+  const equipeBId = lookupTeamId(bName);
+  if (!equipeAId){ formMsg('addMsg','Équipe A introuvable. Sélectionne une équipe dans la liste.', false); return; }
+  if (!equipeBId){ formMsg('addMsg','Équipe B introuvable. Sélectionne une équipe dans la liste.', false); return; }
+  if (equipeAId === equipeBId){ formMsg('addMsg','Les deux équipes sont identiques.', false); return; }
+  withAction(btn, 'Ajout du match…',
+    api('adminAddMatch', {
+      userId:user.userId,
+      phase, groupe,
+      equipeAId, equipeBId,
+      date:dateFR, heure:$('addHeure').value,
+      stade:$('addStade').value,
+      diffuseur1:$('addDiff1').value, diffuseur2:$('addDiff2').value,
+      cote1:$('addCote1').value, coteX:$('addCoteX').value, cote2:$('addCote2').value
+    })
+  ).then(d=>{
+    if (d && d.error){ formMsg('addMsg', d.error, false); return; }
+    formMsg('addMsg', 'Match ajouté ✅', true);
+    toast('Match ajouté ✅');
+    refreshAffectedViews(['pronosView','adminView','light'], ()=>{
+      activeProfileSection='addmatch'; drawProfile();
+    });
+  }).catch(e=> formMsg('addMsg', 'Erreur API : '+e.message, false));
 }
 function adminToggleBonus(matchId, active, btn){
-  formMsg('bonusMsg','Mise à jour…',true);
-  withAction(btn, 'Mise à jour…',
-    api('adminSetBonusJoker', {userId:user.userId, matchId, active: active?1:0, enabled: active?1:0})
-  ).then(d=>{
-    if (d && d.error){ formMsg('bonusMsg', d.error, false); return; }
-    formMsg('bonusMsg', (active?'⭐ Joker bonus activé':'Joker bonus retiré')+' ✅', true);
-    toast(active?'⭐ Joker bonus activé':'Joker bonus retiré');
-    refreshAffectedViews(['pronosView','adminView','light'], ()=>{
-      activeProfileSection='bonus'; drawProfile();
-    });
-  }).catch(e=> formMsg('bonusMsg', 'Erreur API : '+e.message, false));
+  formMsg('bonusMsg','Mise à jour…',true);
+  withAction(btn, 'Mise à jour…',
+    api('adminSetBonusJoker', {userId:user.userId, matchId, active: active?1:0, enabled: active?1:0})
+  ).then(d=>{
+    if (d && d.error){ formMsg('bonusMsg', d.error, false); return; }
+    formMsg('bonusMsg', (active?'⭐ Joker bonus activé':'Joker bonus retiré')+' ✅', true);
+    toast(active?'⭐ Joker bonus activé':'Joker bonus retiré');
+    refreshAffectedViews(['pronosView','adminView','light'], ()=>{
+      activeProfileSection='bonus'; drawProfile();
+    });
+  }).catch(e=> formMsg('bonusMsg', 'Erreur API : '+e.message, false));
 }
 function adminRebuild(btn){
-  withAction(btn, 'Reconstruction des caches…',
-    api('adminRebuildCaches', {userId:user.userId})
-  ).then(d=>{
-    toast(d.message || '♻️ Caches reconstruits');
-    Object.keys(dataLoaded).forEach(k => dataLoaded[k] = false); refreshAffectedViews(['pronosView','rankView','groupsView','summaryView','profileView','scorersView','adminView','light']);
-  }).catch(e=> toast('Erreur : '+e.message, true));
+  withAction(btn, 'Reconstruction des caches…',
+    api('adminRebuildCaches', {userId:user.userId})
+  ).then(d=>{
+    toast(d.message || '♻️ Caches reconstruits');
+    Object.keys(dataLoaded).forEach(k => dataLoaded[k] = false); refreshAffectedViews(['pronosView','rankView','groupsView','summaryView','profileView','scorersView','adminView','light']);
+  }).catch(e=> toast('Erreur : '+e.message, true));
 }
 function adminTrigger(btn){
-  withAction(btn, 'Réinstallation du trigger…',
-    api('adminSetupTrigger', {userId:user.userId})
-  ).then(d=> toast(d.message || '⏱️ Trigger réinstallé'))
-   .catch(e=> toast('Erreur : '+e.message, true));
+  withAction(btn, 'Réinstallation du trigger…',
+    api('adminSetupTrigger', {userId:user.userId})
+  ).then(d=> toast(d.message || '⏱️ Trigger réinstallé'))
+   .catch(e=> toast('Erreur : '+e.message, true));
 }
-
 /* =============================================================================
- * AUTOSTART
- * ============================================================================= */
+ * AUTOSTART
+ * ============================================================================= */
 window.addEventListener('load', ()=>{
-  const stored = localStorage.getItem('cdmUser');
-  if (stored){
-    try { user = JSON.parse(stored); startApp(); }
-    catch(e){ localStorage.removeItem('cdmUser'); setAuthMode('login'); }
-  } else {
-    setAuthMode('login');
-  }
+  const stored = localStorage.getItem('cdmUser');
+  if (stored){
+    try { user = JSON.parse(stored); startApp(); }
+    catch(e){ localStorage.removeItem('cdmUser'); setAuthMode('login'); }
+  } else {
+    setAuthMode('login');
+  }
 });
 </script>
 </body>
