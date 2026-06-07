@@ -554,7 +554,7 @@ function startApp(){
   openBootOverlay('Connexion…');
   const u = user.userId;
   api('initLightSmart', {userId:u}).then(d=>{
-    viewHashes = d.viewHashes || {};
+    viewHashes = {}; // ne pas pré-remplir : sinon 1er getView renvoie skip et les données ne chargent jamais
     applyLight(d);
     show('Home');           // Accueil affiché IMMÉDIATEMENT
     closeBootOverlay();     // Plus de blocage
