@@ -14,14 +14,15 @@ body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(
 .view{display:none;padding:12px}
 .view.active{display:block}
 /* HEADER & NAV */
-.hdr{position:sticky;top:0;z-index:5;background:var(--g);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;box-shadow:0 2px 12px #0008}
-.hdr h1{font-size:1rem;margin:0;color:var(--gold);font-weight:900;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hdrRight{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.hdr{position:sticky;top:0;z-index:5;background:var(--g);padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px;box-shadow:0 2px 12px #0008}
+.hdr h1{font-size:.95rem;margin:0;color:var(--gold);font-weight:900;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1 1 auto;min-width:0}
+.hdrRight{display:flex;align-items:center;gap:6px;flex:0 0 auto}
 .hdr > div{display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:flex-end}
-.badge{background:#ffffff1f;border-radius:999px;padding:5px 10px;font-size:.72rem;font-weight:800}
+.badge{background:#ffffff1f;border-radius:999px;padding:4px 9px;font-size:.7rem;font-weight:800;white-space:nowrap}
 .admin{background:var(--gold);color:#111}
-.topLogoutBtn{background:#7a1f25;border:1px solid #ef535066;color:#ffd6d6;border-radius:999px;padding:5px 9px;font-size:.68rem;font-weight:900}
+.topLogoutBtn{background:#7a1f25;border:1px solid #ef535066;color:#ffd6d6;border-radius:999px;padding:5px 10px;font-size:.68rem;font-weight:900;white-space:nowrap}
 .topLogoutBtn:active{transform:scale(.98)}
+@media(max-width:480px){.hdr h1{font-size:.82rem}.badge{padding:3px 7px;font-size:.64rem}.topLogoutBtn{padding:4px 8px;font-size:.62rem}}
 .bnav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--bdr);display:flex;z-index:20;padding:4px 0 env(safe-area-inset-bottom)}
 .bnav button{flex:1;background:none;border:0;color:var(--muted);font-size:.64rem;padding:7px 2px 6px;font-weight:800;display:flex;flex-direction:column;gap:2px;align-items:center}
 .bnav button .ico{font-size:1.25rem;line-height:1.25}
@@ -332,7 +333,7 @@ table.table td:last-child,table.table th:last-child{padding-right:5px}
  * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
  *   message vert/rouge inline + toast de confirmation
  * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbyMDmwp1EP20F7ZB-OtlEIfbH2Mh3lGWpQAdJwQ_It_2DH54SB8Gid36kQN6sclrq1efA/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxTe_lqC5jmXvn3-mjdPadWG9vW49F-uqdXFBSWSP9OYCA04T0E4hlYfpZognt3ASo2Tw/exec";
 const MAX_JOKERS     = 3;
 const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
 // Format date français : "12/06/2026" → "Ven. 12 juin 2026"
