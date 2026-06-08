@@ -14,8 +14,9 @@ body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(
 .view{display:none;padding:12px}
 .view.active{display:block}
 /* HEADER & NAV */
-.hdr{position:sticky;top:0;z-index:5;background:var(--g);padding:12px 15px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 12px #0008}
-.hdr h1{font-size:1rem;margin:0;color:var(--gold);font-weight:900}
+.hdr{position:sticky;top:0;z-index:5;background:var(--g);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;box-shadow:0 2px 12px #0008}
+.hdr h1{font-size:1rem;margin:0;color:var(--gold);font-weight:900;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdrRight{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .hdr > div{display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:flex-end}
 .badge{background:#ffffff1f;border-radius:999px;padding:5px 10px;font-size:.72rem;font-weight:800}
 .admin{background:var(--gold);color:#111}
@@ -230,7 +231,7 @@ table.table td:last-child,table.table th:last-child{padding-right:5px}
 <div id="app" class="hide">
   <div class="hdr">
     <h1>🏆 CdM 2026 Pronos</h1>
-    <div>
+    <div class="hdrRight">
       <span class="badge" id="uBadge"></span>
       <span class="badge admin hide" id="aBadge">ADMIN</span>
       <button type="button" id="logoutTopBtn" class="topLogoutBtn" onclick="logout()">Déconnexion</button>
@@ -282,9 +283,6 @@ table.table td:last-child,table.table th:last-child{padding-right:5px}
     <div class="sec">Classement des poules</div>
     <div id="groupsBox"><div class="viewLoading">Chargement…</div></div>
   </div>
-  <div id="vSummary" class="view">
-    <div class="sec">Résumé des 3 jours</div>
-    <div id="summary3Days"><div class="viewLoading">Chargement…</div></div>
   </div>
   <div id="vRank" class="view">
     <div class="rankTabs">
@@ -308,7 +306,6 @@ table.table td:last-child,table.table th:last-child{padding-right:5px}
   <div id="vProfile" class="view"><div class="viewLoading">Chargement…</div></div>
   <div class="bnav" id="nav">
     <button data-view="Home"    class="active" onclick="show('Home',this)"   ><span class="ico">🏠</span><span>Accueil</span></button>
-    <button data-view="Summary"                onclick="show('Summary',this)"><span class="ico">🧾</span><span>Résumé</span></button>
     <button data-view="Groups"                 onclick="show('Groups',this)" ><span class="ico">📊</span><span>Poules</span></button>
     <button data-view="Pronos"                 onclick="show('Pronos',this)" ><span class="ico">⚽</span><span>Pronos</span></button>
     <button data-view="Matches"                onclick="show('Matches',this)"><span class="ico">📅</span><span>Matchs</span></button>
@@ -335,7 +332,7 @@ table.table td:last-child,table.table th:last-child{padding-right:5px}
  * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
  *   message vert/rouge inline + toast de confirmation
  * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycby8okVtpGKnl_cEYSJu2panxn0rT0gqI7VzUUCsJ5IKFVvDo_aPXfQf6HDNT7LPR4DpfA/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyMDmwp1EP20F7ZB-OtlEIfbH2Mh3lGWpQAdJwQ_It_2DH54SB8Gid36kQN6sclrq1efA/exec";
 const MAX_JOKERS     = 3;
 const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
 // Format date français : "12/06/2026" → "Ven. 12 juin 2026"
@@ -540,7 +537,7 @@ function doAuth(){
     user=d; localStorage.setItem('cdmUser',JSON.stringify(user)); dropLocalCache(); startApp();
   }).catch(e=> $('authErr').innerHTML='<span class="ko">'+e.message+'</span>');
 }
-function logout(){ localStorage.removeItem('cdmUser'); localStorage.removeItem(PERSIST_KEY); location.reload(); }
+function logout(){ try{ localStorage.removeItem('cdmUser'); }catch(e){} try{ localStorage.removeItem('cdmCache_v2'); }catch(e){} location.reload(); }
 /* =============================================================================
  * DÉMARRAGE — initLight rapide + précharge silencieuse en parallèle
  * ============================================================================= */
@@ -636,7 +633,7 @@ function applyViewData(key, d){
     classement = d.classement || [];
     fun = d.fun || [];
     buteur = d.buteur || null;
-  } else if (key==='groupsView') groupsData = d || {};
+  } else if (key==='groupsView') groupsData = (d && d.groups) ? d.groups : (d || {});
   else if (key==='summaryView') summaryData = d || {};
   else if (key==='profileView') profileData = d || {};
   else if (key==='scorersView'){
