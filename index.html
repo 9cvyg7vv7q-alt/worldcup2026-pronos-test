@@ -16,7 +16,9 @@ body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(
 /* HEADER & NAV */
 .hdr{position:sticky;top:0;z-index:5;background:var(--g);padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px;box-shadow:0 2px 12px #0008}
 .hdr h1{font-size:.95rem;margin:0;color:var(--gold);font-weight:900;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1 1 auto;min-width:0}
-.hdrRight{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.hdrRight{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex:0 0 auto}
+.hdrUser{font-size:.66rem;color:#ffffffcc;font-weight:700;white-space:nowrap;line-height:1}
+.hdrUser .admin{color:var(--gold)}
 .hdr > div{display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:flex-end}
 .badge{background:#ffffff1f;border-radius:999px;padding:4px 9px;font-size:.7rem;font-weight:800;white-space:nowrap}
 .admin{background:var(--gold);color:#111}
@@ -233,9 +235,8 @@ table.table td:last-child,table.table th:last-child{padding-right:5px}
   <div class="hdr">
     <h1>🏆 CdM 2026 Pronos</h1>
     <div class="hdrRight">
-      <span class="badge" id="uBadge"></span>
-      <span class="badge admin hide" id="aBadge">ADMIN</span>
-      <button type="button" id="logoutTopBtn" class="topLogoutBtn" onclick="logout()">Déconnexion</button>
+      <div class="hdrUser"><span id="uBadge"></span><span class="admin hide" id="aBadge"> · admin</span></div>
+      <button type="button" id="logoutTopBtn" class="topLogoutBtn" onclick="logout()">Déconnexion</button>
     </div>
   </div>
   <div id="globalLoading" class="globalLoading hide">Chargement…</div>
