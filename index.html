@@ -995,7 +995,7 @@ function drawMatches(){
       (isBonusMatch(id)?'<div class="countdown bonusPill centeredLine">⭐ Joker bonus : points doublés sur ce match</div>':'') +
       (timeLeftText(m)?'<div class="countdown centeredLine">⏳ '+timeLeftText(m)+'</div>':'') +
       statMirrorHtml(m) + riskHtml(m) +
-      (p?'<div class="prono"><span>✅ Ton prono : '+p.scoreA+'-'+p.scoreB+(p.joker?' ⭐':'')+(p.counterCurrent?' 😈':'')+(Number(p.riskBonus)?(' 🎁 +'+p.riskBonus):'')+'</span><b>'+(p.points!==''&&p.points!=null?p.points+' pts':'En attente')+'</b></div>':'') +
+      (p?'<div class="prono"><span>✅ Ton prono : '+p.scoreA+'-'+p.scoreB+(bool(p.joker)?' ⭐':'')+(bool(p.counterCurrent)?' 😈':'')+(Number(p.riskBonus)?(' 🎁 +'+p.riskBonus):'')+'</span><b>'+(p.points!==''&&p.points!=null?p.points+' pts':'En attente')+'</b></div>':'') +
       (canPlay?'<button class="btn" onclick="goPronosMatch(\''+id+'\')">Pronostiquer ce match</button>':'') +
       publicPronosHtml(m) +
       (isGroupMatch(m)?'<button class="btn btn2" style="margin-top:8px" onclick="openMatchDetail(\''+id+'\')">Voir classement local + historique</button>':'') +
@@ -1019,9 +1019,9 @@ function publicPronosHtml(m){
               const exact = String(m.status)==='FINISHED' && String(p.scoreA)===String(m.scoreA) && String(p.scoreB)===String(m.scoreB);
               const good = String(m.status)==='FINISHED' && issue===resIssue;
               const tag = String(m.status)==='FINISHED' ? (exact?'🎯 Score exact':good?'✅ Bon résultat':'❌ Échec') : '';
-              const risk = p.counterCurrent?' — 😈 Contre-courant':'';
-              const bonus = p.riskBonus?' — 🎁 Bonus +'+p.riskBonus:'';
-              return '<div class="small">'+cleanText(p.pseudo)+' : <b>'+p.scoreA+'-'+p.scoreB+'</b>'+(p.joker?' ⭐':'')+(tag?(' — '+tag):'')+risk+bonus+'</div>';
+              const risk = bool(p.counterCurrent)?' — 😈 Contre-courant':'';
+              const bonus = Number(p.riskBonus)?' — 🎁 Bonus +'+p.riskBonus:'';
+              return '<div class="small">'+cleanText(p.pseudo)+' : <b>'+p.scoreA+'-'+p.scoreB+'</b>'+(bool(p.joker)?' ⭐':'')+(tag?(' — '+tag):'')+risk+bonus+'</div>';
             }).join('')
           : '<div class="muted small">Aucun</div>'
         ) +
@@ -1371,7 +1371,7 @@ function profileMyPronosHtml(){
         return '<div class="card profilePronostic'+(grouped?' grouped':'')+'" '+(grouped?groupStyle(m.groupe):'')+'>' +
           '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:5px"><b>'+mFlag(m,'A')+' '+mName(m,'A')+' - '+mName(m,'B')+' '+mFlag(m,'B')+'</b>'+statusBadge+'</div>' +
           '<span class="muted">'+(isPoolFilter(m.groupe)?'Groupe '+m.groupe:'Phase finale')+' · '+fmtDateFR(m.dateFR)+(m.heureFR?(' · '+fmtHeure(m.heureFR)):'')+'</span><br>' +
-          '<span>Ton prono : <b>'+p.scoreA+'-'+p.scoreB+'</b>'+(p.joker?' ⭐':'')+(p.counterCurrent?' 😈':'')+(p.riskBonus?(' · 🎁 +'+p.riskBonus):'')+'</span>'+scoreLine +
+          '<span>Ton prono : <b>'+p.scoreA+'-'+p.scoreB+'</b>'+(bool(p.joker)?' ⭐':'')+(bool(p.counterCurrent)?' 😈':'')+(Number(p.riskBonus)?(' · 🎁 +'+p.riskBonus):'')+'</span>'+scoreLine +
         '</div>';
       }).join('')
     : '<div class="card muted">'+(dataLoaded.pronosView?'Aucun pronostic dans ce filtre.':'Chargement…')+'</div>';
@@ -1393,7 +1393,7 @@ function adminSuiviHtml(){
   const open = rows.filter(r=> r.status==='OPEN').length;
   const noProno = rows.filter(r=> r.status==='OPEN' && r.count===0).length;
   const lowProno = rows.filter(r=> r.status==='OPEN' && r.count>0 && r.count<(r.totalUsers/2)).length;
-  const withBonus = rows.filter(r=> r.bonusJoker).length;
+  const withBonus = rows.filter(r=> bool(r.bonusJoker)).length;
   return '<div class="card"><b>Vue d\'ensemble admin</b><br><br>' +
     '<div class="grid2">' +
       '<div class="card"><div class="pts">'+open+'</div><div class="muted">📅 Matchs ouverts</div></div>' +
@@ -1495,7 +1495,7 @@ function adminCoverageHtml(){
     || (adminCoverageFilter==='low' && r.count>0 && r.count<(r.totalUsers/2))
     || (adminCoverageFilter==='incomplete' && r.count<r.totalUsers)
     || (adminCoverageFilter==='complete' && r.count>=r.totalUsers)
-    || (adminCoverageFilter==='bonus' && r.bonusJoker)
+    || (adminCoverageFilter==='bonus' && bool(r.bonusJoker))
   );
   return '<div class="adminCoverageFilters">' +
     filters.map(f=> '<button type="button" class="'+(adminCoverageFilter===f[0]?'active':'')+'" onclick="adminCoverageFilter=\''+f[0]+'\';drawProfile()">'+f[1]+'</button>').join('') +
@@ -1503,7 +1503,7 @@ function adminCoverageHtml(){
   (filtered.length
     ? filtered.map(r=>
       '<div class="card"><b>'+cleanText(r.label)+'</b><br>' +
-        '<span class="muted">'+fmtDateFR(r.dateFR)+' · '+r.status+' · '+r.ratio+' · ⭐ '+(r.jokers||0)+(r.bonusJoker?' · Joker bonus':'')+'</span><br><br>' +
+        '<span class="muted">'+fmtDateFR(r.dateFR)+' · '+r.status+' · '+r.ratio+' · ⭐ '+(r.jokers||0)+(bool(r.bonusJoker)?' · Joker bonus':'')+'</span><br><br>' +
         '<b>Ont joué :</b><br><span class="small">'+(r.played.length?cleanText(r.played.join(', ')):'Personne')+'</span><br><br>' +
         '<b>Manquent :</b><br><span class="small">'+(r.missing.length?cleanText(r.missing.join(', ')):'Personne')+'</span>' +
       '</div>'
