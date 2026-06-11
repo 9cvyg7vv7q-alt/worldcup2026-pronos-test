@@ -334,7 +334,7 @@ details.rulesAcc .inner{padding:0 12px 12px}
       <div class="muted">Pronostique les scores, utilise tes jokers et suis le classement.</div>
     </div>
     <div id="homeSummary"></div>
-    <details class="rulesAcc"><summary>📜 Règles du jeu &amp; cagnotte</summary><div class="inner">
+    <div class="sec">📜 Règles du jeu &amp; cagnotte</div>
     <div class="card">🎯 <b>Score exact</b> : 3 points<br><span class="muted">Le score pronostiqué correspond exactement au résultat final.</span></div>
     <div class="card">✅ <b>Bon résultat</b> : 1 point<br><span class="muted">Bon vainqueur ou bon match nul, sans le score exact.</span></div>
     <div class="card">⭐ <b>Joker</b> : points ×2<br><span class="muted">3 jokers disponibles sur l'ensemble de la compétition.</span></div>
@@ -421,7 +421,7 @@ details.rulesAcc .inner{padding:0 12px 12px}
  * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
  *   message vert/rouge inline + toast de confirmation
  * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbxIpVMiApC7lMjaSq1IMYg907IUcutGvgbbPJzRrHXxlsX4J3TiK9Jb5zSVHqE8MzoP0g/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwdaGEXGViD-y0mzNVwqwjlO67MgL-OkeYFMHxMuc_CmFc1Fh1trqF-WJ9551lR2-YX1g/exec";
 const MAX_JOKERS     = 3;
 const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
 // Format date français : "12/06/2026" → "Ven. 12 juin 2026"
@@ -890,10 +890,19 @@ function heroMatchHtml(){
       '<div class="hmVs">VS</div>' +
       '<div class="hmT"><div class="f">'+mFlag(m,'B')+'</div><div class="n">'+mName(m,'B')+'</div></div>' +
     '</div>' +
-    (live ? '<div style="text-align:center" class="muted">Le score tombera au coup de sifflet final ⏱️</div>'
+    (live ? heroLiveHtml(m)
           : '<div class="cdown" id="homeCd" data-key="'+String(m.dateFR)+' '+String(m.heureFR)+'"></div>') +
     (!pronos[String(mId(m))] && String(m.status)==='OPEN'
       ? '<button class="btn" style="margin-top:10px" onclick="goPronosMatch(\''+mId(m)+'\')">Pronostiquer ce match</button>' : '') +
+  '</div>';
+}
+function heroLiveHtml(m){
+  const sa=(m.scoreA===''||m.scoreA==null)?0:m.scoreA, sb=(m.scoreB===''||m.scoreB==null)?0:m.scoreB;
+  const gA=(typeof goalsForSide==='function')?goalsForSide(m,'A'):'';
+  const gB=(typeof goalsForSide==='function')?goalsForSide(m,'B'):'';
+  return '<div style="text-align:center;margin:6px 0 2px">' +
+    '<div style="font-size:2rem;font-weight:900;letter-spacing:2px">'+sa+' <span class="muted">-</span> '+sb+'</div>' +
+    ((gA||gB)?'<div class="muted" style="font-size:.72rem;margin-top:4px;display:flex;justify-content:space-around;gap:8px"><span>'+(gA||'')+'</span><span>'+(gB||'')+'</span></div>':'') +
   '</div>';
 }
 let homeCdTimer=null;
