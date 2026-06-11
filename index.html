@@ -421,7 +421,7 @@ details.rulesAcc .inner{padding:0 12px 12px}
  * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
  *   message vert/rouge inline + toast de confirmation
  * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbwdaGEXGViD-y0mzNVwqwjlO67MgL-OkeYFMHxMuc_CmFc1Fh1trqF-WJ9551lR2-YX1g/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzJMyhlDDBetqIK19mk5goMMtYqeukYwwetEs45mUAmMT2n4Ya4JU8ecENK5wiLoF0qMw/exec";
 const MAX_JOKERS     = 3;
 const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
 // Format date français : "12/06/2026" → "Ven. 12 juin 2026"
@@ -711,6 +711,7 @@ let stadesList = [], diffuseursList = [];
 function applyViewData(key, d){
   if (key==='pronosView'){
     matches = d.matches || [];
+    setTimeout(function(){ try{ updateNavLive(); }catch(e){} }, 0);
     pronos = d.myPronos || {};
     pronosticStats = d.pronosticStats || {};
     butsMatch = d.butsMatch || {};
@@ -765,6 +766,9 @@ function show(viewName, btn){
   // les pronos/votes/classements des autres remontent sans rebuild ni attente.
   var LIVE_VIEWS = { pronosView:1, rankView:1, groupsView:1, summaryView:1, scorersView:1 };
   if (req && !viewLoading[req[0]] && (LIVE_VIEWS[req[0]] || !dataLoaded[req[0]])) fetchView(req[0], req[1], req[2]);
+  // ACCUEIL : la carte "match en direct" lit 'matches' (vue pronos). On la rafraîchit à
+  // l'ouverture de l'accueil pour que le score live remonte sans passer par l'onglet Matchs.
+  if (viewName === 'Home' && !viewLoading.pronosView) fetchView('pronosView', 'getPronosView', {userId:u});
   if (viewName === 'Profile' && user.isAdmin && !dataLoaded.adminView && !viewLoading.adminView){
     fetchView('adminView', 'getAdminView', {userId:u});
   }
@@ -897,7 +901,8 @@ function heroMatchHtml(){
   '</div>';
 }
 function heroLiveHtml(m){
-  const sa=(m.scoreA===''||m.scoreA==null)?0:m.scoreA, sb=(m.scoreB===''||m.scoreB==null)?0:m.scoreB;
+  const toN=v=> (v===''||v==null||isNaN(Number(v)))?0:Number(v);
+  const sa=toN(m.scoreA), sb=toN(m.scoreB);
   const gA=(typeof goalsForSide==='function')?goalsForSide(m,'A'):'';
   const gB=(typeof goalsForSide==='function')?goalsForSide(m,'B'):'';
   return '<div style="text-align:center;margin:6px 0 2px">' +
