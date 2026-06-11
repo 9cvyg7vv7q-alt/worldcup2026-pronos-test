@@ -334,7 +334,7 @@ table.table td:last-child,table.table th:last-child{padding-right:5px}
  * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
  *   message vert/rouge inline + toast de confirmation
  * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbxFZJCGe9qWJLREtvq8paeLXu0FRfY_iIvqENBp5hahfA9RCeV2xRtPQ0J7BO6_8CZSXw/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxTjY_uNTGS0EPu1f0w9kjQ41aBWZm8udFEh3m2H2EaWnUWVZ8AwkPPVlgQoKEShshH9w/exec";
 const MAX_JOKERS     = 3;
 const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
 // Format date français : "12/06/2026" → "Ven. 12 juin 2026"
@@ -673,7 +673,11 @@ function show(viewName, btn){
     'Profile':  ['profileView',  'getProfileView', {userId:u}]
   };
   const req = needs[viewName];
-  if (req && !dataLoaded[req[0]] && !viewLoading[req[0]]) fetchView(req[0], req[1], req[2]);
+  // Vues "vivantes" (maj par d'autres users) : on retente le fetch à CHAQUE ouverture.
+  // Le hash serveur renvoie "skip" si rien n'a changé -> gratuit, mais garantit que
+  // les pronos/votes/classements des autres remontent sans rebuild ni attente.
+  var LIVE_VIEWS = { pronosView:1, rankView:1, groupsView:1, summaryView:1, scorersView:1 };
+  if (req && !viewLoading[req[0]] && (LIVE_VIEWS[req[0]] || !dataLoaded[req[0]])) fetchView(req[0], req[1], req[2]);
   if (viewName === 'Profile' && user.isAdmin && !dataLoaded.adminView && !viewLoading.adminView){
     fetchView('adminView', 'getAdminView', {userId:u});
   }
