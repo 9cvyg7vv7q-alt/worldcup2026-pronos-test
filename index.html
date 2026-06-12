@@ -293,6 +293,7 @@ details.rulesAcc summary{cursor:pointer;padding:12px;font-weight:900;list-style:
 details.rulesAcc summary::after{content:"▾";float:right;color:var(--muted);transition:transform .2s}
 details.rulesAcc[open] summary::after{transform:rotate(180deg)}
 details.rulesAcc .inner{padding:0 12px 12px}
+.scCard.scVoted{border-color:rgba(255,215,0,.55);background:linear-gradient(90deg,#FFD70014,transparent 60%);box-shadow:inset 3px 0 0 var(--gold)}
 </style>
 </head>
 <body>
@@ -432,7 +433,7 @@ details.rulesAcc .inner{padding:0 12px 12px}
  * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
  *   message vert/rouge inline + toast de confirmation
  * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbw1eRLk6YHrFUM9LqdwN8r5TrEGIsdH477zywBDoE7vOpNiwluow6KI0YDKZ3mhefzMag/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxWvJ2USiYho_piLq-LXHtIgQ0e0IcFuYo0npbrqPumGziLDmwKU0JoqZrYVxuLQ0tvFw/exec";
 const MAX_JOKERS     = 3;
 const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
 // Format date français : "12/06/2026" → "Ven. 12 juin 2026"
@@ -1382,8 +1383,10 @@ function drawRankScorers(){
     const better=[...new Set(arr.map(x=>Number(x.votes)||0))].filter(x=>x>(Number(v.votes)||0)).length+1;
     return better===1?'🥇':better===2?'🥈':better===3?'🥉':'<span class="scPos">'+better+'</span>';
   };
-  const votersOf = jid => {
-    const r=ranking.find(x=> String(x.joueurId)===String(jid));
+  const votersOf = (jid, nom) => {
+    const n=String(nom||'').toLowerCase().trim();
+    const r=ranking.find(x=> (jid!=='' && jid!=null && String(x.joueurId)===String(jid))
+                          || (n && String(x.joueur||'').toLowerCase().trim()===n));
     return r ? (r.users||[]) : [];
   };
 
@@ -1407,8 +1410,8 @@ function drawRankScorers(){
     // PENDANT : top buteurs réels d'abord, badge ⭐ pour les joueurs choisis
     html += '<div class="sec" style="border-top:none;margin-top:2px">🎯 Top buteurs du Mondial</div>';
     html += scorers.filter(s=> Number(s.buts)>0).slice(0,8).map((s,i)=>{
-      const vs=votersOf(s.joueurId);
-      return '<div class="scCard">' +
+      const vs=votersOf(s.joueurId, s.nomComplet||s.nom);
+      return '<div class="scCard'+(vs.length?' scVoted':'')+'">' +
         '<div class="scPos2">'+(i+1)+'</div>' +
         '<div class="scInfo"><div class="scName">'+cleanText(s.nomComplet||s.initialNom||s.nom)+' '+(s.emoji||'')+'</div>' +
           (vs.length?'<div class="scVoters">⭐ '+cleanText(vs.join(' · '))+'</div>':'<div class="scVoters muted">'+cleanText(s.equipe||'')+'</div>') +
@@ -1417,8 +1420,11 @@ function drawRankScorers(){
       '</div>';
     }).join('');
     // joueurs votés hors top : restent visibles
-    const topIds = new Set(scorers.filter(s=> Number(s.buts)>0).slice(0,8).map(s=>String(s.joueurId)));
-    const offTop = ranking.filter(v=> !topIds.has(String(v.joueurId)));
+    const topList = scorers.filter(s=> Number(s.buts)>0).slice(0,8);
+    const topIds  = new Set(topList.map(s=>String(s.joueurId)).filter(x=>x&&x!=='null'));
+    const topNoms = new Set(topList.map(s=>String(s.nomComplet||s.nom||'').toLowerCase().trim()));
+    const offTop  = ranking.filter(v=> !topIds.has(String(v.joueurId))
+                                    && !topNoms.has(String(v.joueur||'').toLowerCase().trim()));
     if (offTop.length){
       html += '<div class="sec">⭐ Vos buteurs hors du top</div>' +
         offTop.map(v=>
