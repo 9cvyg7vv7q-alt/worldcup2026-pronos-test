@@ -24,14 +24,13 @@ body{margin:0;font-family:Inter,Arial,sans-serif;background:radial-gradient(1200
 .hdrUserWrap{display:flex;flex-direction:column;align-items:flex-end;gap:2px;line-height:1}
 .hdrUser{font-size:.74rem;color:#fff;font-weight:800;white-space:nowrap;line-height:1}
 .hdrUser .admin{background:none!important;color:var(--gold);padding:0!important;font-weight:900}
-.hdrUserPic{width:30px;height:30px;border-radius:50%;background:#ffffff22;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:#fff;flex:0 0 auto;border:1px solid #ffffff33}
 
 .badge{background:#ffffff1f;border-radius:999px;padding:4px 9px;font-size:.7rem;font-weight:800;white-space:nowrap}
 .admin{background:var(--gold);color:#111}
 .topLogoutBtn{background:#ffffff1a;border:1px solid #ffffff33;color:#fff;border-radius:999px;padding:7px 12px;font-size:.7rem;font-weight:800;white-space:nowrap;transition:background .15s}
 .topLogoutBtn:hover{background:#ffffff2e}
 .topLogoutBtn:active{transform:scale(.98)}
-@media(max-width:480px){.hdr{padding:10px 12px;gap:9px}.hdr h1{font-size:.9rem}.hdrSubtitle{font-size:.55rem}.hdrLogo{width:34px;height:34px;font-size:1.15rem}.hdrUser{font-size:.68rem}.hdrUserPic{display:none}.topLogoutBtn{padding:6px 10px;font-size:.64rem}}
+@media(max-width:480px){.hdr{padding:10px 12px;gap:9px}.hdr h1{font-size:.9rem}.hdrSubtitle{font-size:.55rem}.hdrLogo{width:34px;height:34px;font-size:1.15rem}.hdrUser{font-size:.68rem}.topLogoutBtn{padding:6px 10px;font-size:.64rem}}
 .bnav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--bdr);display:flex;z-index:20;padding:4px 0 env(safe-area-inset-bottom)}
 .bnav button{flex:1;background:none;border:0;color:var(--muted);font-size:.64rem;padding:7px 2px 6px;font-weight:800;display:flex;flex-direction:column;gap:2px;align-items:center}
 .bnav button .ico{font-size:1.25rem;line-height:1.25}
@@ -334,7 +333,6 @@ details.rulesAcc .inner{padding:0 12px 12px}
       <div class="hdrUserWrap">
         <div class="hdrUser"><span id="uBadge"></span><span class="admin hide" id="aBadge"> · admin</span></div>
       </div>
-      <div class="hdrUserPic" id="uPic"></div>
       <button type="button" id="logoutTopBtn" class="topLogoutBtn" onclick="logout()">Déconnexion</button>
     </div>
   </div>
@@ -434,7 +432,7 @@ details.rulesAcc .inner{padding:0 12px 12px}
  * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
  *   message vert/rouge inline + toast de confirmation
  * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbx2SDKgZexPjkbF7JqV1iCcgW4WHs4OtthW5cY9QALmtJkvhuZ0hFG2vESq2BFQDeN_rA/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbw1eRLk6YHrFUM9LqdwN8r5TrEGIsdH477zywBDoE7vOpNiwluow6KI0YDKZ3mhefzMag/exec";
 const MAX_JOKERS     = 3;
 const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
 // Format date français : "12/06/2026" → "Ven. 12 juin 2026"
@@ -1408,7 +1406,7 @@ function drawRankScorers(){
   } else {
     // PENDANT : top buteurs réels d'abord, badge ⭐ pour les joueurs choisis
     html += '<div class="sec" style="border-top:none;margin-top:2px">🎯 Top buteurs du Mondial</div>';
-    html += scorers.slice(0,8).map((s,i)=>{
+    html += scorers.filter(s=> Number(s.buts)>0).slice(0,8).map((s,i)=>{
       const vs=votersOf(s.joueurId);
       return '<div class="scCard">' +
         '<div class="scPos2">'+(i+1)+'</div>' +
@@ -1419,7 +1417,7 @@ function drawRankScorers(){
       '</div>';
     }).join('');
     // joueurs votés hors top : restent visibles
-    const topIds = new Set(scorers.slice(0,8).map(s=>String(s.joueurId)));
+    const topIds = new Set(scorers.filter(s=> Number(s.buts)>0).slice(0,8).map(s=>String(s.joueurId)));
     const offTop = ranking.filter(v=> !topIds.has(String(v.joueurId)));
     if (offTop.length){
       html += '<div class="sec">⭐ Vos buteurs hors du top</div>' +
