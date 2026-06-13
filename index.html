@@ -294,6 +294,18 @@ details.rulesAcc summary::after{content:"▾";float:right;color:var(--muted);tra
 details.rulesAcc[open] summary::after{transform:rotate(180deg)}
 details.rulesAcc .inner{padding:0 12px 12px}
 .scCard.scVoted{border-color:rgba(255,215,0,.55);background:linear-gradient(90deg,#FFD70014,transparent 60%);box-shadow:inset 3px 0 0 var(--gold)}
+.editPronoBtn{background:#ffffff14;border:1px solid var(--bdr);color:var(--gold);border-radius:99px;padding:5px 12px;font-size:.74rem;font-weight:800;cursor:pointer;white-space:nowrap}
+.editPronoBtn:hover{background:#ffffff22}
+.epTeams{display:flex;align-items:center;justify-content:space-around;gap:10px;margin:16px 0}
+.epTeam{text-align:center;flex:1}
+.epTeam .f{font-size:2.2rem}
+.epTeam .n{font-weight:800;font-size:.82rem;margin-top:3px}
+.epScore{width:60px;height:60px;font-size:1.6rem;font-weight:900;text-align:center;border-radius:12px;border:2px solid var(--bdr);background:#0d1117;color:var(--txt);margin-top:8px}
+.epVs{color:var(--muted);font-weight:900;font-size:.9rem}
+.epJoker{display:flex;align-items:center;gap:10px;background:#0d1117;border:1px solid var(--bdr);border-radius:12px;padding:12px;margin:12px 0}
+.epJoker.disabled{opacity:.45}
+.epJoker input{width:20px;height:20px;accent-color:var(--gold)}
+.epHint{font-size:.72rem;color:var(--muted);margin-top:2px}
 </style>
 </head>
 <body>
@@ -433,7 +445,7 @@ details.rulesAcc .inner{padding:0 12px 12px}
  * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
  *   message vert/rouge inline + toast de confirmation
  * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbxWvJ2USiYho_piLq-LXHtIgQ0e0IcFuYo0npbrqPumGziLDmwKU0JoqZrYVxuLQ0tvFw/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxE4x9Y0iXUvysu-UIay7BUT5u5d8A7byQFdJXddWl1qP1-Rh4mGeRkIaoeufPL3iGorg/exec";
 const MAX_JOKERS     = 3;
 const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
 // Format date français : "12/06/2026" → "Ven. 12 juin 2026"
@@ -1182,7 +1194,7 @@ function drawMatches(){
       (isBonusMatch(id)?'<div class="countdown bonusPill centeredLine">⭐ Joker bonus : points doublés sur ce match</div>':'') +
       (timeLeftText(m)?'<div class="countdown centeredLine">⏳ '+timeLeftText(m)+'</div>':'') +
       statMirrorHtml(m) + riskHtml(m) +
-      (p?'<div class="prono"><span>✅ Ton prono : '+p.scoreA+'-'+p.scoreB+(bool(p.joker)?' ⭐':'')+(bool(p.counterCurrent)?' 😈':'')+(Number(p.riskBonus)?(' 🎁 +'+p.riskBonus):'')+'</span><b>'+(p.points!==''&&p.points!=null?p.points+' pts':'En attente')+'</b></div>':'') +
+      (p?'<div class="prono"><span>✅ Ton prono : '+p.scoreA+'-'+p.scoreB+(bool(p.joker)?' ⭐':'')+(bool(p.counterCurrent)?' 😈':'')+(Number(p.riskBonus)?(' 🎁 +'+p.riskBonus):'')+'</span>'+(String(m.status)==='OPEN'?'<button class="editPronoBtn" onclick="openEditProno(\''+id+'\')">✏️ Modifier</button>':'<b>'+(p.points!==''&&p.points!=null?p.points+' pts':'En attente')+'</b>')+'</div>':'') +
       (canPlay?'<button class="btn" onclick="goPronosMatch(\''+id+'\')">Pronostiquer ce match</button>':'') +
       publicPronosHtml(m) +
       (isGroupMatch(m)?'<button class="btn btn2" style="margin-top:8px" onclick="openMatchDetail(\''+id+'\')">Voir classement local + historique</button>':'') +
@@ -1259,6 +1271,50 @@ function openMatchDetail(id){
   $('matchModal').classList.add('open');
 }
 function closeMatchDetail(){ $('matchModal').classList.remove('open'); }
+function openEditProno(matchId){
+  const m=(matches||[]).find(x=>String(mId(x))===String(matchId)); if(!m) return;
+  const p=pronos[String(matchId)]; if(!p){ toast('Aucun prono à modifier','ko'); return; }
+  if(String(m.status)!=='OPEN'){ toast('Match déjà verrouillé','ko'); return; }
+  // jokers utilisés sur les AUTRES matchs
+  let usedOther=0; Object.keys(pronos).forEach(k=>{ if(k!==String(matchId) && bool(pronos[k].joker)) usedOther++; });
+  const hadJoker=bool(p.joker);
+  const bonus=isBonusMatch(String(matchId));
+  // peut cocher si : il avait déjà le joker (op blanche) OU il lui en reste, ET pas de bonus collectif
+  const canJoker = !bonus && (hadJoker || usedOther<3);
+  const restants = 3-usedOther-(hadJoker?1:0);
+  $('matchModalContent').innerHTML =
+    '<h3 style="margin:0 0 4px">✏️ Modifier mon prono</h3>'+
+    '<div class="epHint">'+cleanText(matchTitle(m))+'</div>'+
+    '<div class="epTeams">'+
+      '<div class="epTeam"><div class="f">'+mFlag(m,'A')+'</div><div class="n">'+mName(m,'A')+'</div>'+
+        '<input type="number" min="0" max="30" class="epScore" id="epA" value="'+p.scoreA+'"></div>'+
+      '<div class="epVs">—</div>'+
+      '<div class="epTeam"><div class="f">'+mFlag(m,'B')+'</div><div class="n">'+mName(m,'B')+'</div>'+
+        '<input type="number" min="0" max="30" class="epScore" id="epB" value="'+p.scoreB+'"></div>'+
+    '</div>'+
+    (bonus
+      ? '<div class="epJoker disabled"><input type="checkbox" disabled '+(hadJoker?'checked':'')+'><div><b>Joker perso</b><div class="epHint">Indisponible : ce match a déjà un joker bonus collectif ⭐</div></div></div>'
+      : '<div class="epJoker'+(canJoker?'':' disabled')+'"><input type="checkbox" id="epJoker" '+(hadJoker?'checked':'')+' '+(canJoker?'':'disabled')+'><div><b>Utiliser un joker perso ⭐</b><div class="epHint">'+(hadJoker?'Décoche pour le récupérer.':(canJoker?('Il te reste '+Math.max(0,restants)+' joker(s).'):'Tu as utilisé tes 3 jokers sur d\'autres matchs.'))+'</div></div></div>')+
+    '<button class="btn" onclick="submitEditProno(\''+matchId+'\')">Enregistrer</button>'+
+    '<button class="btn btn2" style="margin-top:8px" onclick="closeMatchDetail()">Annuler</button>';
+  $('matchModal').classList.add('open');
+}
+function submitEditProno(matchId){
+  const a=parseInt($('epA').value,10), b=parseInt($('epB').value,10);
+  if(isNaN(a)||isNaN(b)||a<0||b<0){ toast('Scores invalides','ko'); return; }
+  const jk=$('epJoker'); const joker=jk?jk.checked:false;
+  api('editPronostic',{matchId:String(matchId),scoreA:a,scoreB:b,joker:String(joker)})
+    .then(r=>{
+      if(r&&r.prono){
+        pronos[String(matchId)]=Object.assign(pronos[String(matchId)]||{},r.prono);
+        closeMatchDetail(); toast('Prono modifié ✅');
+        drawMatches();
+        // rafraîchir les vues live (classement, stats) au prochain affichage
+        ['pronosView','rankView','summaryView'].forEach(k=>{ dataLoaded[k]=false; });
+      } else { toast((r&&r.error)||'Erreur','ko'); }
+    })
+    .catch(e=>toast(String(e&&e.message||e),'ko'));
+}
 /* =============================================================================
  * VUE POULES
  * ============================================================================= */
