@@ -381,19 +381,10 @@ details.rulesAcc .inner{padding:0 12px 12px}
   </div></details>
   </div>
   <div id="vPronos" class="view">
-    <div class="pronosSticky">
-      <div class="pronoModeToggle">
-        <button id="pmToTodo" class="active" onclick="setPronoMode('todo')">📝 À pronostiquer</button>
-        <button id="pmToDone" onclick="setPronoMode('done')">✅ Déjà pronostiqués</button>
-      </div>
-      <div class="filters" id="pronosFilters"></div>
-    </div>
-    <div id="pronoTodoWrap">
-      <div class="matchSelectWrap"><select id="pronoMatchSelect" onchange="selectPronoMatch(this.value)"></select></div>
-      <div id="pronoSwipeBox"><div class="skel"></div><div class="skel"></div></div>
-    </div>
-    <div id="pronoDoneWrap" class="hide"></div>
-  </div>
+    <div class="pronosSticky"><div class="filters" id="pronosFilters"></div></div>
+    <div class="matchSelectWrap"><select id="pronoMatchSelect" onchange="selectPronoMatch(this.value)"></select></div>
+    <div id="pronoSwipeBox"><div class="skel"></div><div class="skel"></div></div>
+  </div>
   <div id="vMatches" class="view">
     <div class="matchesSticky">
       <div class="filters" id="matchesStatusFilters"></div>
