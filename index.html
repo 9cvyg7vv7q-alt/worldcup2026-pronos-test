@@ -387,7 +387,6 @@ details.rulesAcc .inner{padding:0 12px 12px}
   </div>
   <div id="vMatches" class="view">
     <div class="matchesSticky">
-      <div class="filters" id="matchesStatusFilters"></div>
       <div class="filters" id="matchesFilters"></div>
     </div>
     <div id="matchList"><div class="skel"></div><div class="skel"></div></div>
@@ -512,7 +511,6 @@ let userState = {};
 let groupsData={}, summaryData={}, profileData={}, adminData={};
 let currentFilter='all', currentProfileFilter='all';
 // Filtre par statut dans l'onglet Matchs (indépendant du filtre par groupe)
-let matchesStatusFilter='all'; // all / topredict / predicted / done
 let activeProfileSection='infos', adminCoverageFilter='all';
 let activeRankSection='classement';
 let currentPronoIndex=0, directPronoMatchId=null;
@@ -978,20 +976,6 @@ function drawFilters(){
   });
 }
 function setFilter(k){ currentFilter=k; drawFilters(); drawPronos(); drawMatches(); }
-function setMatchesStatus(k){ matchesStatusFilter=k; drawMatchesStatusFilters(); drawMatches(); }
-function passMatchesStatus(m){
-  if (matchesStatusFilter==='all') return true;
-  const hasProno = !!pronos[String(mId(m))];
-  if (matchesStatusFilter==='topredict') return String(m.status)==='OPEN' && !hasProno;
-  if (matchesStatusFilter==='predicted') return hasProno;
-  if (matchesStatusFilter==='done')      return String(m.status)==='LOCKED' || String(m.status)==='FINISHED';
-  return true;
-}
-function drawMatchesStatusFilters(){
-  const box = $('matchesStatusFilters'); if (!box) return;
-  const items = [['all','Tous'],['topredict','À pronostiquer'],['predicted','Déjà pronostiqués'],['done','En cours / Terminés']];
-  box.innerHTML = items.map(x=> '<button class="'+(matchesStatusFilter===x[0]?'active':'')+'" onclick="setMatchesStatus(\''+x[0]+'\')">'+x[1]+'</button>').join('');
-}
 function passFilter(m){
   if (currentFilter==='all') return true;
   if (currentFilter==='today'){ const t=new Date().toLocaleDateString('fr-FR'); return m.dateFR===t; }
@@ -1165,12 +1149,11 @@ function updateNavLive(){
 function drawMatches(){
   updateNavLive();
   const box=$('matchList'); if(!box) return;
-  drawMatchesStatusFilters();
   if (!dataLoaded.pronosView && !matches.length){ box.innerHTML=skel(3); return; }
   // Affiche TOUS les matchs ; les filtres sticky (statut + groupe) permettent de restreindre.
   const list = matches
     .filter(passFilter)
-    .filter(passMatchesStatus)
+    
     .sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||'')));
   if (!list.length){ box.innerHTML='<div class="card muted">Aucun match dans ce filtre.</div>'; return; }
   window.__lastDay='';
