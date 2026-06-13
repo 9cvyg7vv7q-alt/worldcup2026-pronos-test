@@ -444,7 +444,7 @@ details.rulesAcc .inner{padding:0 12px 12px}
  * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
  *   message vert/rouge inline + toast de confirmation
  * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbxvcIX15PrRqrC5ihnAGb80ZN9OO0UtRzzCkimnClN_aNRS7j5j9JGEz5HWW0BJQKsnYg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwls-TJpuTmXs0i1GNe3EHPlwynmYr7evOf0I0Cp2D51QHfQUdwGYuGyrRwoxxxr1lJfA/exec";
 const MAX_JOKERS     = 3;
 const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
 // Format date français : "12/06/2026" → "Ven. 12 juin 2026"
@@ -1290,10 +1290,11 @@ function submitEditProno(matchId){
     .then(r=>{
       if(r&&r.prono){
         pronos[String(matchId)]=Object.assign(pronos[String(matchId)]||{},r.prono);
+        if(r.jokersUsed!=null) userState.jokersUsed=r.jokersUsed;
         closeMatchDetail(); toast('Prono modifié ✅');
         drawMatches();
         // rafraîchir les vues live (classement, stats) au prochain affichage
-        ['pronosView','rankView','summaryView'].forEach(k=>{ dataLoaded[k]=false; });
+        ['pronosView','rankView','summaryView','profileView'].forEach(k=>{ dataLoaded[k]=false; });
       } else { toast((r&&r.error)||'Erreur','ko'); }
     })
     .catch(e=>toast(String(e&&e.message||e),'ko'));
@@ -1585,7 +1586,7 @@ function drawProfile(){
   const preds  = meRank.predictions || meRank.played || 0;
   const exact  = meRank.exact || 0;
   const riskB  = meRank.riskBonus || 0;
-  const jUsed  = meRank.jokersUsed!=null?meRank.jokersUsed:(meRank.jokers!=null?meRank.jokers:(user.jokersUsed||0));
+  const jUsed  = (userState&&userState.jokersUsed!=null)?userState.jokersUsed:(meRank.jokersUsed!=null?meRank.jokersUsed:(meRank.jokers!=null?meRank.jokers:(user.jokersUsed||0)));
   const remJok = MAX_JOKERS - jUsed;
   const rate   = meRank.successRate!=null?meRank.successRate:(meRank.rate||0);
   const badges = [];
