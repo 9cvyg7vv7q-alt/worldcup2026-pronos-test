@@ -1174,7 +1174,7 @@ function drawMatches(){
   // Affiche TOUS les matchs ; les filtres sticky (statut + groupe) permettent de restreindre.
   const list = matches
     .filter(passFilter)
-    
+    .filter(passMatchStatus)
     .sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||'')));
   if (!list.length){ box.innerHTML='<div class="card muted">Aucun match dans ce filtre.</div>'; return; }
   window.__lastDay='';
