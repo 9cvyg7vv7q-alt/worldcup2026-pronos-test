@@ -865,7 +865,7 @@ function matchTitle(m){
   if (pronos[String(mId(m))])         return 'Pronostiqué';
   return 'Match à venir';
 }
-function goalMin(v){ const n=parseInt(String(v||'').replace(/[^0-9]/g,''),10); return isNaN(n)?999:n; }
+function goalMin(v){ var s=String(v==null?'':v).trim(); if(s.indexOf('+')>=0){ var p=s.split('+'); var base=parseInt(p[0],10)||0; var extra=parseInt(p[1],10)||0; return base+extra/100; } var n=parseInt(s.replace(/[^0-9]/g,''),10); return isNaN(n)?999:n; }
 function goalType(t){ t=String(t||'').toUpperCase(); if(t==='P'||t==='PENALTY')return ' (P)'; if(t==='CSC'||t==='OWN_GOAL')return ' (CSC)'; return ''; }
 function goalsForSide(m, side){
   const arr = (butsMatch[String(mId(m))]||[]).filter(g=>{
