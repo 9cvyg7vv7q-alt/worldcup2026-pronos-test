@@ -323,6 +323,10 @@ details.rulesAcc .inner{padding:0 12px 12px}
 .fmNm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700;font-size:.76rem;color:var(--muted)}
 .fmFlag{font-size:1rem;flex:0 0 auto}
 .fmSc{font-weight:900;color:var(--gold);background:var(--bg);border-radius:6px;padding:1px 8px;flex:0 0 auto;font-size:.76rem}
+.fmHr{font-weight:800;color:#9bd0ff;background:var(--bg);border-radius:6px;padding:1px 8px;flex:0 0 auto;font-size:.74rem}
+.fmTag{flex:0 0 auto;font-size:.6rem;font-weight:900;border-radius:99px;padding:2px 7px;margin-left:2px;white-space:nowrap}
+.fmDone{color:#66bb6a;background:#2e8b5722;border:1px solid #2e8b5755}
+.fmTodo{color:#ffcc80;background:#ff980018;border:1px solid #ff980055}
 .fmOpen > .match{margin-bottom:8px}
 .fmOpen > .match:last-child{margin-bottom:0}
 </style>
@@ -540,6 +544,7 @@ let activeRankSection='classement';
 let currentPronoIndex=0, directPronoMatchId=null;
 let matchStatusFilter='finished';
 let openFinishedDate=null, openFinishedMatchId=null, finishedDateInit=false;
+let openUpcomingDate=null, upcomingDateInit=false;
 let selectedPlayer=null;
 const rankCharts = {};
 // PAS DE CACHE LOCALSTORAGE — chaque navigation fait un fetch frais.
@@ -1216,9 +1221,11 @@ function drawMatches(){
   if (!dataLoaded.pronosView && !matches.length){ box.innerHTML=skel(3); return; }
   const list = matches.filter(passFilter).filter(passMatchStatus);
   if (!list.length){ box.innerHTML='<div class="card muted">Aucun match dans ce filtre.</div>'; return; }
-  // TERMINÉS : accordéon par date (décroissant) + liste compacte, détail au tap.
-  if (matchStatusFilter==='finished'){ box.innerHTML = finishedAccordionHtml(list); return; }
-  // À VENIR / EN COURS : liste plate chronologique avec en-têtes de jour (comportement d'origine).
+  // TERMINÉS : accordéon par date décroissant (aperçu = score).
+  if (matchStatusFilter==='finished'){ box.innerHTML = dateAccordionHtml(list, 'finished'); return; }
+  // À VENIR : accordéon par date chronologique (aperçu = heure).
+  if (matchStatusFilter==='upcoming'){ box.innerHTML = dateAccordionHtml(list, 'upcoming'); return; }
+  // EN COURS : liste plate chronologique avec en-têtes de jour (comportement d'origine).
   list.sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||'')));
   window.__lastDay='';
   box.innerHTML = list.map(m=>{
@@ -1230,9 +1237,16 @@ function drawMatches(){
 // Accordéon des matchs terminés : une date = un volet, dates décroissantes.
 // FERMÉ : on affiche un aperçu compact (drapeau + équipe vs équipe) pour repérer le jour.
 // OUVERT : on affiche les cartes complètes, exactement comme l'onglet d'origine.
-function finishedAccordionHtml(list){
-  // Tri décroissant : dates les plus récentes en haut.
-  const sorted = list.slice().sort((a,b)=> String(b.sortKey||'').localeCompare(String(a.sortKey||'')));
+// Accordéon par date, factorisé pour Terminés et À venir.
+// mode='finished' : dates décroissantes, aperçu = score.
+// mode='upcoming' : dates chronologiques, aperçu = heure du coup d'envoi.
+// FERMÉ : aperçu compact (drapeau + équipe vs équipe) pour repérer le jour.
+// OUVERT : cartes complètes, comme l'affichage d'origine.
+function dateAccordionHtml(list, mode){
+  const desc = (mode==='finished');
+  const sorted = list.slice().sort((a,b)=> desc
+    ? String(b.sortKey||'').localeCompare(String(a.sortKey||''))
+    : String(a.sortKey||'').localeCompare(String(b.sortKey||'')));
   const groups=[]; const idx={};
   sorted.forEach(m=>{
     const d=String(m.dateFR||'');
@@ -1242,32 +1256,48 @@ function finishedAccordionHtml(list){
   // Dans chaque date : ordre chronologique (matin -> soir).
   groups.forEach(g=> g.matches.sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||''))));
   const dates = groups.map(g=> g.date);
-  // Ouverture auto de la date la plus récente, une seule fois (puis on respecte les clics).
-  if (!finishedDateInit){ openFinishedDate = dates[0]||null; finishedDateInit=true; }
-  else if (openFinishedDate && dates.indexOf(openFinishedDate)<0){ openFinishedDate=null; }
+  // État d'ouverture propre à chaque mode (les deux accordéons ne se gênent pas).
+  let openDate, toggleFn;
+  if (mode==='finished'){
+    if (!finishedDateInit){ openFinishedDate = dates[0]||null; finishedDateInit=true; }
+    else if (openFinishedDate && dates.indexOf(openFinishedDate)<0){ openFinishedDate=null; }
+    openDate = openFinishedDate; toggleFn = 'toggleFinishedDate';
+  } else {
+    if (!upcomingDateInit){ openUpcomingDate = dates[0]||null; upcomingDateInit=true; }
+    else if (openUpcomingDate && dates.indexOf(openUpcomingDate)<0){ openUpcomingDate=null; }
+    openDate = openUpcomingDate; toggleFn = 'toggleUpcomingDate';
+  }
   return groups.map(g=>{
-    const open = g.date===openFinishedDate;
-    const head = '<div class="fmDateHdr'+(open?' open':'')+'" onclick="toggleFinishedDate(\''+g.date.replace(/'/g,"\\'")+'\')">'+
+    const open = g.date===openDate;
+    const safeDate = g.date.replace(/'/g,"\\'");
+    const head = '<div class="fmDateHdr'+(open?' open':'')+'" onclick="'+toggleFn+'(\''+safeDate+'\')">'+
         '<span>📅 '+fmtDateFR(g.date)+'</span>'+
         '<span class="fmDateMeta">'+g.matches.length+' match'+(g.matches.length>1?'s':'')+'<span class="fmChev">\u25be</span></span>'+
       '</div>';
     if(open){
-      // Cartes complètes, comme avant.
       return head + '<div class="fmOpen">'+g.matches.map(matchCardHtml).join('')+'</div>';
     }
-    // Aperçu compact des matchs du jour (non cliquable individuellement : sert juste de repère).
-    const preview = g.matches.map(m=>
-      '<div class="fmMini">'+
+    // Aperçu compact : au milieu, score si terminé, heure si à venir.
+    const preview = g.matches.map(m=>{
+      const mid = desc
+        ? '<span class="fmSc">'+m.scoreA+'-'+m.scoreB+'</span>'
+        : '<span class="fmHr">'+fmtHeure(m.heureFR)+'</span>';
+      // Pour les matchs à venir : indique si l'utilisateur courant a déjà pronostiqué.
+      const tag = desc ? '' : (pronos[String(mId(m))]
+        ? '<span class="fmTag fmDone">✓ Fait</span>'
+        : '<span class="fmTag fmTodo">À faire</span>');
+      return '<div class="fmMini">'+
         '<span class="fmTeam"><span class="fmFlag">'+mFlag(m,'A')+'</span><span class="fmNm">'+mName(m,'A')+'</span></span>'+
-        '<span class="fmSc">'+m.scoreA+'-'+m.scoreB+'</span>'+
+        mid+
         '<span class="fmTeam fmR"><span class="fmNm">'+mName(m,'B')+'</span><span class="fmFlag">'+mFlag(m,'B')+'</span></span>'+
-      '</div>'
-    ).join('');
-    return head + '<div class="fmPreview" onclick="toggleFinishedDate(\''+g.date.replace(/'/g,"\\'")+'\')">'+preview+'</div>';
+        tag+
+      '</div>';
+    }).join('');
+    return head + '<div class="fmPreview" onclick="'+toggleFn+'(\''+safeDate+'\')">'+preview+'</div>';
   }).join('');
 }
-function toggleFinishedDate(d){ openFinishedDate=(openFinishedDate===d)?null:d; openFinishedMatchId=null; drawMatches(); }
-function toggleFinishedMatch(id){ openFinishedMatchId=(String(openFinishedMatchId)===String(id))?null:String(id); drawMatches(); }
+function toggleFinishedDate(d){ openFinishedDate=(openFinishedDate===d)?null:d; drawMatches(); }
+function toggleUpcomingDate(d){ openUpcomingDate=(openUpcomingDate===d)?null:d; drawMatches(); }
 function publicPronosHtml(m){
   if (String(m.status)==='OPEN') return '';
   const s = pronosticStats[String(mId(m))] || {};
