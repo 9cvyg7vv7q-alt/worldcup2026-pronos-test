@@ -309,6 +309,22 @@ details.rulesAcc .inner{padding:0 12px 12px}
 .matchStatusTabs{display:flex;background:var(--card);border-radius:10px;padding:3px;gap:3px;position:sticky;top:0;z-index:26;margin:-12px -12px 8px;box-shadow:0 6px 16px #000a}
 .matchStatusTabs button{flex:1;border:0;background:transparent;color:var(--muted);padding:10px 6px;border-radius:8px;font-weight:900;font-size:.78rem;cursor:pointer}
 .matchStatusTabs button.active{background:var(--g2);color:#fff}
+.fmDateHdr{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:11px 13px;margin:8px 0 0;font-weight:900;font-size:.84rem;color:var(--gold);cursor:pointer}
+.fmDateHdr.open{border-color:var(--g2);border-bottom-left-radius:0;border-bottom-right-radius:0}
+.fmDateMeta{color:var(--muted);font-size:.7rem;font-weight:800;display:flex;align-items:center;gap:6px}
+.fmChev{display:inline-block;transition:transform .2s}
+.fmDateHdr.open .fmChev{transform:rotate(180deg)}
+.fmPreview{border:1px solid var(--bdr);border-top:0;border-radius:0 0 10px 10px;padding:4px 5px;margin-bottom:8px;background:#0d111766;cursor:pointer}
+.fmPreview:active{background:#ffffff0a}
+.fmMini{display:flex;align-items:center;gap:8px;padding:6px 8px}
+.fmOpen{border:1px solid var(--g2);border-top:0;border-radius:0 0 10px 10px;padding:6px;margin-bottom:8px;background:#0d111733}
+.fmTeam{flex:1;display:flex;align-items:center;gap:6px;min-width:0}
+.fmTeam.fmR{justify-content:flex-end}
+.fmNm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700;font-size:.76rem;color:var(--muted)}
+.fmFlag{font-size:1rem;flex:0 0 auto}
+.fmSc{font-weight:900;color:var(--gold);background:var(--bg);border-radius:6px;padding:1px 8px;flex:0 0 auto;font-size:.76rem}
+.fmOpen > .match{margin-bottom:8px}
+.fmOpen > .match:last-child{margin-bottom:0}
 </style>
 </head>
 <body>
@@ -523,6 +539,7 @@ let activeProfileSection='infos', adminCoverageFilter='upcoming';
 let activeRankSection='classement';
 let currentPronoIndex=0, directPronoMatchId=null;
 let matchStatusFilter='finished';
+let openFinishedDate=null, openFinishedMatchId=null, finishedDateInit=false;
 let selectedPlayer=null;
 const rankCharts = {};
 // PAS DE CACHE LOCALSTORAGE — chaque navigation fait un fetch frais.
@@ -1167,44 +1184,90 @@ function passMatchStatus(m){
   if(matchStatusFilter==='finished') return st==='FINISHED';
   return true;
 }
+// Rendu d'UNE carte de match complète (sans en-tête de jour). Réutilisé par la liste plate
+// (À venir / En cours) et par le détail déplié dans l'accordéon des Terminés.
+function matchCardHtml(m){
+  const id=mId(m), p=pronos[String(id)], grouped=isPoolFilter(m.groupe);
+  const canPlay = String(m.status)==='OPEN' && !p;
+  const phase = isGroupMatch(m) ? 'Groupe '+(m.groupe||'') : (m.phase||'Phase finale');
+  return '<div class="match'+(grouped?' grouped':'')+(String(m.status)==='FINISHED'?' finished':'')+(p?' predicted has':'')+'" '+(grouped?groupStyle(m.groupe):'')+'>' +
+    '<div class="matchCardTitle">'+matchTitle(m)+'</div>' +
+    (String(m.status)==='LOCKED'?'<div style="text-align:center;margin:2px 0 6px"><span class="livePill"><span class="liveDot" style="margin:0"></span>EN DIRECT</span></div>':'') +
+    '<div class="matchHeaderClean">' +
+      '<div class="mtop">' +
+        '<div class="team"><div class="flag">'+mFlag(m,'A')+'</div><div class="name">'+mName(m,'A')+'</div>'+(String(m.status)!=='OPEN'?goalsForSide(m,'A'):'')+'</div>' +
+        '<div class="score">'+(String(m.status)==='FINISHED'?(m.scoreA+' - '+m.scoreB):(String(m.status)==='LOCKED'&&m.scoreA!==''&&m.scoreA!=null?(m.scoreA+' - '+m.scoreB):'VS'))+'</div>' +
+        '<div class="team"><div class="flag">'+mFlag(m,'B')+'</div><div class="name">'+mName(m,'B')+'</div>'+(String(m.status)!=='OPEN'?goalsForSide(m,'B'):'')+'</div>' +
+      '</div>' +
+      '<div class="meta metaClean"><span>📅 '+fmtDateFR(m.dateFR)+' \u00b7 🕒 '+fmtHeure(m.heureFR)+' \u00b7 🏷\uFE0F '+phase+'<br>🏟\uFE0F '+(m.stadeLabel||'Stade \u00e0 confirmer')+(tvFor(m)?'<br>'+tvFor(m):'')+'</span></div>' +
+    '</div>' +
+    (isBonusMatch(id)?'<div class="countdown bonusPill centeredLine">\u2b50 Joker bonus : points doubl\u00e9s sur ce match</div>':'') +
+    (timeLeftText(m)?'<div class="countdown centeredLine">\u23f3 '+timeLeftText(m)+'</div>':'') +
+    statMirrorHtml(m) + riskHtml(m) +
+    (p?'<div class="prono"><span>\u2705 Ton prono : '+p.scoreA+'-'+p.scoreB+(bool(p.joker)?' \u2b50':'')+(bool(p.counterCurrent)?' 😈':'')+(Number(p.riskBonus)?(' 🎁 +'+p.riskBonus):'')+'</span>'+(String(m.status)==='OPEN'?'<button class="editPronoBtn" onclick="openEditProno(\''+id+'\')">\u270f\uFE0F Modifier</button>':'<b>'+(p.points!==''&&p.points!=null?p.points+' pts':'En attente')+'</b>')+'</div>':'') +
+    (canPlay?'<button class="btn" onclick="goPronosMatch(\''+id+'\')">Pronostiquer ce match</button>':'') +
+    publicPronosHtml(m) +
+    (isGroupMatch(m)?'<button class="btn btn2" style="margin-top:8px" onclick="openMatchDetail(\''+id+'\')">Voir classement local + historique</button>':'') +
+  '</div>';
+}
 function drawMatches(){
   updateNavLive();
-  const box=$('matchList'); if(!box) return;
-  if (!dataLoaded.pronosView && !matches.length){ box.innerHTML=skel(3); return; }
-  // Affiche TOUS les matchs ; les filtres sticky (statut + groupe) permettent de restreindre.
-  const list = matches
-    .filter(passFilter)
-    .filter(passMatchStatus)
-    .sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||'')));
-  if (!list.length){ box.innerHTML='<div class="card muted">Aucun match dans ce filtre.</div>'; return; }
-  window.__lastDay='';
+  const box=$('matchList'); if(!box) return;
+  if (!dataLoaded.pronosView && !matches.length){ box.innerHTML=skel(3); return; }
+  const list = matches.filter(passFilter).filter(passMatchStatus);
+  if (!list.length){ box.innerHTML='<div class="card muted">Aucun match dans ce filtre.</div>'; return; }
+  // TERMINÉS : accordéon par date (décroissant) + liste compacte, détail au tap.
+  if (matchStatusFilter==='finished'){ box.innerHTML = finishedAccordionHtml(list); return; }
+  // À VENIR / EN COURS : liste plate chronologique avec en-têtes de jour (comportement d'origine).
+  list.sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||'')));
+  window.__lastDay='';
   box.innerHTML = list.map(m=>{
-    const id=mId(m), p=pronos[String(id)], grouped=isPoolFilter(m.groupe);
     let dayHdr='';
-    if (String(m.dateFR)!==window.__lastDay){ window.__lastDay=String(m.dateFR); dayHdr='<div class="dayHdr">\ud83d\udcc5 '+fmtDateFR(m.dateFR)+'</div>'; }
-    const canPlay = String(m.status)==='OPEN' && !p;
-    const phase = isGroupMatch(m) ? 'Groupe '+(m.groupe||'') : (m.phase||'Phase finale');
-    return dayHdr+'<div class="match'+(grouped?' grouped':'')+(String(m.status)==='FINISHED'?' finished':'')+(p?' predicted has':'')+'" '+(grouped?groupStyle(m.groupe):'')+'>' +
-      '<div class="matchCardTitle">'+matchTitle(m)+'</div>' +
-      (String(m.status)==='LOCKED'?'<div style="text-align:center;margin:2px 0 6px"><span class="livePill"><span class="liveDot" style="margin:0"></span>EN DIRECT</span></div>':'') +
-      '<div class="matchHeaderClean">' +
-        '<div class="mtop">' +
-          '<div class="team"><div class="flag">'+mFlag(m,'A')+'</div><div class="name">'+mName(m,'A')+'</div>'+(String(m.status)!=='OPEN'?goalsForSide(m,'A'):'')+'</div>' +
-          '<div class="score">'+(String(m.status)==='FINISHED'?(m.scoreA+' - '+m.scoreB):(String(m.status)==='LOCKED'&&m.scoreA!==''&&m.scoreA!=null?(m.scoreA+' - '+m.scoreB):'VS'))+'</div>' +
-          '<div class="team"><div class="flag">'+mFlag(m,'B')+'</div><div class="name">'+mName(m,'B')+'</div>'+(String(m.status)!=='OPEN'?goalsForSide(m,'B'):'')+'</div>' +
-        '</div>' +
-        '<div class="meta metaClean"><span>📅 '+fmtDateFR(m.dateFR)+' · 🕒 '+fmtHeure(m.heureFR)+' · 🏷️ '+phase+'<br>🏟️ '+(m.stadeLabel||'Stade à confirmer')+(tvFor(m)?'<br>'+tvFor(m):'')+'</span></div>' +
-      '</div>' +
-      (isBonusMatch(id)?'<div class="countdown bonusPill centeredLine">⭐ Joker bonus : points doublés sur ce match</div>':'') +
-      (timeLeftText(m)?'<div class="countdown centeredLine">⏳ '+timeLeftText(m)+'</div>':'') +
-      statMirrorHtml(m) + riskHtml(m) +
-      (p?'<div class="prono"><span>✅ Ton prono : '+p.scoreA+'-'+p.scoreB+(bool(p.joker)?' ⭐':'')+(bool(p.counterCurrent)?' 😈':'')+(Number(p.riskBonus)?(' 🎁 +'+p.riskBonus):'')+'</span>'+(String(m.status)==='OPEN'?'<button class="editPronoBtn" onclick="openEditProno(\''+id+'\')">✏️ Modifier</button>':'<b>'+(p.points!==''&&p.points!=null?p.points+' pts':'En attente')+'</b>')+'</div>':'') +
-      (canPlay?'<button class="btn" onclick="goPronosMatch(\''+id+'\')">Pronostiquer ce match</button>':'') +
-      publicPronosHtml(m) +
-      (isGroupMatch(m)?'<button class="btn btn2" style="margin-top:8px" onclick="openMatchDetail(\''+id+'\')">Voir classement local + historique</button>':'') +
-    '</div>';
-  }).join('');
+    if (String(m.dateFR)!==window.__lastDay){ window.__lastDay=String(m.dateFR); dayHdr='<div class="dayHdr">📅 '+fmtDateFR(m.dateFR)+'</div>'; }
+    return dayHdr + matchCardHtml(m);
+  }).join('');
 }
+// Accordéon des matchs terminés : une date = un volet, dates décroissantes.
+// FERMÉ : on affiche un aperçu compact (drapeau + équipe vs équipe) pour repérer le jour.
+// OUVERT : on affiche les cartes complètes, exactement comme l'onglet d'origine.
+function finishedAccordionHtml(list){
+  // Tri décroissant : dates les plus récentes en haut.
+  const sorted = list.slice().sort((a,b)=> String(b.sortKey||'').localeCompare(String(a.sortKey||'')));
+  const groups=[]; const idx={};
+  sorted.forEach(m=>{
+    const d=String(m.dateFR||'');
+    if(idx[d]==null){ idx[d]=groups.length; groups.push({date:d, matches:[]}); }
+    groups[idx[d]].matches.push(m);
+  });
+  // Dans chaque date : ordre chronologique (matin -> soir).
+  groups.forEach(g=> g.matches.sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||''))));
+  const dates = groups.map(g=> g.date);
+  // Ouverture auto de la date la plus récente, une seule fois (puis on respecte les clics).
+  if (!finishedDateInit){ openFinishedDate = dates[0]||null; finishedDateInit=true; }
+  else if (openFinishedDate && dates.indexOf(openFinishedDate)<0){ openFinishedDate=null; }
+  return groups.map(g=>{
+    const open = g.date===openFinishedDate;
+    const head = '<div class="fmDateHdr'+(open?' open':'')+'" onclick="toggleFinishedDate(\''+g.date.replace(/'/g,"\\'")+'\')">'+
+        '<span>📅 '+fmtDateFR(g.date)+'</span>'+
+        '<span class="fmDateMeta">'+g.matches.length+' match'+(g.matches.length>1?'s':'')+'<span class="fmChev">\u25be</span></span>'+
+      '</div>';
+    if(open){
+      // Cartes complètes, comme avant.
+      return head + '<div class="fmOpen">'+g.matches.map(matchCardHtml).join('')+'</div>';
+    }
+    // Aperçu compact des matchs du jour (non cliquable individuellement : sert juste de repère).
+    const preview = g.matches.map(m=>
+      '<div class="fmMini">'+
+        '<span class="fmTeam"><span class="fmFlag">'+mFlag(m,'A')+'</span><span class="fmNm">'+mName(m,'A')+'</span></span>'+
+        '<span class="fmSc">'+m.scoreA+'-'+m.scoreB+'</span>'+
+        '<span class="fmTeam fmR"><span class="fmNm">'+mName(m,'B')+'</span><span class="fmFlag">'+mFlag(m,'B')+'</span></span>'+
+      '</div>'
+    ).join('');
+    return head + '<div class="fmPreview" onclick="toggleFinishedDate(\''+g.date.replace(/'/g,"\\'")+'\')">'+preview+'</div>';
+  }).join('');
+}
+function toggleFinishedDate(d){ openFinishedDate=(openFinishedDate===d)?null:d; openFinishedMatchId=null; drawMatches(); }
+function toggleFinishedMatch(id){ openFinishedMatchId=(String(openFinishedMatchId)===String(id))?null:String(id); drawMatches(); }
 function publicPronosHtml(m){
   if (String(m.status)==='OPEN') return '';
   const s = pronosticStats[String(mId(m))] || {};
