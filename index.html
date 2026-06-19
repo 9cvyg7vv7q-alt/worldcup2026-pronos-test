@@ -472,7 +472,7 @@ details.rulesAcc .inner{padding:0 12px 12px}
  * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
  *   message vert/rouge inline + toast de confirmation
  * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbx6MMAeQ6kpakUgE7vDb23zKJAKb0dojMt1elmH3eRzf7g0dUt6Pn5ruqB23-7vzK411g/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxaeNki0EgiX83pQxOqDumlXfjtbOiNboIq6DIKy2RBfKSn54Y5BHJ5b7GMxPWzyBXnww/exec";
 const MAX_JOKERS     = 3;
 const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
 // Format date français : "12/06/2026" → "Ven. 12 juin 2026"
@@ -1299,7 +1299,7 @@ function dateAccordionHtml(list, mode){
 function toggleFinishedDate(d){ openFinishedDate=(openFinishedDate===d)?null:d; drawMatches(); }
 function toggleUpcomingDate(d){ openUpcomingDate=(openUpcomingDate===d)?null:d; drawMatches(); }
 function publicPronosHtml(m){
-  if (String(m.status)==='OPEN') return '';
+  if (String(m.status)!=='FINISHED') return '';  // pronos des autres masqués tant que le match n'est pas terminé (y compris en cours)
   const s = pronosticStats[String(mId(m))] || {};
   const raw = s.publicPronos || (s.publicPronosJson ? (function(){try{return JSON.parse(s.publicPronosJson);}catch(e){return {A:[],X:[],B:[]};}})() : {A:[],X:[],B:[]});
   if (!(raw.A||[]).length && !(raw.X||[]).length && !(raw.B||[]).length) return '';
@@ -1712,7 +1712,7 @@ function drawProfile(){
   if ((meRank.wrong||0)>=3) badges.push('🐈\u200d⬛ Chat noir temporaire');
   let tabs = [['infos','Mes infos'],['pronos','Mes pronos']];
   if (user.isAdmin) tabs = tabs.concat([
-    ['suivi','Admin suivi'],['bonus','Admin joker bonus'],['coverage','\ud83d\udccb Dashboard pronos']
+    ['suivi','\ud83d\udee0\ufe0f Suivi'],['bonus','\u2b50 Joker bonus'],['coverage','\ud83d\udccb Dashboard pronos']
   ]);
   if (!tabs.some(t=> t[0]===activeProfileSection)) activeProfileSection = 'infos';
   let content='';
@@ -1891,10 +1891,16 @@ function adminBonusHtml(){
     '<div id="bonusMsg" class="small" style="margin-top:8px"></div>' +
   '</div>';
 }
+function dashStatusPill(st){
+  st=String(st);
+  if(st==='FINISHED') return '<span class="pill finishedP">Terminé</span>';
+  if(st==='LOCKED')   return '<span class="pill lockedP">En cours</span>';
+  return '<span class="pill open">À venir</span>';
+}
 function adminCoverageHtml(){
   const rows = ((adminData||{}).coverage||{}).rows || [];
   const filters = [['upcoming','\ud83d\udcc5 \u00c0 venir'],['all','Tous'],['none','Aucun prono'],['incomplete','Incomplets'],['complete','Complets'],['done','Termin\u00e9s/En cours'],['bonus','Joker bonus']];
-  const filtered = rows.filter(r=>
+  let filtered = rows.filter(r=>
        (adminCoverageFilter==='upcoming' && String(r.status)==='OPEN')
     || adminCoverageFilter==='all'
     || (adminCoverageFilter==='none' && r.count===0)
@@ -1903,6 +1909,18 @@ function adminCoverageHtml(){
     || (adminCoverageFilter==='done' && String(r.status)!=='OPEN')
     || (adminCoverageFilter==='bonus' && bool(r.bonusJoker))
   );
+  // Tri par date facon onglet Matchs : a venir croissant, en cours/termines decroissant.
+  const dkey = r => Number(String(r.matchId).replace(/[^0-9.]/g,''))||0; // matchId = ordre chrono du calendrier
+  if (adminCoverageFilter==='upcoming'){
+    filtered.sort((a,b)=> dkey(a)-dkey(b));
+  } else if (adminCoverageFilter==='done' || adminCoverageFilter==='complete'){
+    filtered.sort((a,b)=> dkey(b)-dkey(a));
+  } else {
+    // Vue mixte : a venir (croissant) d'abord, puis en cours/termines (decroissant).
+    const up = filtered.filter(r=> String(r.status)==='OPEN').sort((a,b)=> dkey(a)-dkey(b));
+    const dn = filtered.filter(r=> String(r.status)!=='OPEN').sort((a,b)=> dkey(b)-dkey(a));
+    filtered = up.concat(dn);
+  }
   const totP = rows.reduce((a,r)=> a+(r.count||0),0);
   const totJ = rows.reduce((a,r)=> a+(r.jokers||0),0);
   const full = rows.filter(r=> r.count>=r.totalUsers).length;
@@ -1932,7 +1950,7 @@ function adminCoverageHtml(){
           : '<div class="muted small" style="margin-top:6px">\u2705 Tout le monde a pronostiqu\u00e9.</div>';
         return '<div class="dashCard">' +
           '<div class="dHead"><b>'+cleanText(r.label)+'</b><span class="muted small">'+r.ratio+(bool(r.bonusJoker)?' \u00b7 \u2b50 bonus':'')+'</span></div>' +
-          '<div class="muted" style="font-size:.7rem">'+fmtDateFR(r.dateFR)+' \u00b7 '+r.status+' \u00b7 \u2b50 '+(r.jokers||0)+' joker(s)</div>' +
+          '<div class="muted" style="font-size:.7rem">'+fmtDateFR(r.dateFR)+(r.heureFR?(' \u00b7 '+fmtHeure(r.heureFR)):'')+' \u00b7 '+dashStatusPill(r.status)+' \u00b7 \u2b50 '+(r.jokers||0)+' joker(s)</div>' +
           bar + table + miss +
         '</div>';
       }).join('')
