@@ -329,6 +329,35 @@ details.rulesAcc .inner{padding:0 12px 12px}
 .fmTodo{color:#ffcc80;background:#ff980018;border:1px solid #ff980055}
 .fmOpen > .match{margin-bottom:8px}
 .fmOpen > .match:last-child{margin-bottom:0}
+
+/* === Dashboard pronos admin (refonte) === */
+.dashCard{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:11px 12px;margin-bottom:8px}
+.dHead{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.dHead b{font-size:.86rem}
+.dRatio{font-size:.68rem;font-weight:900;color:#ffcc80;background:#ff980018;border:1px solid #ff980044;border-radius:99px;padding:2px 9px;white-space:nowrap}
+.dRatio.dRatioFull{color:#66bb6a;background:#2e8b5722;border-color:#2e8b5755}
+.dSub{color:var(--muted);font-size:.7rem;margin:3px 0 9px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.dBonus{color:var(--gold);font-weight:800}
+.dIssues{display:flex;flex-direction:column;gap:7px}
+.dIssue{border:1px solid var(--bdr);border-radius:10px;padding:7px 9px;background:#ffffff04}
+.dIssA{border-left:3px solid #2e8b57}
+.dIssX{border-left:3px solid #8b949e}
+.dIssB{border-left:3px solid #1f6feb}
+.dIssHead{display:flex;justify-content:space-between;align-items:center;font-weight:900;font-size:.74rem;margin-bottom:4px}
+.dIssN{color:var(--muted);font-size:.7rem;background:var(--bg);border-radius:99px;padding:1px 8px;min-width:22px;text-align:center}
+.dIssEmpty{color:var(--muted);font-size:.74rem;text-align:center;padding:2px}
+.dUser{display:flex;align-items:center;gap:7px;padding:3px 2px;font-size:.76rem;border-top:1px solid #ffffff0a}
+.dUser:first-of-type{border-top:0}
+.dPseudo{flex:1;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dScore{font-weight:900;color:var(--txt);background:var(--bg);border-radius:6px;padding:1px 7px;flex:0 0 auto}
+.dOdd{font-size:.7rem;font-weight:800;color:var(--gold);flex:0 0 auto}
+.dOdd.dOddRef{color:#9bd0ff;opacity:.85}
+.dMarks{flex:0 0 auto;font-size:.74rem}
+.dMiss{margin-top:8px}
+
+/* Masque la barre de défilement horizontale des filtres (gênante) — le swipe reste possible */
+.filters::-webkit-scrollbar,.profileUnifiedTabs::-webkit-scrollbar,.profileFilters::-webkit-scrollbar,.adminCoverageFilters::-webkit-scrollbar,.poolJump::-webkit-scrollbar{display:none;width:0;height:0}
+.filters,.profileUnifiedTabs,.profileFilters,.adminCoverageFilters,.poolJump{scrollbar-width:none;-ms-overflow-style:none}
 </style>
 </head>
 <body>
@@ -472,7 +501,7 @@ details.rulesAcc .inner{padding:0 12px 12px}
  * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
  *   message vert/rouge inline + toast de confirmation
  * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbxaeNki0EgiX83pQxOqDumlXfjtbOiNboIq6DIKy2RBfKSn54Y5BHJ5b7GMxPWzyBXnww/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyg6fkIZR1TAK8GCKJkWUzrsWrow8JMyBrJweCxvXzA_ScdXTYLS8BpZqXCLqfhriPSFg/exec";
 const MAX_JOKERS     = 3;
 const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
 // Format date français : "12/06/2026" → "Ven. 12 juin 2026"
@@ -545,6 +574,7 @@ let currentPronoIndex=0, directPronoMatchId=null;
 let matchStatusFilter='finished';
 let openFinishedDate=null, openFinishedMatchId=null, finishedDateInit=false;
 let openUpcomingDate=null, upcomingDateInit=false;
+let openDashDate=null, dashDateInit=false;
 let selectedPlayer=null;
 const rankCharts = {};
 // PAS DE CACHE LOCALSTORAGE — chaque navigation fait un fetch frais.
@@ -1899,7 +1929,7 @@ function dashStatusPill(st){
 }
 function adminCoverageHtml(){
   const rows = ((adminData||{}).coverage||{}).rows || [];
-  const filters = [['upcoming','\ud83d\udcc5 \u00c0 venir'],['all','Tous'],['none','Aucun prono'],['incomplete','Incomplets'],['complete','Complets'],['done','Termin\u00e9s/En cours'],['bonus','Joker bonus']];
+  const filters = [['upcoming','📅 À venir'],['all','Tous'],['none','Aucun prono'],['incomplete','Incomplets'],['complete','Complets'],['done','Terminés/En cours'],['bonus','⭐ Bonus']];
   let filtered = rows.filter(r=>
        (adminCoverageFilter==='upcoming' && String(r.status)==='OPEN')
     || adminCoverageFilter==='all'
@@ -1909,54 +1939,94 @@ function adminCoverageHtml(){
     || (adminCoverageFilter==='done' && String(r.status)!=='OPEN')
     || (adminCoverageFilter==='bonus' && bool(r.bonusJoker))
   );
-  // Tri par date facon onglet Matchs : a venir croissant, en cours/termines decroissant.
-  const dkey = r => Number(String(r.matchId).replace(/[^0-9.]/g,''))||0; // matchId = ordre chrono du calendrier
-  if (adminCoverageFilter==='upcoming'){
-    filtered.sort((a,b)=> dkey(a)-dkey(b));
-  } else if (adminCoverageFilter==='done' || adminCoverageFilter==='complete'){
-    filtered.sort((a,b)=> dkey(b)-dkey(a));
-  } else {
-    // Vue mixte : a venir (croissant) d'abord, puis en cours/termines (decroissant).
-    const up = filtered.filter(r=> String(r.status)==='OPEN').sort((a,b)=> dkey(a)-dkey(b));
-    const dn = filtered.filter(r=> String(r.status)!=='OPEN').sort((a,b)=> dkey(b)-dkey(a));
-    filtered = up.concat(dn);
-  }
+  const dkey = r => Number(String(r.matchId).replace(/[^0-9.]/g,''))||0;
+  const desc = (adminCoverageFilter==='done' || adminCoverageFilter==='complete');
+  // KPIs globaux
   const totP = rows.reduce((a,r)=> a+(r.count||0),0);
   const totJ = rows.reduce((a,r)=> a+(r.jokers||0),0);
   const full = rows.filter(r=> r.count>=r.totalUsers).length;
   const kpis = '<div class="dashKpis">' +
-    '<div class="k"><b>'+totP+'</b><span>pronos pos\u00e9s</span></div>' +
+    '<div class="k"><b>'+totP+'</b><span>pronos posés</span></div>' +
     '<div class="k"><b>'+full+'/'+rows.length+'</b><span>matchs complets</span></div>' +
-    '<div class="k"><b>'+totJ+'</b><span>jokers pos\u00e9s</span></div>' +
+    '<div class="k"><b>'+totJ+'</b><span>jokers posés</span></div>' +
   '</div>';
-  return kpis + '<div class="adminCoverageFilters">' +
+  const filterBar = '<div class="adminCoverageFilters">' +
     filters.map(f=> '<button type="button" class="'+(adminCoverageFilter===f[0]?'active':'')+'" onclick="adminCoverageFilter=\''+f[0]+'\';drawProfile()">'+f[1]+'</button>').join('') +
-  '</div>' +
-  (filtered.length
-    ? filtered.map(r=>{
-        const det = r.details||[];
-        const nA = det.filter(d=> d.issue==='A').length, nX = det.filter(d=> d.issue==='X').length, nB = det.filter(d=> d.issue==='B').length;
-        const tot = nA+nX+nB;
-        const bar = tot ? '<div class="dashBar">' +
-          '<i style="width:'+(100*nA/tot)+'%;background:#2e8b57"></i>' +
-          '<i style="width:'+(100*nX/tot)+'%;background:#8b949e"></i>' +
-          '<i style="width:'+(100*nB/tot)+'%;background:#1f6feb"></i></div>' +
-          '<div class="muted" style="font-size:.68rem;display:flex;justify-content:space-between"><span>\ud83d\udfe2 Victoire A : '+nA+'</span><span>\u26aa Nul : '+nX+'</span><span>\ud83d\udd35 Victoire B : '+nB+'</span></div>' : '';
-        const table = det.length ? '<table class="dashTable">' +
-          det.map(d=> '<tr><td>'+cleanText(d.pseudo)+'</td><td>'+cleanText(d.score)+'</td><td>'+(bool(d.joker)?'\u2b50':'')+(bool(d.cc)?' \ud83d\ude08':'')+'</td><td class="muted">'+(d.odds!==''&&d.odds!=null?('cote '+d.odds):'')+'</td></tr>').join('') +
-          '</table>' : '<div class="muted small">Aucun prono pour ce match.</div>';
-        const miss = (r.missing||[]).length
-          ? '<div style="margin-top:6px"><span class="muted small">Manquent :</span><br>'+r.missing.map(p=>'<span class="chipMiss">'+cleanText(p)+'</span>').join('')+'</div>'
-          : '<div class="muted small" style="margin-top:6px">\u2705 Tout le monde a pronostiqu\u00e9.</div>';
-        return '<div class="dashCard">' +
-          '<div class="dHead"><b>'+cleanText(r.label)+'</b><span class="muted small">'+r.ratio+(bool(r.bonusJoker)?' \u00b7 \u2b50 bonus':'')+'</span></div>' +
-          '<div class="muted" style="font-size:.7rem">'+fmtDateFR(r.dateFR)+(r.heureFR?(' \u00b7 '+fmtHeure(r.heureFR)):'')+' \u00b7 '+dashStatusPill(r.status)+' \u00b7 \u2b50 '+(r.jokers||0)+' joker(s)</div>' +
-          bar + table + miss +
-        '</div>';
-      }).join('')
-    : '<div class="card muted">Aucun match dans ce filtre.</div>'
-  );
+  '</div>';
+  if(!filtered.length) return kpis + filterBar + '<div class="card muted">Aucun match dans ce filtre.</div>';
+  // Regroupement par date (accordéon façon onglet Matchs)
+  const groups=[]; const idx={};
+  filtered.slice().sort((a,b)=> desc ? dkey(b)-dkey(a) : dkey(a)-dkey(b)).forEach(r=>{
+    const d=String(r.dateFR||'');
+    if(idx[d]==null){ idx[d]=groups.length; groups.push({date:d, rows:[]}); }
+    groups[idx[d]].rows.push(r);
+  });
+  const dates=groups.map(g=>g.date);
+  if(!dashDateInit){ openDashDate=dates[0]||null; dashDateInit=true; }
+  else if(openDashDate && dates.indexOf(openDashDate)<0){ openDashDate=null; }
+  const acc = groups.map(g=>{
+    const open=g.date===openDashDate;
+    const safe=g.date.replace(/'/g,"\\'");
+    const nb=g.rows.length;
+    const head='<div class="fmDateHdr'+(open?' open':'')+'" onclick="toggleDashDate(\''+safe+'\')">'+
+        '<span>📅 '+fmtDateFR(g.date)+'</span>'+
+        '<span class="fmDateMeta">'+nb+' match'+(nb>1?'s':'')+'<span class="fmChev">▾</span></span>'+
+      '</div>';
+    if(!open) return head;
+    return head + '<div class="fmOpen">'+g.rows.map(dashMatchCard).join('')+'</div>';
+  }).join('');
+  return kpis + filterBar + acc;
 }
+// Carte d'un match dans le Dashboard : entête + 3 blocs (Victoire A / Nul / Victoire B) + manquants.
+function dashMatchCard(r){
+  const parts=String(r.label||'').split(' - ');
+  const teamA=cleanText(parts[0]||'Équipe A'), teamB=cleanText(parts[1]||'Équipe B');
+  // Cotes du match (référence) ; servent de repli si la cote figée du prono manque.
+  const matchOdds={ A:r.cote1, X:r.coteX, B:r.cote2 };
+  // Regroupe les pronos par issue (déduite du score si issueAtVote absent).
+  const det=r.details||[];
+  const grp={A:[],X:[],B:[]};
+  det.forEach(d=>{
+    let iss=String(d.issue||'').toUpperCase();
+    if(iss!=='A'&&iss!=='X'&&iss!=='B'){
+      const p=String(d.score||'').split('-'); const a=Number(p[0]), b=Number(p[1]);
+      iss = (a>b)?'A':(a<b)?'B':'X';
+    }
+    grp[iss].push(d);
+  });
+  const head='<div class="dHead">'+
+      '<b>'+teamA+' <span class="muted">vs</span> '+teamB+'</b>'+
+      '<span class="dRatio'+(r.count>=r.totalUsers?' dRatioFull':'')+'">'+r.ratio+'</span>'+
+    '</div>'+
+    '<div class="dSub">'+fmtDateFR(r.dateFR)+(r.heureFR?(' · '+fmtHeure(r.heureFR)):'')+' · '+dashStatusPill(r.status)+(bool(r.bonusJoker)?' · <span class="dBonus">⭐ bonus</span>':'')+'</div>';
+  const blocks='<div class="dIssues">'+
+    dashIssueBlock('A','✅ '+teamA, grp.A, matchOdds.A, 'dIssA')+
+    dashIssueBlock('X','🤝 Match nul', grp.X, matchOdds.X, 'dIssX')+
+    dashIssueBlock('B','✅ '+teamB, grp.B, matchOdds.B, 'dIssB')+
+  '</div>';
+  const miss=(r.missing||[]).length
+    ? '<div class="dMiss"><span class="muted small">Pas encore pronostiqué :</span><br>'+r.missing.map(p=>'<span class="chipMiss">'+cleanText(p)+'</span>').join('')+'</div>'
+    : '<div class="muted small dMiss">✅ Tout le monde a pronostiqué.</div>';
+  return '<div class="dashCard">'+head+blocks+miss+'</div>';
+}
+// Un bloc d'issue : entête coloré + nombre + liste des joueurs (score, cote, marqueurs).
+function dashIssueBlock(iss, title, list, refOdd, cls){
+  const n=list.length;
+  const head='<div class="dIssHead"><span>'+title+'</span><span class="dIssN">'+n+'</span></div>';
+  if(!n) return '<div class="dIssue '+cls+'">'+head+'<div class="dIssEmpty">—</div></div>';
+  const rows=list.map(d=>{
+    // cote retenue : figée au vote si dispo, sinon cote actuelle du match pour cette issue
+    const frozen = (d.odds!==''&&d.odds!=null);
+    const odd = frozen ? d.odds : refOdd;
+    const oddTxt = (odd!==''&&odd!=null) ? '<span class="dOdd'+(frozen?'':' dOddRef')+'">'+odd+'</span>' : '';
+    const marks=(bool(d.joker)?' ⭐':'')+(bool(d.cc)?' 😈':'');
+    return '<div class="dUser"><span class="dPseudo">'+cleanText(d.pseudo)+'</span>'+
+      '<span class="dScore">'+cleanText(d.score)+'</span>'+oddTxt+
+      '<span class="dMarks">'+marks+'</span></div>';
+  }).join('');
+  return '<div class="dIssue '+cls+'">'+head+rows+'</div>';
+}
+function toggleDashDate(d){ openDashDate=(openDashDate===d)?null:d; drawProfile(); }
 function fillAdminSelects(){
   const resSel = $('adminMatch');
   if (resSel){
