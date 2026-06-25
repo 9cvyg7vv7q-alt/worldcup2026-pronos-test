@@ -501,7 +501,7 @@ details.rulesAcc .inner{padding:0 12px 12px}
  * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
  *   message vert/rouge inline + toast de confirmation
  * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbyg6fkIZR1TAK8GCKJkWUzrsWrow8JMyBrJweCxvXzA_ScdXTYLS8BpZqXCLqfhriPSFg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycby40E5FjByPGvKX69xIrQmJD4cIT9JcYirq8el5UPmvXsP2TrHFGlECozogXkefNGbqmQ/exec";
 const MAX_JOKERS     = 3;
 const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
 // Format date français : "12/06/2026" → "Ven. 12 juin 2026"
@@ -1828,13 +1828,14 @@ function adminSuiviHtml(){
   const noProno = rows.filter(r=> r.status==='OPEN' && r.count===0).length;
   const lowProno = rows.filter(r=> r.status==='OPEN' && r.count>0 && r.count<(r.totalUsers/2)).length;
   const withBonus = rows.filter(r=> bool(r.bonusJoker)).length;
+  const finishedOpts = (matches||[]).filter(function(m){ return String(m.status)==='FINISHED'; }).sort(function(a,b){ return String(b.sortKey||'').localeCompare(String(a.sortKey||'')); }).map(function(m){ return '<option value="'+mId(m)+'">'+mId(m)+' \u00b7 '+mName(m,'A')+' '+(m.scoreA)+'-'+(m.scoreB)+' '+mName(m,'B')+' \u00b7 '+fmtDateShort(m.dateFR)+'</option>'; }).join('') || '<option value="">Aucun match termin\u00e9</option>';
   return '<div class="card"><b>Vue d\'ensemble admin</b><br><br>' +
     '<div class="grid2">' +
       '<div class="card"><div class="pts">'+open+'</div><div class="muted">📅 Matchs ouverts</div></div>' +
       '<div class="card"><div class="pts">'+noProno+'</div><div class="muted">😶 Sans aucun prono</div></div>' +
       '<div class="card"><div class="pts">'+lowProno+'</div><div class="muted">⚠️ Couverture &lt; 50%</div></div>' +
       '<div class="card"><div class="pts">'+withBonus+'</div><div class="muted">⭐ Joker bonus actif</div></div>' +
-    '</div></div>' + '<div class="sec">\ud83d\udd27 Outils de secours</div><div class="card"><span class="muted small">\u00c0 utiliser uniquement si tu modifies des donn\u00e9es \u00e0 la main dans le Sheet (rebuild) ou si les triggers ont saut\u00e9.</span><br><br><div class="grid2"><button class="btn btn2" onclick="adminRebuild(this)">\u267b\ufe0f Rebuild caches</button><button class="btn btn2" onclick="adminTrigger(this)">\u23f1\ufe0f R\u00e9installer trigger</button></div></div>';
+    '</div></div>' + '<div class="sec">\ud83d\udd27 Outils de secours</div><div class="card"><span class="muted small">\u00c0 utiliser uniquement si tu modifies des donn\u00e9es \u00e0 la main dans le Sheet (rebuild) ou si les triggers ont saut\u00e9.</span><br><br><div class="grid2"><button class="btn btn2" onclick="adminRebuild(this)">\u267b\ufe0f Rebuild caches</button><button class="btn btn2" onclick="adminTrigger(this)">\u23f1\ufe0f R\u00e9installer trigger</button></div></div>' + '<div class="sec">\u26bd Corriger les buteurs d\'un match</div>' + '<div class="card"><span class="muted small">Recharge les buteurs depuis l\'API pour le match choisi. Si le nombre de buts correspond au r\u00e9sultat officiel, remplace TOUS les buteurs actuels (manuels, doublons, mal orthographi\u00e9s) par ceux de l\'API, puis reconstruit les caches.</span><br><br>' + '<select id="fixScorerMatch">' + finishedOpts + '</select><br><br>' + '<button class="btn" onclick="adminFixScorers(this)">\u26bd Corriger les buteurs + rebuild</button>' + '<div id="fixScorerMsg" class="small" style="margin-top:8px"></div></div>';
 }
 
 function adminResultsHtml(){
@@ -2252,6 +2253,23 @@ function adminRebuild(btn){
     toast(d.message || '♻️ Caches reconstruits');
     Object.keys(dataLoaded).forEach(k => dataLoaded[k] = false); refreshAffectedViews(['pronosView','rankView','groupsView','summaryView','profileView','scorersView','adminView','light']);
   }).catch(e=> toast('Erreur : '+e.message, true));
+}
+function adminFixScorers(btn){
+  const sel=$('fixScorerMatch');
+  if(!sel || !sel.value){ formMsg('fixScorerMsg','Choisis un match.',false); return; }
+  formMsg('fixScorerMsg','Correction des buteurs en cours…',true);
+  withAction(btn, 'Correction des buteurs…',
+    api('adminFixMatchScorers', {userId:user.userId, matchId:sel.value})
+  ).then(d=>{
+    if (d && d.ok){
+      formMsg('fixScorerMsg', '✅ Buteurs corrigés : '+d.butsAvant+' → '+d.butsApres+' but(s). Caches reconstruits.', true);
+      toast('Buteurs corrigés ✅');
+      Object.keys(dataLoaded).forEach(k => dataLoaded[k] = false);
+      refreshAffectedViews(['pronosView','rankView','groupsView','summaryView','profileView','scorersView','adminView','light']);
+    } else {
+      formMsg('fixScorerMsg', (d && d.raison) || 'Échec de la correction.', false);
+    }
+  }).catch(e=> formMsg('fixScorerMsg', 'Erreur : '+e.message, false));
 }
 function adminTrigger(btn){
   withAction(btn, 'Réinstallation du trigger…',
