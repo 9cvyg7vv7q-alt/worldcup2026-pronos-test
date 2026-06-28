@@ -417,6 +417,15 @@ details.rulesAcc .inner{padding:0 12px 12px}
 .bkRound:not(:first-child) .bkMatch::before{content:'';position:absolute;left:-12px;top:50%;width:12px;height:1px;background:#30363d}
 .bkThird{margin-top:14px}
 .bkThirdBox{max-width:200px}
+.bkWhen{display:flex;justify-content:space-between;align-items:center;gap:4px;font-size:.55rem;color:var(--muted);margin:0 0 3px;line-height:1.2;white-space:nowrap}
+.bkTagOk{color:#86efac;font-weight:900;font-size:.62rem}
+.bkTagNo{color:#fca5a5;font-weight:900;font-size:.5rem}
+.bkPok{border-color:#2e8b5766;background:linear-gradient(180deg,#15271d,#161b22)}
+.bkPno{border-color:#9d3d3d66;background:linear-gradient(180deg,#271619,#161b22)}
+.bkWin{background:#2e8b5718;border-radius:5px}
+.bkRound:not(:last-child) .bkMatch::after{content:'';position:absolute;right:-12px;top:50%;width:12px;height:2px;background:#4a5568;opacity:.85}
+.bkRound:not(:first-child) .bkMatch::before{content:'';position:absolute;left:-12px;top:50%;width:12px;height:2px;background:#4a5568;opacity:.85}
+.bkEmpty::after,.bkEmpty::before{opacity:.3!important}
 </style>
 </head>
 <body>
@@ -1462,48 +1471,85 @@ function bkSideScoreHtml_(m, side){
 function bkMatchBox(m){
   if(!m) return '<div class="bkMatch bkEmpty"><div class="bkTeam"><span class="bkFlag">\u2b1c</span><span class="bkNm muted">\u00c0 venir</span></div><div class="bkTeam"><span class="bkFlag">\u2b1c</span><span class="bkNm muted">\u00c0 venir</span></div></div>';
   var id=mId(m), win=bkWinnerSide_(m), live=String(m.status)==='LOCKED';
+  var open=String(m.status)==='OPEN', done=!!pronos[String(id)];
+  var pcls = done ? ' bkPok' : (open ? ' bkPno' : '');       // vert = pronostiqué, rouge = à faire
+  var tag  = done ? '<span class="bkTagOk">\u2713</span>' : (open ? '<span class="bkTagNo">\u25cf</span>' : '');
+  var when = '<div class="bkWhen"><span>'+(m.dateFR?fmtDateFR(m.dateFR):'')+(m.heureFR?' \u00b7 '+fmtHeure(m.heureFR):'')+'</span>'+tag+'</div>';
   function row(side){
     var isWin=win===side;
     return '<div class="bkTeam'+(isWin?' bkWin':'')+'"><span class="bkFlag">'+mFlag(m,side)+'</span>'+
       '<span class="bkNm">'+mName(m,side)+'</span><span class="bkSc">'+bkSideScoreHtml_(m,side)+'</span></div>';
   }
-  return '<div class="bkMatch'+(live?' bkLiveBox':'')+(String(m.status)==='FINISHED'?' bkDone':'')+'" onclick="bkTap(\''+id+'\')">'+
-    (live?'<div class="bkLiveTag">EN DIRECT</div>':'')+row('A')+row('B')+'</div>';
+  return '<div class="bkMatch'+(live?' bkLiveBox':'')+(String(m.status)==='FINISHED'?' bkDone':'')+pcls+'" onclick="bkTap(\''+id+'\')">'+
+    (live?'<div class="bkLiveTag">EN DIRECT</div>':'')+when+row('A')+row('B')+'</div>';
 }
 function bkTap(id){
   var m=(matches||[]).find(function(x){return String(mId(x))===String(id);}); if(!m) return;
-  if(String(m.status)==='OPEN' && !pronos[String(id)]) goPronosMatch(id);
-  else openMatchDetail(id);
+  if(String(m.status)==='OPEN') goPronosMatch(id);   // pronostiquer OU modifier son prono
+  else openMatchDetail(id);                          // sinon : détail + historique
 }
 function koTeams_(m){ return [String(m.equipeAId||''), String(m.equipeBId||'')]; }
-function alignFeeders_(child, parent){
-  // Réordonne le tour "child" pour que les 2 matchs qui alimentent parent[k] (ceux dont une
-  // équipe est l'une des 2 équipes de parent[k]) soient placés en positions 2k et 2k+1.
-  if(!parent || !parent.length) return child;
-  var used={}, out=[];
-  parent.forEach(function(pm){
-    var pt=koTeams_(pm);
-    var feed=(child||[]).filter(function(cm){ if(used[mId(cm)])return false; var ct=koTeams_(cm); return ct.indexOf(pt[0])>=0||ct.indexOf(pt[1])>=0; });
-    feed.slice(0,2).forEach(function(cm){ used[mId(cm)]=1; out.push(cm); });
+function normTeam_(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z]/g,''); }
+// Tableau OFFICIEL CdM 2026 : position verticale (0..15) de chaque 16e selon les croisements
+// FIFA, repérée par ÉQUIPE (les matchId internes ne suivent pas la numérotation FIFA).
+var KO_SLOT_1_16 = {
+  germany:0, allemagne:0, paraguay:0,
+  france:1, suede:1,
+  afriquedusud:2, canada:2,
+  paysbas:3, maroc:3,
+  portugal:4, croatie:4,
+  espagne:5, autriche:5,
+  etatsunis:6, usa:6, bosnieherzegovine:6,
+  belgique:7, senegal:7,
+  bresil:8, japon:8,
+  cotedivoire:9, norvege:9,
+  mexique:10, equateur:10,
+  angleterre:11, rdcongo:11,
+  argentina:12, argentine:12, capvert:12,
+  australie:13, egypte:13,
+  suisse:14, algerie:14,
+  colombia:15, colombie:15, ghana:15
+};
+function koSlotOf_(m){
+  var a=KO_SLOT_1_16[normTeam_(mName(m,'A'))];
+  if(a==null) a=KO_SLOT_1_16[normTeam_(mName(m,'B'))];
+  return (a==null)? -1 : a;
+}
+// Place les matchs d'un tour à leur VRAIE position de tableau (longueur=slots), null sinon.
+// 1er tour : position par équipe (tableau officiel). Tours suivants : position = floor(position
+// du match nourricier dans le tour précédent / 2). L'arbre se propage donc en cascade et
+// s'aligne automatiquement au fur et à mesure que les tours sont créés.
+function placeKoRound_(roundMatches, slots, prevPlaced, firstRound){
+  var arr=new Array(slots), i; for(i=0;i<slots;i++) arr[i]=null;
+  function put(m,pos){ if(pos>=0&&pos<slots&&!arr[pos]){arr[pos]=m;return true;} return false; }
+  (roundMatches||[]).forEach(function(m){
+    var pos=-1;
+    if(firstRound){ pos=koSlotOf_(m); }
+    else if(prevPlaced){
+      var ct=koTeams_(m), fpos=-1;
+      for(var k=0;k<prevPlaced.length;k++){ var pm=prevPlaced[k]; if(!pm) continue;
+        var pt=koTeams_(pm); if(pt.indexOf(ct[0])>=0||pt.indexOf(ct[1])>=0){ if(fpos<0||k<fpos) fpos=k; } }
+      if(fpos>=0) pos=Math.floor(fpos/2);
+    }
+    if(!put(m,pos)){ for(var j=0;j<slots;j++){ if(!arr[j]){arr[j]=m;break;} } }
   });
-  (child||[]).forEach(function(cm){ if(!used[mId(cm)]) out.push(cm); });
-  return out;
+  return arr;
 }
 function drawFinal(){
   var box=$('finalBracket'); if(!box) return;
   if(!dataLoaded.pronosView && !(matches&&matches.length)){ box.innerHTML=skel(4); return; }
   var KO=[{key:'1/16',label:'16es',slots:16},{key:'1/8',label:'8es',slots:8},{key:'1/4',label:'Quarts',slots:4},{key:'1/2',label:'Demies',slots:2},{key:'Finale',label:'Finale',slots:1}];
-  function inPhase(k){ return (matches||[]).filter(function(m){return String(m.phase)===k;})
-    .sort(function(a,b){return String(a.sortKey||'').localeCompare(String(b.sortKey||''))||Number(mId(a))-Number(mId(b));}); }
-  var perRound=KO.map(function(r){ return inPhase(r.key); });
-  var anyKo=perRound.some(function(l){return l.length;});
-  // Aligne chaque tour SOUS le tour suivant : le gagnant d'un match se retrouve sur la
-  // branche du match suivant. S'active automatiquement dès que le tour suivant existe.
-  for(var ri=perRound.length-2; ri>=0; ri--){ perRound[ri]=alignFeeders_(perRound[ri], perRound[ri+1]); }
+  function inPhase(k){ return (matches||[]).filter(function(m){return String(m.phase)===k;}); }
+  var anyKo=KO.some(function(r){return inPhase(r.key).length;});
+  // Placement à la VRAIE position du tableau : le 1er tour via le tableau officiel (par équipe),
+  // puis chaque tour suivant aligné sur les nourriciers du tour précédent. Cascade automatique.
+  var placed=[];
+  placed[0]=placeKoRound_(inPhase(KO[0].key), KO[0].slots, null, true);
+  for(var ri=1; ri<KO.length; ri++){ placed[ri]=placeKoRound_(inPhase(KO[ri].key), KO[ri].slots, placed[ri-1], false); }
   var cols='';
   KO.forEach(function(r, idx){
-    var real=perRound[idx], boxes='';
-    for(var i=0;i<r.slots;i++) boxes+=bkMatchBox(real[i]||null);
+    var boxes='';
+    for(var i=0;i<r.slots;i++) boxes+=bkMatchBox(placed[idx][i]);
     cols+='<div class="bkRound"><div class="bkRoundHead">'+r.label+'</div><div class="bkCol">'+boxes+'</div></div>';
   });
   var third=inPhase('3e place');
