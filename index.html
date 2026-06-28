@@ -383,6 +383,17 @@ details.rulesAcc .inner{padding:0 12px 12px}
 .provUp{color:#66bb6a;font-size:.72rem;font-weight:900}
 .provNote{margin-top:8px;font-size:.66rem;color:var(--muted);line-height:1.35}
 .lvProv{margin:8px 0 2px;padding:7px 10px;border-radius:9px;background:linear-gradient(90deg,#1f6feb22,#1f6feb08);border:1px solid #1f6feb44;font-size:.78rem;line-height:1.35}
+.koBox{margin:8px 0;padding:10px 12px;border-radius:11px;background:linear-gradient(160deg,#241a2e,#1a1422);border:1px solid #4a3a5e}
+.koHead{font-size:.72rem;font-weight:900;letter-spacing:.4px;color:#d8b4fe;margin-bottom:6px}
+.koRow{display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:.8rem;border-top:1px solid #ffffff0a}
+.koRow:first-of-type{border-top:0}
+.koRow span{color:var(--muted)}
+.koRow b{font-weight:900;font-variant-numeric:tabular-nums}
+.koTab b{color:#f0abfc}
+.koWin{margin-top:7px;padding:5px 8px;border-radius:8px;background:#2e8b5722;border:1px solid #2e8b5755;color:#86efac;font-weight:800;font-size:.76rem;text-align:center}
+.koNote{margin-top:6px;font-size:.62rem;color:var(--muted);text-align:center}
+.koNoteLine{margin:6px 0 2px;padding:6px 10px;border-radius:9px;background:#1f6feb14;border:1px solid #1f6feb33;font-size:.74rem;line-height:1.4;color:var(--txt)}
+.koNoteLine b{font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
@@ -526,7 +537,7 @@ details.rulesAcc .inner{padding:0 12px 12px}
  * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
  *   message vert/rouge inline + toast de confirmation
  * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbw8CK5w4WQtjApjJK5WLxI-hi9O1H5wYKle86Wt39A1eZFg6iE6rR4xVgTlhDQXbCL3yg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzyHbIYirhMnA2GV93Rieu8hXJPNRpkIj2kt_ZmRPi5HHXN9EngqBkhwlcgGLlH9uoUvQ/exec";
 const MAX_JOKERS     = 3;
 const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
 // Format date français : "12/06/2026" → "Ven. 12 juin 2026"
@@ -1341,6 +1352,33 @@ function liveMatchCardHtml(m){
   '</div>';
 }
 
+function headlineScore(m){
+  const ft=String(m.finishType||'');
+  const toN=v=>(v===''||v==null||isNaN(Number(v)))?null:Number(v);
+  if(String(m.status)==='FINISHED' && (ft==='AET'||ft==='PEN')){
+    const apa=toN(m.scoreApA), apb=toN(m.scoreApB);
+    if(apa!=null&&apb!=null) return apa+' - '+apb;   // score réel après prolongation
+  }
+  return m.scoreA+' - '+m.scoreB;
+}
+function knockoutResultBox(m){
+  const ft=String(m.finishType||'');
+  if(ft!=='AET' && ft!=='PEN') return '';
+  if(String(m.status)!=='FINISHED') return '';
+  const toN=v=>(v===''||v==null||isNaN(Number(v)))?null:Number(v);
+  const ra=toN(m.scoreA), rb=toN(m.scoreB);
+  const ta=toN(m.scoreTabA), tb=toN(m.scoreTabB);
+  let bits=[];
+  // Quel score compte pour les points : le temps réglementaire.
+  if(ra!=null&&rb!=null) bits.push('🎯 Pour les points : <b>'+ra+'-'+rb+'</b> (temps réglementaire)');
+  if(ta!=null&&tb!=null){
+    const w = ta>tb?mName(m,'A'):(tb>ta?mName(m,'B'):'');
+    bits.push('🥅 Tirs au but : <b>'+ta+'-'+tb+'</b>'+(w?' ('+w+' qualifié)':''));
+  } else if(ft==='AET'){
+    bits.push('après prolongation');
+  }
+  return '<div class="koNoteLine">'+bits.join(' \u00b7 ')+'</div>';
+}
 function matchCardHtml(m){
   if(String(m.status)==='LOCKED') return liveMatchCardHtml(m);
   const id=mId(m), p=pronos[String(id)], grouped=isPoolFilter(m.groupe);
@@ -1352,18 +1390,19 @@ function matchCardHtml(m){
     '<div class="matchHeaderClean">' +
       '<div class="mtop">' +
         '<div class="team"><div class="flag">'+mFlag(m,'A')+'</div><div class="name">'+mName(m,'A')+'</div>'+(String(m.status)!=='OPEN'?goalsForSide(m,'A'):'')+'</div>' +
-        '<div class="score">'+(String(m.status)==='FINISHED'?(m.scoreA+' - '+m.scoreB):(String(m.status)==='LOCKED'&&m.scoreA!==''&&m.scoreA!=null?(m.scoreA+' - '+m.scoreB):'VS'))+'</div>' +
+        '<div class="score">'+(String(m.status)==='FINISHED'?headlineScore(m):(String(m.status)==='LOCKED'&&m.scoreA!==''&&m.scoreA!=null?(m.scoreA+' - '+m.scoreB):'VS'))+'</div>' +
         '<div class="team"><div class="flag">'+mFlag(m,'B')+'</div><div class="name">'+mName(m,'B')+'</div>'+(String(m.status)!=='OPEN'?goalsForSide(m,'B'):'')+'</div>' +
       '</div>' +
       '<div class="meta metaClean"><span>📅 '+fmtDateFR(m.dateFR)+' \u00b7 🕒 '+fmtHeure(m.heureFR)+' \u00b7 🏷\uFE0F '+phase+'<br>🏟\uFE0F '+(m.stadeLabel||'Stade \u00e0 confirmer')+(tvFor(m)?'<br>'+tvFor(m):'')+'</span></div>' +
     '</div>' +
     (isBonusMatch(id)?'<div class="countdown bonusPill centeredLine">\u2b50 Joker bonus : points doubl\u00e9s sur ce match</div>':'') +
     (timeLeftText(m)?'<div class="countdown centeredLine">\u23f3 '+timeLeftText(m)+'</div>':'') +
+    knockoutResultBox(m) +
     statMirrorHtml(m) + riskHtml(m) +
     (p?'<div class="prono"><span>\u2705 Ton prono : '+p.scoreA+'-'+p.scoreB+(bool(p.joker)?' \u2b50':'')+(bool(p.counterCurrent)?' 😈':'')+(Number(p.riskBonus)?(' 🎁 +'+p.riskBonus):'')+'</span>'+(String(m.status)==='OPEN'?'<button class="editPronoBtn" onclick="openEditProno(\''+id+'\')">\u270f\uFE0F Modifier</button>':'<b>'+(p.points!==''&&p.points!=null?p.points+' pts':'En attente')+'</b>')+'</div>':'') +
     (canPlay?'<button class="btn" onclick="goPronosMatch(\''+id+'\')">Pronostiquer ce match</button>':'') +
     publicPronosHtml(m) +
-    (isGroupMatch(m)?'<button class="btn btn2" style="margin-top:8px" onclick="openMatchDetail(\''+id+'\')">Voir classement local + historique</button>':'') +
+    (String(m.status)!=='LOCKED'?'<button class="btn btn2" style="margin-top:8px" onclick="openMatchDetail(\''+id+'\')">'+(isGroupMatch(m)?'Voir classement local + historique':'Voir l\'historique des équipes')+'</button>':'') +
   '</div>';
 }
 function drawMatches(){
