@@ -537,8 +537,8 @@ details.rulesAcc .inner{padding:0 12px 12px}
   <div id="vProfile" class="view"><div class="skel"></div><div class="skel"></div></div>
   <div class="bnav" id="nav">
     <button data-view="Home"    class="active" onclick="show('Home',this)"   ><span class="ico">🏠</span><span>Accueil</span></button>
-    <button data-view="Groups"                 onclick="show('Groups',this)" ><span class="ico">📊</span><span>Poules</span></button>
-    <button data-view="Final"                 onclick="show('Final',this)" ><span class="ico">🏆</span><span>Final</span></button>
+    <button data-view="Final"                  onclick="show('Final',this)"  ><span class="ico">🏆</span><span>Final</span></button>
+    <button data-view="Pronos"                 onclick="show('Pronos',this)" ><span class="ico">⚽</span><span>Pronos</span></button>
     <button data-view="Matches"                onclick="show('Matches',this)"><span class="ico">📅</span><span>Matchs</span></button>
     <button data-view="Rank"                   onclick="show('Rank',this)"   ><span class="ico">🏅</span><span>Classement</span></button>
     <button data-view="Profile"                onclick="show('Profile',this)"><span class="ico">👤</span><span>Profil</span></button>
@@ -898,6 +898,7 @@ function show(viewName, btn){
   const u = user.userId;
   const needs = {
     'Pronos':   ['pronosView',   'getPronosView',  {userId:u}],
+    'Final':    ['pronosView',   'getPronosView',  {userId:u}],
     'Matches':  ['pronosView',   'getPronosView',  {userId:u}],
     'Groups':   ['groupsView',   'getGroupsView',  {}],
     'Summary':  ['summaryView',  'getSummaryView', {}],
@@ -910,7 +911,9 @@ function show(viewName, btn){
   // Le hash serveur renvoie "skip" si rien n'a changé -> gratuit, mais garantit que
   // les pronos/votes/classements des autres remontent sans rebuild ni attente.
   var LIVE_VIEWS = { pronosView:1, rankView:1, groupsView:1, summaryView:1, scorersView:1 };
-  if (req && !viewLoading[req[0]] && (LIVE_VIEWS[req[0]] || !dataLoaded[req[0]])) fetchView(req[0], req[1], req[2]);
+  // 'Final' réutilise les matchs déjà en mémoire (affichage instantané) ; refetch seulement si non chargés.
+  var forceLive = LIVE_VIEWS[req && req[0]] && viewName !== 'Final';
+  if (req && !viewLoading[req[0]] && (forceLive || !dataLoaded[req[0]])) fetchView(req[0], req[1], req[2]);
   // ACCUEIL : la carte "match en direct" lit 'matches' (vue pronos). On la rafraîchit à
   // l'ouverture de l'accueil pour que le score live remonte sans passer par l'onglet Matchs.
   if (viewName === 'Home' && !viewLoading.pronosView) fetchView('pronosView', 'getPronosView', {userId:u});
@@ -923,6 +926,7 @@ function drawView(v){
   switch(v){
     case 'Home':    drawHome(); break;
     case 'Pronos':  drawFilters(); drawPronos(); break;
+    case 'Final':   drawFinal(); break;
     case 'Matches': drawFilters(); drawMatches(); break;
     case 'Groups':  drawGroups(); break;
     case 'Summary': drawSummary(); break;
@@ -1471,16 +1475,34 @@ function bkTap(id){
   if(String(m.status)==='OPEN' && !pronos[String(id)]) goPronosMatch(id);
   else openMatchDetail(id);
 }
+function koTeams_(m){ return [String(m.equipeAId||''), String(m.equipeBId||'')]; }
+function alignFeeders_(child, parent){
+  // Réordonne le tour "child" pour que les 2 matchs qui alimentent parent[k] (ceux dont une
+  // équipe est l'une des 2 équipes de parent[k]) soient placés en positions 2k et 2k+1.
+  if(!parent || !parent.length) return child;
+  var used={}, out=[];
+  parent.forEach(function(pm){
+    var pt=koTeams_(pm);
+    var feed=(child||[]).filter(function(cm){ if(used[mId(cm)])return false; var ct=koTeams_(cm); return ct.indexOf(pt[0])>=0||ct.indexOf(pt[1])>=0; });
+    feed.slice(0,2).forEach(function(cm){ used[mId(cm)]=1; out.push(cm); });
+  });
+  (child||[]).forEach(function(cm){ if(!used[mId(cm)]) out.push(cm); });
+  return out;
+}
 function drawFinal(){
   var box=$('finalBracket'); if(!box) return;
   if(!dataLoaded.pronosView && !(matches&&matches.length)){ box.innerHTML=skel(4); return; }
   var KO=[{key:'1/16',label:'16es',slots:16},{key:'1/8',label:'8es',slots:8},{key:'1/4',label:'Quarts',slots:4},{key:'1/2',label:'Demies',slots:2},{key:'Finale',label:'Finale',slots:1}];
   function inPhase(k){ return (matches||[]).filter(function(m){return String(m.phase)===k;})
     .sort(function(a,b){return String(a.sortKey||'').localeCompare(String(b.sortKey||''))||Number(mId(a))-Number(mId(b));}); }
-  var anyKo=KO.some(function(r){return inPhase(r.key).length;});
+  var perRound=KO.map(function(r){ return inPhase(r.key); });
+  var anyKo=perRound.some(function(l){return l.length;});
+  // Aligne chaque tour SOUS le tour suivant : le gagnant d'un match se retrouve sur la
+  // branche du match suivant. S'active automatiquement dès que le tour suivant existe.
+  for(var ri=perRound.length-2; ri>=0; ri--){ perRound[ri]=alignFeeders_(perRound[ri], perRound[ri+1]); }
   var cols='';
-  KO.forEach(function(r){
-    var real=inPhase(r.key), boxes='';
+  KO.forEach(function(r, idx){
+    var real=perRound[idx], boxes='';
     for(var i=0;i<r.slots;i++) boxes+=bkMatchBox(real[i]||null);
     cols+='<div class="bkRound"><div class="bkRoundHead">'+r.label+'</div><div class="bkCol">'+boxes+'</div></div>';
   });
