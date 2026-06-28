@@ -394,6 +394,29 @@ details.rulesAcc .inner{padding:0 12px 12px}
 .koNote{margin-top:6px;font-size:.62rem;color:var(--muted);text-align:center}
 .koNoteLine{margin:6px 0 2px;padding:6px 10px;border-radius:9px;background:#1f6feb14;border:1px solid #1f6feb33;font-size:.74rem;line-height:1.4;color:var(--txt)}
 .koNoteLine b{font-variant-numeric:tabular-nums}
+.bracketTip{font-size:.72rem;color:var(--muted);margin:4px 2px 10px;line-height:1.45}
+.bracketScroll{overflow:auto;max-height:74vh;border:1px solid var(--bdr);border-radius:12px;padding:12px 10px;background:#0d1117aa;-webkit-overflow-scrolling:touch}
+.bracket{display:flex;gap:22px;align-items:stretch;min-width:min-content}
+.bkRound{display:flex;flex-direction:column;min-width:128px;width:128px}
+.bkRoundHead{height:20px;line-height:20px;text-align:center;font-size:.62rem;font-weight:900;letter-spacing:.6px;color:#d8b4fe;text-transform:uppercase;margin-bottom:6px;position:sticky;top:-2px;background:#0d1117;border-radius:5px}
+.bkCol{flex:1;display:flex;flex-direction:column;justify-content:space-around}
+.bkMatch{position:relative;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:4px 6px;margin:5px 0;cursor:pointer;transition:border-color .15s}
+.bkMatch:active{border-color:#8b5cf6}
+.bkEmpty{cursor:default;border-style:dashed;opacity:.5}
+.bkLiveBox{border-color:#f85149;box-shadow:0 0 0 1px #f8514955}
+.bkLiveTag{position:absolute;top:-7px;left:6px;background:#f85149;color:#fff;font-size:.5rem;font-weight:900;padding:1px 5px;border-radius:6px;letter-spacing:.5px}
+.bkTeam{display:flex;align-items:center;gap:5px;padding:2px 0;font-size:.73rem}
+.bkTeam+.bkTeam{border-top:1px solid #ffffff0d}
+.bkFlag{flex:0 0 auto;font-size:.95rem;line-height:1}
+.bkNm{flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--txt)}
+.bkSc{flex:0 0 auto;font-weight:800;font-variant-numeric:tabular-nums;min-width:13px;text-align:right;color:var(--txt)}
+.bkWin .bkNm{font-weight:900;color:#fff}
+.bkWin .bkSc{color:#86efac}
+.bkTab{font-size:.58rem;color:#f0abfc;margin-left:1px;vertical-align:super}
+.bkRound:not(:last-child) .bkMatch::after{content:'';position:absolute;right:-12px;top:50%;width:12px;height:1px;background:#30363d}
+.bkRound:not(:first-child) .bkMatch::before{content:'';position:absolute;left:-12px;top:50%;width:12px;height:1px;background:#30363d}
+.bkThird{margin-top:14px}
+.bkThirdBox{max-width:200px}
 </style>
 </head>
 <body>
@@ -473,6 +496,9 @@ details.rulesAcc .inner{padding:0 12px 12px}
     <div class="matchSelectWrap"><select id="pronoMatchSelect" onchange="selectPronoMatch(this.value)"></select></div>
     <div id="pronoSwipeBox"><div class="skel"></div><div class="skel"></div></div>
   </div>
+  <div id="vFinal" class="view">
+    <div id="finalBracket"><div class="skel"></div><div class="skel"></div></div>
+  </div>
   <div id="vMatches" class="view">
     <div class="matchStatusTabs">
       <button data-st="upcoming" onclick="setMatchStatus('upcoming')">📅 À venir</button>
@@ -512,7 +538,7 @@ details.rulesAcc .inner{padding:0 12px 12px}
   <div class="bnav" id="nav">
     <button data-view="Home"    class="active" onclick="show('Home',this)"   ><span class="ico">🏠</span><span>Accueil</span></button>
     <button data-view="Groups"                 onclick="show('Groups',this)" ><span class="ico">📊</span><span>Poules</span></button>
-    <button data-view="Pronos"                 onclick="show('Pronos',this)" ><span class="ico">⚽</span><span>Pronos</span></button>
+    <button data-view="Final"                 onclick="show('Final',this)" ><span class="ico">🏆</span><span>Final</span></button>
     <button data-view="Matches"                onclick="show('Matches',this)"><span class="ico">📅</span><span>Matchs</span></button>
     <button data-view="Rank"                   onclick="show('Rank',this)"   ><span class="ico">🏅</span><span>Classement</span></button>
     <button data-view="Profile"                onclick="show('Profile',this)"><span class="ico">👤</span><span>Profil</span></button>
@@ -537,7 +563,7 @@ details.rulesAcc .inner{padding:0 12px 12px}
  * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
  *   message vert/rouge inline + toast de confirmation
  * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbzyHbIYirhMnA2GV93Rieu8hXJPNRpkIj2kt_ZmRPi5HHXN9EngqBkhwlcgGLlH9uoUvQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxwh-_NOlfLwXXz0kAMLK-llRkj-y7XMkOCX2L_0Ch6hFykyUJHxZz8-jt9z9IM7JfcqQ/exec";
 const MAX_JOKERS     = 3;
 const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
 // Format date français : "12/06/2026" → "Ven. 12 juin 2026"
@@ -1405,6 +1431,66 @@ function matchCardHtml(m){
     (String(m.status)!=='LOCKED'?'<button class="btn btn2" style="margin-top:8px" onclick="openMatchDetail(\''+id+'\')">'+(isGroupMatch(m)?'Voir classement local + historique':'Voir l\'historique des équipes')+'</button>':'') +
   '</div>';
 }
+function bkNum_(v){ return (v===''||v==null||isNaN(Number(v)))?null:Number(v); }
+function bkPlayScores_(m){
+  var ft=String(m.finishType||''), a, b;
+  if(String(m.status)==='FINISHED' && (ft==='AET'||ft==='PEN')){
+    a=bkNum_(m.scoreApA); b=bkNum_(m.scoreApB);
+    if(a==null||b==null){ a=bkNum_(m.scoreA); b=bkNum_(m.scoreB); }
+  } else { a=bkNum_(m.scoreA); b=bkNum_(m.scoreB); }
+  return {a:a,b:b};
+}
+function bkWinnerSide_(m){
+  if(String(m.status)!=='FINISHED') return '';
+  var ft=String(m.finishType||'');
+  if(ft==='PEN'){ var ta=bkNum_(m.scoreTabA), tb=bkNum_(m.scoreTabB); if(ta!=null&&tb!=null) return ta>tb?'A':(tb>ta?'B':''); }
+  var s=bkPlayScores_(m); if(s.a==null||s.b==null) return '';
+  return s.a>s.b?'A':(s.b>s.a?'B':'');
+}
+function bkSideScoreHtml_(m, side){
+  if(String(m.status)==='OPEN') return '';
+  var s=bkPlayScores_(m), v=side==='A'?s.a:s.b;
+  if(v==null) return '';
+  var ft=String(m.finishType||'');
+  if(ft==='PEN'){ var ta=bkNum_(m.scoreTabA), tb=bkNum_(m.scoreTabB), tv=side==='A'?ta:tb; if(tv!=null) return v+'<span class="bkTab">('+tv+')</span>'; }
+  return ''+v;
+}
+function bkMatchBox(m){
+  if(!m) return '<div class="bkMatch bkEmpty"><div class="bkTeam"><span class="bkFlag">\u2b1c</span><span class="bkNm muted">\u00c0 venir</span></div><div class="bkTeam"><span class="bkFlag">\u2b1c</span><span class="bkNm muted">\u00c0 venir</span></div></div>';
+  var id=mId(m), win=bkWinnerSide_(m), live=String(m.status)==='LOCKED';
+  function row(side){
+    var isWin=win===side;
+    return '<div class="bkTeam'+(isWin?' bkWin':'')+'"><span class="bkFlag">'+mFlag(m,side)+'</span>'+
+      '<span class="bkNm">'+mName(m,side)+'</span><span class="bkSc">'+bkSideScoreHtml_(m,side)+'</span></div>';
+  }
+  return '<div class="bkMatch'+(live?' bkLiveBox':'')+(String(m.status)==='FINISHED'?' bkDone':'')+'" onclick="bkTap(\''+id+'\')">'+
+    (live?'<div class="bkLiveTag">EN DIRECT</div>':'')+row('A')+row('B')+'</div>';
+}
+function bkTap(id){
+  var m=(matches||[]).find(function(x){return String(mId(x))===String(id);}); if(!m) return;
+  if(String(m.status)==='OPEN' && !pronos[String(id)]) goPronosMatch(id);
+  else openMatchDetail(id);
+}
+function drawFinal(){
+  var box=$('finalBracket'); if(!box) return;
+  if(!dataLoaded.pronosView && !(matches&&matches.length)){ box.innerHTML=skel(4); return; }
+  var KO=[{key:'1/16',label:'16es',slots:16},{key:'1/8',label:'8es',slots:8},{key:'1/4',label:'Quarts',slots:4},{key:'1/2',label:'Demies',slots:2},{key:'Finale',label:'Finale',slots:1}];
+  function inPhase(k){ return (matches||[]).filter(function(m){return String(m.phase)===k;})
+    .sort(function(a,b){return String(a.sortKey||'').localeCompare(String(b.sortKey||''))||Number(mId(a))-Number(mId(b));}); }
+  var anyKo=KO.some(function(r){return inPhase(r.key).length;});
+  var cols='';
+  KO.forEach(function(r){
+    var real=inPhase(r.key), boxes='';
+    for(var i=0;i<r.slots;i++) boxes+=bkMatchBox(real[i]||null);
+    cols+='<div class="bkRound"><div class="bkRoundHead">'+r.label+'</div><div class="bkCol">'+boxes+'</div></div>';
+  });
+  var third=inPhase('3e place');
+  var thirdHtml=third.length?('<div class="bkThird"><div class="bkRoundHead">Petite finale \u00b7 3e place</div><div class="bkThirdBox">'+bkMatchBox(third[0])+'</div></div>'):'';
+  box.innerHTML=
+    '<div class="bracketTip">\ud83c\udfc6 Arbre des phases finales \u2014 touche un match pour le pronostiquer ou voir le d\u00e9tail. D\u00e9file horizontalement \u2192</div>'+
+    (anyKo?'':'<div class="card muted">Les matchs \u00e0 \u00e9limination directe appara\u00eetront ici d\u00e8s qu\'ils seront connus.</div>')+
+    '<div class="bracketScroll"><div class="bracket">'+cols+'</div></div>'+thirdHtml;
+}
 function drawMatches(){
   updateNavLive();
   const box=$('matchList'); if(!box) return;
@@ -1995,7 +2081,7 @@ function adminSuiviHtml(){
       '<div class="card"><div class="pts">'+noProno+'</div><div class="muted">😶 Sans aucun prono</div></div>' +
       '<div class="card"><div class="pts">'+lowProno+'</div><div class="muted">⚠️ Couverture &lt; 50%</div></div>' +
       '<div class="card"><div class="pts">'+withBonus+'</div><div class="muted">⭐ Joker bonus actif</div></div>' +
-    '</div></div>' + '<div class="sec">\ud83d\udd27 Outils de secours</div><div class="card"><span class="muted small">\u00c0 utiliser uniquement si tu modifies des donn\u00e9es \u00e0 la main dans le Sheet (rebuild) ou si les triggers ont saut\u00e9.</span><br><br><div class="grid2"><button class="btn btn2" onclick="adminRebuild(this)">\u267b\ufe0f Rebuild caches</button><button class="btn btn2" onclick="adminTrigger(this)">\u23f1\ufe0f R\u00e9installer trigger</button></div></div>' + '<div class="sec">\u26bd Corriger les buteurs d\'un match</div>' + '<div class="card"><span class="muted small">Recharge les buteurs depuis l\'API pour le match choisi. Si le nombre de buts correspond au r\u00e9sultat officiel, remplace TOUS les buteurs actuels (manuels, doublons, mal orthographi\u00e9s) par ceux de l\'API, puis reconstruit les caches.</span><br><br>' + '<select id="fixScorerMatch">' + finishedOpts + '</select><br><br>' + '<button class="btn" onclick="adminFixScorers(this)">\u26bd Corriger les buteurs + rebuild</button>' + '<div id="fixScorerMsg" class="small" style="margin-top:8px"></div></div>';
+    '</div></div>' + '<div class="sec">\ud83d\udd27 Outils de secours</div><div class="card"><span class="muted small">\u00c0 utiliser uniquement si tu modifies des donn\u00e9es \u00e0 la main dans le Sheet (rebuild) ou si les triggers ont saut\u00e9.</span><br><br><div class="grid2"><button class="btn btn2" onclick="adminRebuild(this)">\u267b\ufe0f Rebuild caches</button><button class="btn btn2" onclick="adminTrigger(this)">\u23f1\ufe0f R\u00e9installer trigger</button></div><button class="btn" style="margin-top:8px" onclick="adminSyncApi(this)">\u26a1 Sync API maintenant (forcer le direct)</button></div>' + '<div class="sec">\u26bd Corriger les buteurs d\'un match</div>' + '<div class="card"><span class="muted small">Recharge les buteurs depuis l\'API pour le match choisi. Si le nombre de buts correspond au r\u00e9sultat officiel, remplace TOUS les buteurs actuels (manuels, doublons, mal orthographi\u00e9s) par ceux de l\'API, puis reconstruit les caches.</span><br><br>' + '<select id="fixScorerMatch">' + finishedOpts + '</select><br><br>' + '<button class="btn" onclick="adminFixScorers(this)">\u26bd Corriger les buteurs + rebuild</button>' + '<div id="fixScorerMsg" class="small" style="margin-top:8px"></div></div>';
 }
 
 function adminResultsHtml(){
@@ -2405,6 +2491,13 @@ function adminToggleBonus(matchId, active, btn){
       activeProfileSection='bonus'; drawProfile();
     });
   }).catch(e=> formMsg('bonusMsg', 'Erreur API : '+e.message, false));
+}
+function adminSyncApi(btn){
+  if(btn){ btn.disabled=true; btn.textContent='\u26a1 Sync en cours\u2026'; }
+  api('adminSyncNow', {userId:user.userId})
+    .then(function(d){ toast((d&&d.summary?'\u2705 Sync OK':'\u2705 Sync lanc\u00e9')); dataLoaded.pronosView=false; fetchView('pronosView','getPronosView',{userId:user.userId}); })
+    .catch(function(e){ toast('Erreur sync : '+e.message, true); })
+    .finally(function(){ if(btn){ btn.disabled=false; btn.textContent='\u26a1 Sync API maintenant (forcer le direct)'; } });
 }
 function adminRebuild(btn){
   withAction(btn, 'Reconstruction des caches…',
