@@ -358,6 +358,31 @@ details.rulesAcc .inner{padding:0 12px 12px}
 /* Masque la barre de défilement horizontale des filtres (gênante) — le swipe reste possible */
 .filters::-webkit-scrollbar,.profileUnifiedTabs::-webkit-scrollbar,.profileFilters::-webkit-scrollbar,.adminCoverageFilters::-webkit-scrollbar,.poolJump::-webkit-scrollbar{display:none;width:0;height:0}
 .filters,.profileUnifiedTabs,.profileFilters,.adminCoverageFilters,.poolJump{scrollbar-width:none;-ms-overflow-style:none}
+
+/* === Cartes live (match en cours) + classement prévisionnel === */
+.lvBlock{margin-top:10px;border-top:1px solid var(--bdr);padding-top:8px}
+.lvHead{font-size:.74rem;font-weight:900;margin-bottom:6px;letter-spacing:.3px}
+.lvRow{display:flex;align-items:center;gap:8px;padding:5px 7px;border-radius:8px;font-size:.8rem;border-top:1px solid #ffffff08}
+.lvRow:first-of-type{border-top:0}
+.lvMe{background:linear-gradient(90deg,#ffd76622,#ffd76608);border:1px solid #ffd76655;border-radius:9px}
+.lvNm{flex:1;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lvYou{font-size:.62rem;font-weight:900;color:#0b0e12;background:var(--gold);border-radius:99px;padding:1px 6px;margin-left:2px;vertical-align:middle}
+.lvSc{font-weight:900;background:var(--bg);border-radius:6px;padding:2px 8px;flex:0 0 auto}
+.lvPts{flex:0 0 auto;font-weight:900;font-size:.74rem;min-width:34px;text-align:right}
+.lvWin{color:#66bb6a}
+.lvZero{color:var(--muted)}
+.provCard{background:linear-gradient(160deg,#1a2330,#141a22);border:1px solid #2b3a4d}
+.provHead{font-size:.78rem;font-weight:900;letter-spacing:.3px;margin-bottom:4px}
+.provYou{font-size:.82rem;margin-bottom:9px;color:var(--txt)}
+.provRow{display:flex;align-items:center;gap:9px;padding:5px 7px;border-radius:8px;font-size:.8rem;border-top:1px solid #ffffff08}
+.provRow:first-of-type{border-top:0}
+.provMe{background:linear-gradient(90deg,#ffd76622,#ffd76608);border:1px solid #ffd76555}
+.provRk{flex:0 0 auto;width:22px;text-align:center;font-weight:900;color:var(--muted)}
+.provNm{flex:1;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.provPt{flex:0 0 auto;font-weight:900}
+.provUp{color:#66bb6a;font-size:.72rem;font-weight:900}
+.provNote{margin-top:8px;font-size:.66rem;color:var(--muted);line-height:1.35}
+.lvProv{margin:8px 0 2px;padding:7px 10px;border-radius:9px;background:linear-gradient(90deg,#1f6feb22,#1f6feb08);border:1px solid #1f6feb44;font-size:.78rem;line-height:1.35}
 </style>
 </head>
 <body>
@@ -501,7 +526,7 @@ details.rulesAcc .inner{padding:0 12px 12px}
  * - Pattern V14.1 : setLoading global + bouton désactivé pendant l'action +
  *   message vert/rouge inline + toast de confirmation
  * ============================================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycby40E5FjByPGvKX69xIrQmJD4cIT9JcYirq8el5UPmvXsP2TrHFGlECozogXkefNGbqmQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbw8CK5w4WQtjApjJK5WLxI-hi9O1H5wYKle86Wt39A1eZFg6iE6rR4xVgTlhDQXbCL3yg/exec";
 const MAX_JOKERS     = 3;
 const FLAG_BY_CODE   = (c)=>{ c=String(c||'').trim().toUpperCase(); if(c.length!==2)return ''; return c.replace(/./g,x=>String.fromCodePoint(127397+x.charCodeAt(0))); };
 // Format date français : "12/06/2026" → "Ven. 12 juin 2026"
@@ -953,8 +978,19 @@ function drawHome(){
     '<button class="btn" style="margin-bottom:10px" onclick="show(\'Scorers\')">⚽ Choisir mon meilleur buteur</button>';
   const todo = Number((userState||{}).todoCount)||0;
   const cta = todo>0 ? '<button class="ctaTodo" onclick="show(\'Pronos\')">⚽ Il te reste '+todo+' prono'+(todo>1?'s':'')+' à faire — c\'est parti !</button>' : '';
-  $('homeSummary').innerHTML = heroMatchHtml() + cta + bonusHtml + scorerBtn;
+  $('homeSummary').innerHTML = heroMatchesHtml() + cta + bonusHtml + scorerBtn;
   startHomeCountdown();
+}
+/* Accueil : tous les matchs EN COURS (s'il y en a), sinon le prochain match. */
+function liveHomeMatches(){
+  return (matches||[]).filter(m=> String(m.status)==='LOCKED')
+    .sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||'')));
+}
+function heroMatchesHtml(){
+  const live=liveHomeMatches();
+  if(live.length) return live.map(heroMatchHtml).join('');
+  const nx=nextHomeMatch();
+  return nx?heroMatchHtml(nx):'';
 }
 /* Carte "match du jour" : prochain match non terminé */
 function nextHomeMatch(){
@@ -962,8 +998,8 @@ function nextHomeMatch(){
     .sort((a,b)=> String(a.sortKey||'').localeCompare(String(b.sortKey||'')));
   return upc[0]||null;
 }
-function heroMatchHtml(){
-  const m = nextHomeMatch(); if (!m) return '';
+function heroMatchHtml(m){
+  if (!m) return '';
   const live = String(m.status)==='LOCKED';
   const phase = isGroupMatch(m) ? 'Groupe '+(m.groupe||'') : (m.phase||'Phase finale');
   return '<div class="heroMatch">' +
@@ -1221,7 +1257,92 @@ function passMatchStatus(m){
 }
 // Rendu d'UNE carte de match complète (sans en-tête de jour). Réutilisé par la liste plate
 // (À venir / En cours) et par le détail déplié dans l'accordéon des Terminés.
+function ordinal(n){ n=Number(n)||0; return n===1 ? '1er' : (n+'e'); }
+
+// Points qu'un prono RAPPORTERAIT si le score actuel restait final (réplique calculatePoints).
+function livePotentialPoints(entry, m){
+  const toN=v=>(v===''||v==null||isNaN(Number(v)))?null:Number(v);
+  const pa=toN(entry.scoreA), pb=toN(entry.scoreB);
+  const ra=toN(m.scoreA),     rb=toN(m.scoreB);
+  if(pa==null||pb==null||ra==null||rb==null) return {points:0,exact:false,good:false};
+  let base=0, exact=false, good=false;
+  if(pa===ra && pb===rb){ base=3; exact=true; good=true; }
+  else if(Math.sign(pa-pb)===Math.sign(ra-rb)){ base=1; good=true; }
+  const mult=(bool(entry.joker)||isBonusMatch(mId(m)))?2:1;
+  let risk=0;
+  if(bool(entry.counterCurrent)){ if(exact) risk=2; else if(good) risk=1; }
+  return {points: base*mult+risk, exact:exact, good:good};
+}
+
+// Classement PRÉVISIONNEL = classement actuel + points live cumulés sur TOUS les matchs en cours.
+function provisionalStandings(){
+  const base={};
+  (classement||[]).forEach(c=>{ base[String(c.userId)]={userId:String(c.userId), pseudo:c.pseudo, cur:Number(c.points)||0, live:0}; });
+  (matches||[]).filter(m=>String(m.status)==='LOCKED').forEach(m=>{
+    const pp=((pronosticStats[String(mId(m))]||{}).publicPronos)||{A:[],X:[],B:[]};
+    ['A','X','B'].forEach(iss=> (pp[iss]||[]).forEach(entry=>{
+      const uid=String(entry.userId);
+      if(!base[uid]) base[uid]={userId:uid, pseudo:entry.pseudo, cur:0, live:0};
+      base[uid].live += livePotentialPoints(entry,m).points;
+    }));
+  });
+  const arr=Object.keys(base).map(k=>{ const x=base[k]; return {userId:x.userId, pseudo:x.pseudo, cur:x.cur, live:x.live, prov:x.cur+x.live}; });
+  arr.sort((a,b)=> b.prov-a.prov || String(a.pseudo||'').localeCompare(String(b.pseudo||'')));
+  arr.forEach((x,i)=> x.rank=i+1);
+  return arr;
+}
+
+// Écriteau compact "classement prévisionnel" affiché DANS la carte du match en cours.
+function provisionalLineHtml(){
+  if(!(classement||[]).length) return '';
+  const live=(matches||[]).filter(m=>String(m.status)==='LOCKED');
+  if(!live.length) return '';
+  const arr=provisionalStandings(); if(!arr.length) return '';
+  const meId=String((user||{}).userId);
+  const me=arr.find(x=>x.userId===meId); if(!me) return '';
+  const multi=live.length>1;
+  const delta=me.live>0?(' <span class="provUp">+'+me.live+'</span>'):'';
+  return '<div class="lvProv">📊 Classement prévisionnel : tu serais <b>'+ordinal(me.rank)+'</b> avec <b>'+me.prov+' pts</b>'+delta+' à l\'issue '+(multi?'des '+live.length+' matchs en cours':'du match')+'</div>';
+}
+
+// CARTE LIVE (match en cours) : score + tous les pronos avec points en direct, le tien surligné.
+function liveMatchCardHtml(m){
+  const id=mId(m);
+  const pp=((pronosticStats[String(id)]||{}).publicPronos)||{A:[],X:[],B:[]};
+  const all=[].concat(pp.A||[], pp.X||[], pp.B||[]);
+  const meId=String((user||{}).userId);
+  const toN=v=>(v===''||v==null||isNaN(Number(v)))?null:Number(v);
+  const hasScore = toN(m.scoreA)!=null && toN(m.scoreB)!=null;
+  const ranked=all.map(e=>({e:e, lp:livePotentialPoints(e,m)}))
+    .sort((x,y)=> y.lp.points-x.lp.points || String(x.e.pseudo||'').localeCompare(String(y.e.pseudo||'')));
+  const pronoRows = ranked.length ? ranked.map(r=>{
+    const e=r.e, isMe=String(e.userId)===meId;
+    const marks=(bool(e.joker)?' ⭐':'')+(bool(e.counterCurrent)?' 😈':'');
+    const ptsTxt = hasScore ? ('<span class="lvPts'+(r.lp.points>0?' lvWin':' lvZero')+'">'+(r.lp.points>0?'+':'')+r.lp.points+'</span>') : '';
+    return '<div class="lvRow'+(isMe?' lvMe':'')+'">'+
+        '<span class="lvNm">'+cleanText(e.pseudo)+(isMe?' <span class="lvYou">toi</span>':'')+marks+'</span>'+
+        '<span class="lvSc">'+e.scoreA+'-'+e.scoreB+'</span>'+ptsTxt+
+      '</div>';
+  }).join('') : '<div class="muted small" style="padding:8px;text-align:center">Pronos en cours de chargement…</div>';
+  const phase = isGroupMatch(m) ? 'Groupe '+(m.groupe||'') : (m.phase||'Phase finale');
+  return '<div class="match live has">'+
+    '<div class="matchCardTitle">'+matchTitle(m)+'</div>'+
+    '<div style="text-align:center;margin:2px 0 6px"><span class="livePill"><span class="liveDot" style="margin:0"></span>EN DIRECT</span></div>'+
+    '<div class="matchHeaderClean"><div class="mtop">'+
+      '<div class="team"><div class="flag">'+mFlag(m,'A')+'</div><div class="name">'+mName(m,'A')+'</div>'+goalsForSide(m,'A')+'</div>'+
+      '<div class="score">'+(hasScore?(m.scoreA+' - '+m.scoreB):'0 - 0')+'</div>'+
+      '<div class="team"><div class="flag">'+mFlag(m,'B')+'</div><div class="name">'+mName(m,'B')+'</div>'+goalsForSide(m,'B')+'</div>'+
+    '</div>'+
+      '<div class="meta metaClean"><span>🏷\uFE0F '+phase+' \u00b7 🏟\uFE0F '+(m.stadeLabel||'Stade \u00e0 confirmer')+'</span></div>'+
+    '</div>'+
+    (isBonusMatch(id)?'<div class="countdown bonusPill centeredLine">\u2b50 Joker bonus : points doubl\u00e9s sur ce match</div>':'')+
+    provisionalLineHtml()+
+    '<div class="lvBlock"><div class="lvHead">Pronos du groupe \u00b7 <span class="muted">points en direct</span></div>'+pronoRows+'</div>'+
+  '</div>';
+}
+
 function matchCardHtml(m){
+  if(String(m.status)==='LOCKED') return liveMatchCardHtml(m);
   const id=mId(m), p=pronos[String(id)], grouped=isPoolFilter(m.groupe);
   const canPlay = String(m.status)==='OPEN' && !p;
   const phase = isGroupMatch(m) ? 'Groupe '+(m.groupe||'') : (m.phase||'Phase finale');
